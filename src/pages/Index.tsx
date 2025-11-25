@@ -19,23 +19,13 @@ import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
 import Dock from "@/components/Dock";
 import ProfileWidget from "@/components/ProfileWidget";
-import PageIndicator from "@/components/PageIndicator";
 import AppPage from "@/components/AppPage";
 
 type AppType = "settings" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | null;
 
 const Index = () => {
   const [showBoot, setShowBoot] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
   const [openApp, setOpenApp] = useState<AppType>(null);
-
-  const handleSwipe = (direction: number) => {
-    if (direction > 0 && currentPage < 1) {
-      setCurrentPage(1);
-    } else if (direction < 0 && currentPage > 0) {
-      setCurrentPage(0);
-    }
-  };
 
   return (
     <div className="relative w-full h-screen overflow-hidden ios-gradient">
@@ -47,33 +37,9 @@ const Index = () => {
         <>
           <StatusBar />
           
-          {/* Swipeable content area - excludes dock */}
-          <div className="absolute inset-0 pt-14 pb-32 overflow-hidden">
-            <motion.div
-              className="h-full px-6"
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.3}
-              dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-              onDragEnd={(_, info) => {
-                const swipeThreshold = 50;
-                const swipeVelocity = Math.abs(info.velocity.x);
-                
-                // Enhanced swipe detection
-                if (Math.abs(info.offset.x) > swipeThreshold || swipeVelocity > 500) {
-                  handleSwipe(info.offset.x);
-                }
-              }}
-            >
-              <motion.div
-                animate={{ x: currentPage === 0 ? 0 : "-100%" }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="h-full flex"
-                style={{ width: "200%" }}
-              >
-                {/* Page 1 - Main Portfolio */}
-                <div className="w-1/2 flex-shrink-0 h-full pr-6">
-                  <div className="flex flex-col gap-6 h-full">
+          {/* Main content area */}
+          <div className="absolute inset-0 pt-14 pb-32 px-6 overflow-auto">
+            <div className="flex flex-col gap-6 h-full">
                     {/* Profile Widget */}
                     <ProfileWidget />
 
@@ -152,31 +118,12 @@ const Index = () => {
                         label="Music"
                         gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
                         onClick={() => setOpenApp("music")}
-                      />
-                    </div>
+                    />
                   </div>
                 </div>
+              </div>
 
-                {/* Page 2 - Additional Apps */}
-                <div className="w-1/2 flex-shrink-0 h-full pr-6">
-                  <div className="grid grid-cols-4 gap-x-4 gap-y-6 pt-6">
-                    {Array.from({ length: 16 }).map((_, i) => (
-                      <AppIcon
-                        key={i}
-                        icon={Settings}
-                        label={`App ${i + 1}`}
-                        bgColor="bg-gray-400"
-                        onClick={() => {}}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Fixed elements - outside swipeable area */}
-          <PageIndicator currentPage={currentPage} totalPages={2} />
+          {/* Fixed elements */}
           <Dock />
 
           {/* App Pages */}
