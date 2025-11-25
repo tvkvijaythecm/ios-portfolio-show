@@ -31,6 +31,7 @@ import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import profileImage from "@/assets/profile.jpeg";
 import aboutIcon from "@/assets/about-icon.png";
+import backgroundImage from "@/assets/background.png";
 import photo1 from "@/assets/photo1.jpg";
 import photo2 from "@/assets/photo2.jpg";
 import photo3 from "@/assets/photo3.jpg";
@@ -120,7 +121,14 @@ const Index = () => {
   }, [selectedGradient]);
 
   return (
-    <div className={`relative w-full h-screen overflow-hidden ${selectedGradient}`}>
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Background Image with Dimming Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      />
+      <div className="absolute inset-0 bg-black/40" />
+      
       <AnimatePresence>
         {showBoot && <BootScreen onComplete={() => setShowBoot(false)} />}
       </AnimatePresence>
@@ -130,7 +138,7 @@ const Index = () => {
           <StatusBar />
           
           {/* Main content area */}
-          <div className="absolute inset-0 pt-14 pb-32 px-6 overflow-auto">
+          <div className="absolute inset-0 pt-14 pb-32 px-6 overflow-auto z-10">
             <div className="flex flex-col gap-6 h-full">
                     {/* Profile Widget */}
                     <ProfileWidget />
