@@ -26,9 +26,9 @@ const Dock = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, label: "Facebook", gradient: "#0099FF, #00E5FF", url: "#" },
-    { icon: Instagram, label: "Instagram", gradient: "#FF1493, #FF00FF", url: "#" },
-    { icon: Music, label: "TikTok", gradient: "#FF00FF, #00E5FF", url: "#" },
+    { icon: Facebook, label: "Facebook", color: "bg-blue-600", url: "#" },
+    { icon: Instagram, label: "Instagram", gradient: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", url: "#" },
+    { icon: Music, label: "TikTok", color: "bg-black", url: "#" },
   ];
 
   return (
@@ -71,6 +71,7 @@ const Dock = () => {
                     key={social.label}
                     icon={social.icon}
                     label={social.label}
+                    bgColor={social.color}
                     gradient={social.gradient}
                     onClick={() => window.open(social.url, "_blank")}
                   />
@@ -92,25 +93,25 @@ const Dock = () => {
             <AppIcon
               icon={MessageCircle}
               label="WhatsApp"
-              gradient="#00FF88, #00E5FF"
+              gradient="linear-gradient(135deg, #25D366 0%, #128C7E 100%)"
               onClick={() => handleCommunicationAppClick("WhatsApp", "https://wa.me/")}
             />
             <AppIcon
               icon={Phone}
               label="Phone"
-              gradient="#00FF66, #00E5FF"
+              gradient="linear-gradient(135deg, #34C759 0%, #30D158 100%)"
               onClick={() => handleCommunicationAppClick("Phone", "tel:")}
             />
             <AppIcon
               icon={Mail}
               label="Mail"
-              gradient="#0099FF, #00E5FF"
+              gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
               onClick={() => handleCommunicationAppClick("Mail", "mailto:")}
             />
             <AppIcon
               icon={Share2}
               label="Social"
-              gradient="#FF00FF, #FF1493"
+              gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
               onClick={() => setShowSocial(!showSocial)}
             />
           </div>
