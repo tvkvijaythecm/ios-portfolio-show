@@ -3,16 +3,18 @@ import { motion } from "framer-motion";
 const LiveWallpaper = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Animated gradient blobs */}
+      {/* Animated gradient blobs - smaller and more subtle */}
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full blur-3xl opacity-30"
+        className="absolute w-[300px] h-[300px] rounded-full blur-3xl opacity-20"
         style={{
-          background: "radial-gradient(circle, rgba(255,107,107,0.4) 0%, rgba(255,71,87,0.2) 50%, transparent 100%)",
+          background: "radial-gradient(circle, rgba(255,107,107,0.5) 0%, rgba(255,71,87,0.3) 50%, transparent 100%)",
+          top: "10%",
+          left: "-10%",
         }}
         animate={{
-          x: ["-10%", "110%"],
-          y: ["-10%", "50%", "-10%"],
-          scale: [1, 1.2, 1],
+          x: [0, 100, 0],
+          y: [0, 80, 0],
+          scale: [1, 1.1, 1],
         }}
         transition={{
           duration: 20,
@@ -22,14 +24,16 @@ const LiveWallpaper = () => {
       />
       
       <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full blur-3xl opacity-30"
+        className="absolute w-[250px] h-[250px] rounded-full blur-3xl opacity-20"
         style={{
-          background: "radial-gradient(circle, rgba(78,205,196,0.4) 0%, rgba(68,160,141,0.2) 50%, transparent 100%)",
+          background: "radial-gradient(circle, rgba(78,205,196,0.5) 0%, rgba(68,160,141,0.3) 50%, transparent 100%)",
+          top: "60%",
+          right: "-5%",
         }}
         animate={{
-          x: ["110%", "-10%"],
-          y: ["110%", "30%", "110%"],
-          scale: [1, 1.3, 1],
+          x: [0, -80, 0],
+          y: [0, -60, 0],
+          scale: [1, 1.15, 1],
         }}
         transition={{
           duration: 18,
@@ -40,13 +44,15 @@ const LiveWallpaper = () => {
       />
       
       <motion.div
-        className="absolute w-[450px] h-[450px] rounded-full blur-3xl opacity-30"
+        className="absolute w-[280px] h-[280px] rounded-full blur-3xl opacity-20"
         style={{
-          background: "radial-gradient(circle, rgba(95,39,205,0.4) 0%, rgba(52,31,151,0.2) 50%, transparent 100%)",
+          background: "radial-gradient(circle, rgba(95,39,205,0.5) 0%, rgba(52,31,151,0.3) 50%, transparent 100%)",
+          top: "40%",
+          left: "50%",
         }}
         animate={{
-          x: ["50%", "-10%", "50%"],
-          y: ["-10%", "110%"],
+          x: [-50, 50, -50],
+          y: [0, -70, 0],
           scale: [1, 1.1, 1],
         }}
         transition={{
@@ -58,14 +64,16 @@ const LiveWallpaper = () => {
       />
       
       <motion.div
-        className="absolute w-[350px] h-[350px] rounded-full blur-3xl opacity-30"
+        className="absolute w-[220px] h-[220px] rounded-full blur-3xl opacity-20"
         style={{
-          background: "radial-gradient(circle, rgba(255,165,2,0.4) 0%, rgba(255,99,72,0.2) 50%, transparent 100%)",
+          background: "radial-gradient(circle, rgba(255,165,2,0.5) 0%, rgba(255,99,72,0.3) 50%, transparent 100%)",
+          bottom: "15%",
+          left: "20%",
         }}
         animate={{
-          x: ["80%", "20%", "80%"],
-          y: ["80%", "10%", "80%"],
-          scale: [1, 1.25, 1],
+          x: [0, 60, 0],
+          y: [0, -50, 0],
+          scale: [1, 1.2, 1],
         }}
         transition={{
           duration: 25,
