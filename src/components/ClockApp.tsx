@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
-import { Sun, Globe } from "lucide-react";
+import { Sun, LogOut, LogIn } from "lucide-react";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface LocationData {
   city: string;
@@ -10,12 +14,15 @@ interface LocationData {
 }
 
 const ClockApp = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [location, setLocation] = useState<LocationData | null>(null);
   const [is24Hour, setIs24Hour] = useState(true);
   const [sunriseTime, setSunriseTime] = useState<Date | null>(null);
   const [sunsetTime, setSunsetTime] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
   // Calculate sunrise and sunset times
   const calculateSunTimes = (lat: number, lng: number) => {
@@ -49,61 +56,66 @@ const ClockApp = () => {
     setSunsetTime(sunsetDate);
   };
 
-  // Get user location
+  // Check authentication and load location
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          
-          try {
-            // Get location name using reverse geocoding
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`
-            );
-            const data = await response.json();
-            
-            setLocation({
-              city: data.address.city || data.address.town || data.address.village || "Unknown",
-              state: data.address.state || "",
-              country: data.address.country || "",
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            });
-            
-            calculateSunTimes(latitude, longitude);
-            setLoading(false);
-          } catch (error) {
-            console.error("Error fetching location:", error);
-            setLocation({
-              city: "Unknown Location",
-              state: "",
-              country: "",
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            });
-            setLoading(false);
-          }
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          setLocation({
-            city: "Location Access Denied",
-            state: "",
-            country: "",
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          });
-          setLoading(false);
-        }
-      );
-    } else {
-      setLocation({
-        city: "Geolocation Not Supported",
-        state: "",
-        country: "",
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
-      setLoading(false);
-    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadUserLocation(session.user.id);
+      } else {
+        loadDefaultLocation();
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadUserLocation(session.user.id);
+      } else {
+        loadDefaultLocation();
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  const loadUserLocation = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('location_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setLocation({
+          city: data.city,
+          state: data.state || "",
+          country: data.country,
+          timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+        });
+        calculateSunTimes(Number(data.latitude), Number(data.longitude));
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error loading location:", error);
+      loadDefaultLocation();
+    }
+  };
+
+  const loadDefaultLocation = () => {
+    // Default to Kuala Lumpur
+    setLocation({
+      city: "Kuala Lumpur",
+      state: "Federal Territory of Kuala Lumpur",
+      country: "Malaysia",
+      timezone: "Asia/Kuala_Lumpur",
+    });
+    calculateSunTimes(3.1390, 101.6869);
+    setLoading(false);
+  };
 
   // Update time every second
   useEffect(() => {
@@ -130,22 +142,51 @@ const ClockApp = () => {
     return `${hours}h ${minutes.toString().padStart(2, '0')}m`;
   };
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Signed out",
+        description: "You have been signed out successfully.",
+      });
+      loadDefaultLocation();
+    }
+  };
+
+  const handleAuthClick = () => {
+    navigate("/auth");
+  };
+
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors rounded-3xl overflow-hidden">
+    <div className="h-full flex flex-col bg-background text-foreground rounded-3xl overflow-hidden p-6 md:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 md:p-8">
-        <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-900 dark:bg-white flex items-center justify-center">
-          <Globe className="w-5 h-5 md:w-6 md:h-6 text-white dark:text-gray-900" />
+      <div className="flex items-center justify-between mb-8">
+        <button 
+          onClick={user ? handleSignOut : handleAuthClick}
+          className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-foreground flex items-center justify-center hover:opacity-80 transition-opacity"
+          title={user ? "Sign out" : "Sign in"}
+        >
+          {user ? (
+            <LogOut className="w-5 h-5 md:w-6 md:h-6 text-background" />
+          ) : (
+            <LogIn className="w-5 h-5 md:w-6 md:h-6 text-background" />
+          )}
         </button>
         
         {/* 12h/24h Toggle */}
-        <div className="flex items-center gap-0 bg-gray-200 dark:bg-gray-800 rounded-full p-1">
+        <div className="flex items-center gap-0 bg-muted rounded-full p-1">
           <button
             onClick={() => setIs24Hour(false)}
             className={`px-4 md:px-6 py-2 rounded-full text-sm md:text-base font-medium transition-all ${
               !is24Hour
-                ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-md"
-                : "text-gray-600 dark:text-gray-400"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground"
             }`}
           >
             12h
@@ -154,8 +195,8 @@ const ClockApp = () => {
             onClick={() => setIs24Hour(true)}
             className={`px-4 md:px-6 py-2 rounded-full text-sm md:text-base font-medium transition-all ${
               is24Hour
-                ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md"
-                : "text-gray-600 dark:text-gray-400"
+                ? "bg-foreground text-background shadow-sm"
+                : "text-muted-foreground"
             }`}
           >
             24h
@@ -164,75 +205,71 @@ const ClockApp = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col justify-center px-6 md:px-8 pb-20 md:pb-32">
+      <div className="flex-1 flex flex-col justify-between">
         {loading ? (
-          <div className="text-center">
+          <div className="flex-1 flex items-center justify-center">
             <div className="text-4xl md:text-6xl font-light">Loading...</div>
           </div>
         ) : (
           <>
-            {/* Date */}
-            <div className="mb-4 md:mb-8">
-              <div className="text-2xl md:text-4xl font-light flex items-baseline gap-3 md:gap-4">
-                <span className="text-6xl md:text-8xl font-extralight">
-                  {format(currentTime, "dd")}
-                </span>
-                <div className="flex flex-col leading-tight">
-                  <span className="text-xl md:text-3xl">{format(currentTime, "EEE,")}</span>
-                  <span className="text-xl md:text-3xl">{format(currentTime, "d MMM")}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Large Time Display */}
-            <div className="mb-8 md:mb-12 relative">
-              <div className="flex items-baseline gap-2 md:gap-4">
-                <span className="text-[8rem] md:text-[12rem] lg:text-[16rem] font-extralight leading-none tracking-tighter">
-                  {formatTime(currentTime, is24Hour).split(":")[0]}
-                </span>
-                <span className="text-[4rem] md:text-[6rem] lg:text-[8rem] font-extralight leading-none opacity-70">
-                  {formatTime(currentTime, is24Hour).split(":")[1]}
-                </span>
-              </div>
-              
-              {/* Additional time zones */}
-              <div className="absolute -right-2 md:right-0 top-0 flex flex-col gap-2 md:gap-3 text-gray-400 dark:text-gray-600">
-                <span className="text-3xl md:text-5xl font-extralight">
-                  {formatSmallTime(new Date(currentTime.getTime() + 6 * 60 * 60 * 1000), is24Hour)}
-                </span>
-                <span className="text-2xl md:text-4xl font-extralight">
-                  {formatSmallTime(new Date(currentTime.getTime() + 8 * 60 * 60 * 1000), is24Hour)}
-                </span>
-                <span className="text-xl md:text-3xl font-extralight">
-                  {formatSmallTime(new Date(currentTime.getTime() + 10 * 60 * 60 * 1000), is24Hour)}
-                </span>
-              </div>
-            </div>
-
-            {/* Sun Info */}
-            {sunriseTime && sunsetTime && (
+            {/* Time and Date */}
+            <div className="flex-1 flex flex-col justify-center">
+              {/* Date */}
               <div className="mb-6 md:mb-8">
-                <div className="flex items-center gap-2 md:gap-3 text-base md:text-xl text-gray-600 dark:text-gray-400">
-                  <Sun className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
-                  <span className="font-light">
-                    {getDaylight()}
+                <div className="flex items-baseline gap-3 md:gap-4">
+                  <span className="text-[5rem] md:text-[8rem] font-extralight leading-none tracking-tight">
+                    {format(currentTime, "dd")}
                   </span>
-                </div>
-                <div className="text-sm md:text-base text-gray-500 dark:text-gray-500 mt-1 ml-8 md:ml-9 font-light">
-                  {format(sunriseTime, is24Hour ? "HH:mm" : "hh:mm a")} - {format(sunsetTime, is24Hour ? "HH:mm" : "hh:mm a")}
+                  <div className="flex flex-col justify-center">
+                    <span className="text-2xl md:text-4xl font-light">{format(currentTime, "EEE,")}</span>
+                    <span className="text-2xl md:text-4xl font-light">{format(currentTime, "d MMM")}</span>
+                  </div>
                 </div>
               </div>
-            )}
 
-            {/* Location */}
-            <div className="text-3xl md:text-5xl lg:text-6xl font-light leading-tight">
-              {location?.city && (
-                <>
-                  <div>{location.city}</div>
-                  {location.state && <div>{location.state},</div>}
-                  <div>{location.country}</div>
-                </>
+              {/* Large Time Display */}
+              <div className="mb-8 md:mb-12">
+                <div className="flex items-start gap-2 md:gap-4">
+                  <span className="text-[8rem] md:text-[12rem] lg:text-[16rem] font-extralight leading-none tracking-tight">
+                    {formatTime(currentTime, is24Hour).split(":")[0]}
+                  </span>
+                  <div className="flex flex-col pt-4 md:pt-6">
+                    <span className="text-[3rem] md:text-[5rem] font-extralight leading-none tracking-tight opacity-40">
+                      {formatTime(currentTime, is24Hour).split(":")[1]}
+                    </span>
+                    <span className="text-[2rem] md:text-[3rem] font-extralight leading-none tracking-tight opacity-30 mt-2">
+                      {format(currentTime, "ss")}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Section */}
+            <div className="space-y-6 md:space-y-8">
+              {/* Sun Info */}
+              {sunriseTime && sunsetTime && (
+                <div>
+                  <div className="flex items-center gap-2 text-lg md:text-xl">
+                    <span>Sun 🌅:</span>
+                    <span className="font-light">{getDaylight()}</span>
+                  </div>
+                  <div className="text-base md:text-lg text-muted-foreground font-light mt-1">
+                    {format(sunriseTime, is24Hour ? "HH:mm" : "hh:mm")} - {format(sunsetTime, is24Hour ? "HH:mm" : "hh:mm")}
+                  </div>
+                </div>
               )}
+
+              {/* Location */}
+              <div className="text-4xl md:text-6xl lg:text-7xl font-light leading-tight tracking-tight">
+                {location?.city && (
+                  <>
+                    <div>{location.city},</div>
+                    {location.state && <div>{location.state},</div>}
+                    <div>{location.country}.</div>
+                  </>
+                )}
+              </div>
             </div>
           </>
         )}
