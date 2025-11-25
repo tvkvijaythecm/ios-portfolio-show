@@ -8,7 +8,6 @@ import {
   Calendar as CalendarIcon,
   Clock,
   Cloud,
-  Music,
   Briefcase,
   FileText,
   BookOpen,
@@ -18,6 +17,15 @@ import {
   Sun,
   Moon,
   ExternalLink,
+  Folder,
+  TrendingUp,
+  BarChart,
+  PieChart,
+  LineChart,
+  Target,
+  Award,
+  Lightbulb,
+  Layers,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
@@ -42,8 +50,12 @@ import WeatherApp from "@/components/WeatherApp";
 import ClockApp from "@/components/ClockApp";
 import PhotoViewer from "@/components/PhotoViewer";
 import VideoEmbed from "@/components/VideoEmbed";
+import CaseStudyFolder from "@/components/CaseStudyFolder";
+import CaseStudyGrid from "@/components/CaseStudyGrid";
+import CaseStudyPage from "@/components/CaseStudyPage";
 
-type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
+type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
+type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
 
 const Index = () => {
   const [showBoot, setShowBoot] = useState(true);
@@ -51,6 +63,8 @@ const Index = () => {
   const [selectedGradient, setSelectedGradient] = useState("ios-gradient");
   const { theme, setTheme } = useTheme();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+  const [showCaseStudyGrid, setShowCaseStudyGrid] = useState(false);
+  const [openCaseStudyApp, setOpenCaseStudyApp] = useState<CaseStudyAppType>(null);
 
   const photos = [photo1, photo2, photo3, photo4, photo5, photo6];
   const projects = [
@@ -78,6 +92,25 @@ const Index = () => {
     { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", title: "Creative Showcase Reel" },
     { url: "https://vimeo.com/148751763", title: "Design Process Documentary" },
     { url: "https://www.youtube.com/watch?v=9bZkp7q19f0", title: "Project Walkthrough" },
+  ];
+
+  const caseStudyMiniApps = [
+    { icon: TrendingUp, gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)" },
+    { icon: BarChart, gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)" },
+    { icon: PieChart, gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)" },
+    { icon: LineChart, gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)" },
+  ];
+
+  const caseStudyApps = [
+    { icon: TrendingUp, label: "Analytics", gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)", onClick: () => setOpenCaseStudyApp("analytics") },
+    { icon: BarChart, label: "Growth", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => setOpenCaseStudyApp("growth") },
+    { icon: PieChart, label: "Performance", gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)", onClick: () => setOpenCaseStudyApp("performance") },
+    { icon: LineChart, label: "Insights", gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)", onClick: () => setOpenCaseStudyApp("insights") },
+    { icon: Target, label: "Metrics", gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", onClick: () => setOpenCaseStudyApp("metrics") },
+    { icon: Award, label: "Goals", gradient: "linear-gradient(135deg, #F093FB 0%, #F5576C 100%)", onClick: () => setOpenCaseStudyApp("goals") },
+    { icon: Lightbulb, label: "Achievements", gradient: "linear-gradient(135deg, #FFD89B 0%, #19547B 100%)", onClick: () => setOpenCaseStudyApp("achievements") },
+    { icon: Layers, label: "Innovation", gradient: "linear-gradient(135deg, #667EEA 0%, #764BA2 100%)", onClick: () => setOpenCaseStudyApp("innovation") },
+    { icon: Folder, label: "Strategy", gradient: "linear-gradient(135deg, #FA709A 0%, #FEE140 100%)", onClick: () => setOpenCaseStudyApp("strategy") },
   ];
   
   useEffect(() => {
@@ -170,12 +203,14 @@ const Index = () => {
                         gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
                         onClick={() => setOpenApp("weather")}
                       />
-                      <AppIcon
-                        icon={Music}
-                        label="Music"
-                        gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
-                        onClick={() => setOpenApp("music")}
-                    />
+                      <CaseStudyFolder
+                        miniApps={caseStudyMiniApps}
+                        label="Case Study"
+                        onClick={() => {
+                          setShowCaseStudyGrid(true);
+                          setOpenApp("case-study");
+                        }}
+                      />
                   </div>
                 </div>
               </div>
@@ -532,19 +567,6 @@ const Index = () => {
               </AppPage>
             )}
 
-            {openApp === "music" && (
-              <AppPage
-                title="Music"
-                icon={Music}
-                onClose={() => setOpenApp(null)}
-              >
-                <div className="text-white dark:text-gray-200 text-center">
-                  <p className="text-xl">Now Playing</p>
-                  <p className="text-3xl font-bold mt-4">No music playing</p>
-                </div>
-              </AppPage>
-            )}
-
             {openApp === "privacy" && (
               <AppPage
                 title="Privacy Settings"
@@ -769,6 +791,53 @@ const Index = () => {
                   </div>
                 </div>
               </AppPage>
+            )}
+          </AnimatePresence>
+
+          {/* Case Study Grid */}
+          <AnimatePresence>
+            {showCaseStudyGrid && (
+              <CaseStudyGrid
+                apps={caseStudyApps}
+                onClose={() => {
+                  setShowCaseStudyGrid(false);
+                  setOpenApp(null);
+                }}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Case Study Individual Pages */}
+          <AnimatePresence>
+            {openCaseStudyApp && (
+              <CaseStudyPage
+                title={caseStudyApps.find(app => 
+                  (openCaseStudyApp === "analytics" && app.label === "Analytics") ||
+                  (openCaseStudyApp === "growth" && app.label === "Growth") ||
+                  (openCaseStudyApp === "performance" && app.label === "Performance") ||
+                  (openCaseStudyApp === "insights" && app.label === "Insights") ||
+                  (openCaseStudyApp === "metrics" && app.label === "Metrics") ||
+                  (openCaseStudyApp === "goals" && app.label === "Goals") ||
+                  (openCaseStudyApp === "achievements" && app.label === "Achievements") ||
+                  (openCaseStudyApp === "innovation" && app.label === "Innovation") ||
+                  (openCaseStudyApp === "strategy" && app.label === "Strategy")
+                )?.label || "Case Study"}
+                icon={caseStudyApps.find(app => 
+                  (openCaseStudyApp === "analytics" && app.label === "Analytics") ||
+                  (openCaseStudyApp === "growth" && app.label === "Growth") ||
+                  (openCaseStudyApp === "performance" && app.label === "Performance") ||
+                  (openCaseStudyApp === "insights" && app.label === "Insights") ||
+                  (openCaseStudyApp === "metrics" && app.label === "Metrics") ||
+                  (openCaseStudyApp === "goals" && app.label === "Goals") ||
+                  (openCaseStudyApp === "achievements" && app.label === "Achievements") ||
+                  (openCaseStudyApp === "innovation" && app.label === "Innovation") ||
+                  (openCaseStudyApp === "strategy" && app.label === "Strategy")
+                )?.icon || Folder}
+                onClose={() => {
+                  setOpenCaseStudyApp(null);
+                  setShowCaseStudyGrid(true);
+                }}
+              />
             )}
           </AnimatePresence>
         </>
