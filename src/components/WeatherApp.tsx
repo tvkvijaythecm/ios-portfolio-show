@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Cloud, CloudRain, Sun, CloudSnow, Wind, Droplets, Gauge } from "lucide-react";
 
 const OPENWEATHER_API_KEY = "4d8fb5b93d4af21d66a2948710284366";
-const DEFAULT_CITY = "Rotterdam";
 
 interface WeatherData {
+  city: string;
   temp: number;
   feels_like: number;
   temp_min: number;
@@ -31,26 +31,48 @@ const WeatherApp = () => {
   const [forecast, setForecast] = useState<ForecastDay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [cityName, setCityName] = useState("Loading...");
 
   useEffect(() => {
-    fetchWeather();
+    fetchWeatherByLocation();
   }, []);
 
-  const fetchWeather = async () => {
+  const fetchWeatherByLocation = async () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          await fetchWeather(latitude, longitude);
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          setError("Unable to get your location");
+          setLoading(false);
+        }
+      );
+    } else {
+      setError("Geolocation not supported");
+      setLoading(false);
+    }
+  };
+
+  const fetchWeather = async (lat: number, lon: number) => {
     try {
       setLoading(true);
       setError("");
 
-      // Fetch current weather
+      // Fetch current weather by coordinates
       const currentResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${DEFAULT_CITY}&units=metric&appid=${OPENWEATHER_API_KEY}`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_API_KEY}`
       );
       
       if (!currentResponse.ok) throw new Error("Failed to fetch weather");
       
       const currentData = await currentResponse.json();
       
+      setCityName(currentData.name);
       setWeather({
+        city: currentData.name,
         temp: Math.round(currentData.main.temp),
         feels_like: Math.round(currentData.main.feels_like),
         temp_min: Math.round(currentData.main.temp_min),
@@ -63,9 +85,9 @@ const WeatherApp = () => {
         wind_deg: currentData.wind.deg,
       });
 
-      // Fetch 5-day forecast
+      // Fetch 5-day forecast by coordinates
       const forecastResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${DEFAULT_CITY}&units=metric&appid=${OPENWEATHER_API_KEY}`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_API_KEY}`
       );
       
       if (!forecastResponse.ok) throw new Error("Failed to fetch forecast");
@@ -179,7 +201,7 @@ const WeatherApp = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-white dark:text-gray-200 mb-2">Weather forecast</h2>
+        <h2 className="text-3xl font-bold text-white dark:text-gray-200 mb-2">{cityName}</h2>
         <div className="h-px bg-white/30 dark:bg-gray-600 w-full" />
       </div>
 

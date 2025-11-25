@@ -2,9 +2,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Mail, MessageCircle, Share2, Facebook, Instagram, Music } from "lucide-react";
 import { useState } from "react";
 import AppIcon from "./AppIcon";
+import LoadingScreen from "./LoadingScreen";
+import ExternalLinkDialog from "./ExternalLinkDialog";
 
 const Dock = () => {
   const [showSocial, setShowSocial] = useState(false);
+  const [loadingApp, setLoadingApp] = useState<string | null>(null);
+  const [showDialog, setShowDialog] = useState<{ app: string; url: string } | null>(null);
+
+  const handleCommunicationAppClick = (appName: string, url: string) => {
+    setLoadingApp(appName);
+    setTimeout(() => {
+      setLoadingApp(null);
+      setShowDialog({ app: appName, url });
+    }, 3000);
+  };
+
+  const handleConfirm = () => {
+    if (showDialog) {
+      window.open(showDialog.url, "_blank");
+      setShowDialog(null);
+    }
+  };
 
   const socialLinks = [
     { icon: Facebook, label: "Facebook", color: "bg-blue-600", url: "#" },
@@ -15,6 +34,21 @@ const Dock = () => {
   return (
     <>
       <AnimatePresence>
+        {loadingApp && (
+          <LoadingScreen
+            onClose={() => setLoadingApp(null)}
+            appName={loadingApp}
+          />
+        )}
+
+        {showDialog && (
+          <ExternalLinkDialog
+            onConfirm={handleConfirm}
+            onCancel={() => setShowDialog(null)}
+            appName={showDialog.app}
+          />
+        )}
+
         {showSocial && (
           <>
             <motion.div
@@ -25,13 +59,13 @@ const Dock = () => {
               onClick={() => setShowSocial(false)}
             />
             <motion.div
-              className="fixed bottom-32 left-1/2 -translate-x-1/2 ios-glass dark:bg-gray-800/30 rounded-3xl p-6 z-50"
+              className="fixed bottom-32 left-1/2 -translate-x-1/2 ios-glass dark:bg-gray-800/30 rounded-2xl p-4 z-50 w-fit"
               initial={{ scale: 0, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0, opacity: 0, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <div className="flex gap-6">
+              <div className="flex gap-4">
                 {socialLinks.map((social) => (
                   <AppIcon
                     key={social.label}
@@ -60,19 +94,19 @@ const Dock = () => {
               icon={MessageCircle}
               label="WhatsApp"
               gradient="linear-gradient(135deg, #25D366 0%, #128C7E 100%)"
-              onClick={() => window.open("https://wa.me/", "_blank")}
+              onClick={() => handleCommunicationAppClick("WhatsApp", "https://wa.me/")}
             />
             <AppIcon
               icon={Phone}
               label="Phone"
               gradient="linear-gradient(135deg, #34C759 0%, #30D158 100%)"
-              onClick={() => window.open("tel:", "_blank")}
+              onClick={() => handleCommunicationAppClick("Phone", "tel:")}
             />
             <AppIcon
               icon={Mail}
               label="Mail"
               gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
-              onClick={() => window.open("mailto:", "_blank")}
+              onClick={() => handleCommunicationAppClick("Mail", "mailto:")}
             />
             <AppIcon
               icon={Share2}
