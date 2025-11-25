@@ -49,12 +49,12 @@ const Dock = () => {
       </AnimatePresence>
 
       <motion.div
-        className="fixed bottom-2 left-1/2 -translate-x-1/2 ios-glass rounded-[28px] px-4 py-2.5 z-30"
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 ios-glass rounded-[28px] px-5 py-3 z-30 w-auto"
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="flex gap-6 items-center">
+        <div className="flex gap-5 items-center justify-center">
           <AppIcon
             icon={MessageCircle}
             label="WhatsApp"
