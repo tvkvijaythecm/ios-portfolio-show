@@ -17,10 +17,20 @@ import {
   ChevronRight,
   Sun,
   Moon,
+  ExternalLink,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import profileImage from "@/assets/profile.jpeg";
+import photo1 from "@/assets/photo1.jpg";
+import photo2 from "@/assets/photo2.jpg";
+import photo3 from "@/assets/photo3.jpg";
+import photo4 from "@/assets/photo4.jpg";
+import photo5 from "@/assets/photo5.jpg";
+import photo6 from "@/assets/photo6.jpg";
+import project1 from "@/assets/project1.jpg";
+import project2 from "@/assets/project2.jpg";
+import project3 from "@/assets/project3.jpg";
 import BootScreen from "@/components/BootScreen";
 import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
@@ -30,6 +40,8 @@ import AppPage from "@/components/AppPage";
 import CalendarView from "@/components/CalendarView";
 import WeatherApp from "@/components/WeatherApp";
 import ClockApp from "@/components/ClockApp";
+import PhotoViewer from "@/components/PhotoViewer";
+import VideoEmbed from "@/components/VideoEmbed";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
 
@@ -38,6 +50,35 @@ const Index = () => {
   const [openApp, setOpenApp] = useState<AppType>(null);
   const [selectedGradient, setSelectedGradient] = useState("ios-gradient");
   const { theme, setTheme } = useTheme();
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+
+  const photos = [photo1, photo2, photo3, photo4, photo5, photo6];
+  const projects = [
+    { 
+      name: "Project Alpha", 
+      description: "A mobile-first e-commerce platform with real-time inventory management",
+      thumbnail: project1,
+      tech: "React Native, Node.js, MongoDB"
+    },
+    { 
+      name: "Project Beta", 
+      description: "Analytics dashboard for tracking social media engagement and growth",
+      thumbnail: project2,
+      tech: "React, TypeScript, D3.js"
+    },
+    { 
+      name: "Project Gamma", 
+      description: "Creative portfolio website with custom animations and interactions",
+      thumbnail: project3,
+      tech: "Next.js, Framer Motion, Tailwind"
+    },
+  ];
+
+  const videos = [
+    { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", title: "Creative Showcase Reel" },
+    { url: "https://vimeo.com/148751763", title: "Design Process Documentary" },
+    { url: "https://www.youtube.com/watch?v=9bZkp7q19f0", title: "Project Walkthrough" },
+  ];
   
   useEffect(() => {
     document.body.className = selectedGradient;
@@ -279,17 +320,33 @@ const Index = () => {
                 onClose={() => setOpenApp(null)}
               >
                 <div className="grid grid-cols-2 gap-4">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div
+                  {photos.map((photo, i) => (
+                    <motion.div
                       key={i}
-                      className="aspect-square rounded-2xl bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm flex items-center justify-center"
+                      className="aspect-square rounded-2xl overflow-hidden cursor-pointer"
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setSelectedPhotoIndex(i)}
                     >
-                      <Image className="w-12 h-12 text-white/50 dark:text-gray-400" />
-                    </div>
+                      <img 
+                        src={photo} 
+                        alt={`Portfolio ${i + 1}`}
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      />
+                    </motion.div>
                   ))}
                 </div>
               </AppPage>
             )}
+
+            <AnimatePresence>
+              {selectedPhotoIndex !== null && (
+                <PhotoViewer
+                  photos={photos}
+                  initialIndex={selectedPhotoIndex}
+                  onClose={() => setSelectedPhotoIndex(null)}
+                />
+              )}
+            </AnimatePresence>
 
             {openApp === "youtube" && (
               <AppPage
@@ -297,13 +354,11 @@ const Index = () => {
                 icon={Youtube}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="space-y-4">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="aspect-video rounded-2xl bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm flex items-center justify-center"
-                    >
-                      <Youtube className="w-16 h-16 text-white/50 dark:text-gray-400" />
+                <div className="space-y-6">
+                  {videos.map((video, i) => (
+                    <div key={i} className="space-y-2">
+                      <VideoEmbed url={video.url} title={video.title} />
+                      <p className="text-white dark:text-gray-200 font-medium px-1">{video.title}</p>
                     </div>
                   ))}
                 </div>
@@ -316,12 +371,30 @@ const Index = () => {
                 icon={Github}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="space-y-4">
-                  {["Project Alpha", "Project Beta", "Project Gamma"].map((project, i) => (
-                    <div key={i} className="bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6">
-                      <h3 className="text-white dark:text-gray-200 text-xl font-bold mb-2">{project}</h3>
-                      <p className="text-white/70 dark:text-gray-400">A detailed case study of {project.toLowerCase()}...</p>
-                    </div>
+                <div className="space-y-6">
+                  {projects.map((project, i) => (
+                    <motion.div 
+                      key={i} 
+                      className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg rounded-2xl overflow-hidden"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <img 
+                        src={project.thumbnail} 
+                        alt={project.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-gray-900 dark:text-white text-xl font-bold">{project.name}</h3>
+                          <ExternalLink className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 mb-3">{project.description}</p>
+                        <div className="inline-block px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700">
+                          <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">{project.tech}</p>
+                        </div>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
               </AppPage>
@@ -333,17 +406,58 @@ const Index = () => {
                 icon={BookOpen}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="space-y-4">
-                  {[
-                    { school: "University Name", degree: "Bachelor's Degree", year: "2018 - 2022" },
-                    { school: "High School", degree: "High School Diploma", year: "2014 - 2018" },
-                  ].map((edu, i) => (
-                    <div key={i} className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-6">
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">{edu.school}</h3>
-                      <p className="text-gray-600 dark:text-gray-300 mt-1">{edu.degree}</p>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">{edu.year}</p>
-                    </div>
-                  ))}
+                <div className="relative">
+                  {/* Timeline Line */}
+                  <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-400 via-blue-400 to-teal-400" />
+                  
+                  <div className="space-y-8">
+                    {[
+                      { 
+                        school: "University of Technology", 
+                        degree: "Bachelor of Computer Science", 
+                        year: "2018 - 2022",
+                        description: "Specialized in Web Development and UI/UX Design. Graduated with honors.",
+                        color: "bg-purple-500"
+                      },
+                      { 
+                        school: "Design Institute", 
+                        degree: "Certificate in Digital Design", 
+                        year: "2017",
+                        description: "Focused on modern design principles and creative problem solving.",
+                        color: "bg-blue-500"
+                      },
+                      { 
+                        school: "International High School", 
+                        degree: "High School Diploma", 
+                        year: "2014 - 2018",
+                        description: "Emphasis on Mathematics and Creative Arts.",
+                        color: "bg-teal-500"
+                      },
+                    ].map((edu, i) => (
+                      <div key={i} className="relative pl-20">
+                        {/* Timeline Dot */}
+                        <div className={`absolute left-6 top-6 w-5 h-5 ${edu.color} rounded-full border-4 border-white dark:border-gray-900 z-10`} />
+                        
+                        <motion.div
+                          className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg rounded-2xl p-6 shadow-lg"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 dark:text-white">{edu.school}</h3>
+                              <p className="text-gray-600 dark:text-gray-300 mt-1 font-medium">{edu.degree}</p>
+                            </div>
+                            <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full whitespace-nowrap">
+                              {edu.year}
+                            </span>
+                          </div>
+                          <p className="text-gray-500 dark:text-gray-400 text-sm mt-3">{edu.description}</p>
+                        </motion.div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </AppPage>
             )}
