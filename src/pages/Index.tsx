@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
+import profileImage from "@/assets/profile.jpeg";
 import BootScreen from "@/components/BootScreen";
 import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
@@ -152,14 +153,14 @@ const Index = () => {
                 <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   {/* Profile Header */}
                   <div className="flex items-center gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                      <User className="w-8 h-8 text-white" />
-                    </div>
+                    <img 
+                      src={profileImage} 
+                      alt="Suresh Kaleyannan"
+                      className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                    />
                     <div className="flex-1">
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white">thephotomaniak</h2>
-                      <button className="text-gray-400 text-sm hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                        Change profile picture
-                      </button>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white">Suresh Kaleyannan</h2>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm">Creative Developer, Malaysia</p>
                     </div>
                   </div>
 
@@ -212,8 +213,8 @@ const Index = () => {
                     <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6">
                       <div className="text-center">
                         <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">Designed & Developed by</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">thephotomaniak</p>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Rotterdam, Netherlands</p>
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Suresh Kaleyannan</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">Creative Developer, Malaysia</p>
                         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                           <p className="text-gray-600 dark:text-gray-400 text-xs">Built with React, Framer Motion & Tailwind CSS</p>
                         </div>
