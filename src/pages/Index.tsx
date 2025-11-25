@@ -22,7 +22,7 @@ import Dock from "@/components/Dock";
 import ProfileWidget from "@/components/ProfileWidget";
 import AppPage from "@/components/AppPage";
 
-type AppType = "settings" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | null;
+type AppType = "settings" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
 
 const Index = () => {
   const [showBoot, setShowBoot] = useState(true);
@@ -172,7 +172,10 @@ const Index = () => {
 
                   {/* Settings Menu */}
                   <div className="space-y-3">
-                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                    <button 
+                      onClick={() => setOpenApp("privacy")}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                    >
                       <div className="w-10 h-10 rounded-xl bg-gray-600 flex items-center justify-center flex-shrink-0">
                         <Settings className="w-5 h-5 text-white" />
                       </div>
@@ -180,7 +183,10 @@ const Index = () => {
                       <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
                     </button>
 
-                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                    <button 
+                      onClick={() => setOpenApp("private-info")}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                    >
                       <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
                         <User className="w-5 h-5 text-white" />
                       </div>
@@ -188,7 +194,10 @@ const Index = () => {
                       <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
                     </button>
 
-                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                    <button 
+                      onClick={() => setOpenApp("schedule")}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                    >
                       <div className="w-10 h-10 rounded-xl bg-orange-400 flex items-center justify-center flex-shrink-0">
                         <CalendarIcon className="w-5 h-5 text-white" />
                       </div>
@@ -196,7 +205,10 @@ const Index = () => {
                       <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
                     </button>
 
-                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                    <button 
+                      onClick={() => setOpenApp("linked-accounts")}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                    >
                       <div className="w-10 h-10 rounded-xl bg-red-400 flex items-center justify-center flex-shrink-0">
                         <Github className="w-5 h-5 text-white" />
                       </div>
@@ -380,6 +392,236 @@ const Index = () => {
                 <div className="text-white text-center">
                   <p className="text-xl">Now Playing</p>
                   <p className="text-3xl font-bold mt-4">No music playing</p>
+                </div>
+              </AppPage>
+            )}
+
+            {openApp === "privacy" && (
+              <AppPage
+                title="Privacy Settings"
+                icon={Settings}
+                gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
+                onClose={() => setOpenApp("settings")}
+              >
+                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                  <div className="space-y-4">
+                    <div className="pb-4 border-b border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Account Privacy</h3>
+                      <p className="text-gray-600 text-sm">Control who can see your content and interact with you</p>
+                    </div>
+
+                    <div className="flex items-center justify-between py-3">
+                      <div>
+                        <p className="text-gray-900 font-medium">Private Account</p>
+                        <p className="text-gray-500 text-sm">Only approved followers can see your posts</p>
+                      </div>
+                      <div className="w-12 h-7 bg-blue-500 rounded-full"></div>
+                    </div>
+
+                    <div className="flex items-center justify-between py-3 border-t border-gray-100">
+                      <div>
+                        <p className="text-gray-900 font-medium">Activity Status</p>
+                        <p className="text-gray-500 text-sm">Show when you are active</p>
+                      </div>
+                      <div className="w-12 h-7 bg-gray-300 rounded-full"></div>
+                    </div>
+
+                    <div className="flex items-center justify-between py-3 border-t border-gray-100">
+                      <div>
+                        <p className="text-gray-900 font-medium">Story Sharing</p>
+                        <p className="text-gray-500 text-sm">Allow others to share your story</p>
+                      </div>
+                      <div className="w-12 h-7 bg-blue-500 rounded-full"></div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Data & History</h3>
+                      <p className="text-gray-600 text-sm mb-4">Manage your data and viewing history</p>
+                      
+                      <button className="w-full p-4 rounded-xl bg-gray-50 text-left">
+                        <p className="text-gray-900 font-medium">Download Your Data</p>
+                        <p className="text-gray-500 text-sm mt-1">Request a copy of your information</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </AppPage>
+            )}
+
+            {openApp === "private-info" && (
+              <AppPage
+                title="Private Information"
+                icon={User}
+                gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
+                onClose={() => setOpenApp("settings")}
+              >
+                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                  <div className="space-y-4">
+                    <div className="pb-4 border-b border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Contact Information</h3>
+                      <p className="text-gray-600 text-sm">Your personal contact details</p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm text-gray-500">Email Address</label>
+                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
+                          <p className="text-gray-900">jonathan@example.com</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-gray-500">Phone Number</label>
+                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
+                          <p className="text-gray-900">+31 6 1234 5678</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-gray-500">Birth Date</label>
+                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
+                          <p className="text-gray-900">January 15, 1995</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-gray-500">Gender</label>
+                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
+                          <p className="text-gray-900">Male</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <button className="w-full py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors">
+                        Edit Information
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </AppPage>
+            )}
+
+            {openApp === "schedule" && (
+              <AppPage
+                title="Posting Schedule"
+                icon={CalendarIcon}
+                gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 100%)"
+                onClose={() => setOpenApp("settings")}
+              >
+                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                  <div className="space-y-4">
+                    <div className="pb-4 border-b border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Schedule Your Posts</h3>
+                      <p className="text-gray-600 text-sm">Automatically publish your content at optimal times</p>
+                    </div>
+
+                    <div className="flex items-center justify-between py-3">
+                      <div>
+                        <p className="text-gray-900 font-medium">Auto-Schedule</p>
+                        <p className="text-gray-500 text-sm">Post at the best times for engagement</p>
+                      </div>
+                      <div className="w-12 h-7 bg-blue-500 rounded-full"></div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-100">
+                      <h3 className="text-base font-bold text-gray-900 mb-3">Preferred Posting Times</h3>
+                      
+                      <div className="space-y-3">
+                        <div className="p-4 bg-gray-50 rounded-xl">
+                          <div className="flex items-center justify-between">
+                            <p className="text-gray-900 font-medium">Monday - Friday</p>
+                            <p className="text-gray-600">9:00 AM, 3:00 PM</p>
+                          </div>
+                        </div>
+
+                        <div className="p-4 bg-gray-50 rounded-xl">
+                          <div className="flex items-center justify-between">
+                            <p className="text-gray-900 font-medium">Saturday - Sunday</p>
+                            <p className="text-gray-600">11:00 AM, 6:00 PM</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <button className="w-full py-3 bg-orange-500 text-white font-medium rounded-xl hover:bg-orange-600 transition-colors">
+                        Customize Schedule
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </AppPage>
+            )}
+
+            {openApp === "linked-accounts" && (
+              <AppPage
+                title="Linked Accounts"
+                icon={Github}
+                gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
+                onClose={() => setOpenApp("settings")}
+              >
+                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                  <div className="space-y-4">
+                    <div className="pb-4 border-b border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Connected Accounts</h3>
+                      <p className="text-gray-600 text-sm">Manage your social media connections</p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
+                            <Github className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-gray-900 font-medium">Instagram</p>
+                            <p className="text-gray-500 text-sm">@thephotomaniak</p>
+                          </div>
+                        </div>
+                        <button className="text-blue-500 font-medium text-sm">Connected</button>
+                      </div>
+
+                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center">
+                            <Youtube className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-gray-900 font-medium">YouTube</p>
+                            <p className="text-gray-500 text-sm">Not connected</p>
+                          </div>
+                        </div>
+                        <button className="text-gray-500 font-medium text-sm">Connect</button>
+                      </div>
+
+                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center">
+                            <Github className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-gray-900 font-medium">GitHub</p>
+                            <p className="text-gray-500 text-sm">@jonathan_dev</p>
+                          </div>
+                        </div>
+                        <button className="text-blue-500 font-medium text-sm">Connected</button>
+                      </div>
+
+                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-blue-400 flex items-center justify-center">
+                            <User className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-gray-900 font-medium">Twitter</p>
+                            <p className="text-gray-500 text-sm">Not connected</p>
+                          </div>
+                        </div>
+                        <button className="text-gray-500 font-medium text-sm">Connect</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </AppPage>
             )}
