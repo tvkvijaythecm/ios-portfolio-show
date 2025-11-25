@@ -26,6 +26,7 @@ import {
   Award,
   Lightbulb,
   Layers,
+  RotateCcw,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
@@ -332,6 +333,49 @@ const Index = () => {
                       <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Linked accounts</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
+                  </div>
+
+                  {/* Reboot Slider */}
+                  <div className="pt-6 mt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="relative">
+                      <motion.div
+                        className="relative h-14 rounded-full bg-gradient-to-r from-red-500/20 to-red-600/20 dark:from-red-500/30 dark:to-red-600/30 backdrop-blur-md border border-red-500/30 overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <motion.div
+                          drag="x"
+                          dragConstraints={{ left: 0, right: 200 }}
+                          dragElastic={0.1}
+                          onDragEnd={(e, info) => {
+                            if (info.offset.x > 150) {
+                              // Clear all app data
+                              localStorage.clear();
+                              sessionStorage.clear();
+                              document.cookie.split(";").forEach((c) => {
+                                document.cookie = c
+                                  .replace(/^ +/, "")
+                                  .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                              });
+                              // Reload the page
+                              window.location.reload();
+                            }
+                          }}
+                          className="absolute left-1 top-1 h-12 w-12 rounded-full bg-gradient-to-br from-red-500 to-red-600 shadow-lg cursor-grab active:cursor-grabbing flex items-center justify-center"
+                        >
+                          <RotateCcw className="w-6 h-6 text-white" />
+                        </motion.div>
+                        
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <span className="text-red-600 dark:text-red-400 font-semibold text-sm tracking-wide">
+                            Slide to Reboot
+                          </span>
+                        </div>
+                      </motion.div>
+                      
+                      <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
+                        Reboot will clear all data, cookies, and cache
+                      </p>
+                    </div>
                   </div>
                 </div>
               </AppPage>
