@@ -206,7 +206,7 @@ const WeatherApp = () => {
       </div>
 
       {/* Today's Weather */}
-      <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 dark:from-blue-900/30 dark:to-blue-950/30 backdrop-blur-sm rounded-3xl p-6">
+      <div className="bg-gradient-to-br from-blue-500/40 to-blue-600/40 dark:from-blue-900/50 dark:to-blue-950/50 backdrop-blur-sm rounded-3xl p-6">
         <div className="flex items-center justify-between mb-4">
           <span className="text-white dark:text-gray-200 font-semibold text-lg">TODAY</span>
           <span className="text-white dark:text-gray-200 font-medium capitalize">{weather.description}</span>
@@ -263,7 +263,7 @@ const WeatherApp = () => {
         {forecast.map((day, index) => (
           <div
             key={index}
-            className="bg-gradient-to-br from-blue-500/15 to-blue-600/15 dark:from-blue-900/20 dark:to-blue-950/20 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between"
+            className="bg-gradient-to-br from-blue-500/30 to-blue-600/30 dark:from-blue-900/40 dark:to-blue-950/40 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between"
           >
             <div className="flex items-center gap-4 flex-1">
               {getSmallWeatherIcon(day.icon)}
