@@ -12,7 +12,7 @@ interface AppPageProps {
 const AppPage = ({ title, icon: Icon, onClose, children }: AppPageProps) => {
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col ios-gradient dark:bg-gray-900"
+      className="fixed inset-0 z-50 flex flex-col bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-500 dark:bg-gray-900"
       initial={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
       animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
       exit={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
