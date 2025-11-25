@@ -31,7 +31,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
       {/* Animated Welcome Text */}
       <motion.div
-        className="relative z-10 text-white text-8xl font-meldina tracking-wider"
+        className="relative z-10 text-white text-6xl font-barkentina tracking-wide"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
