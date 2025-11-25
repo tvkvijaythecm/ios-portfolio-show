@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Settings,
+  Info,
   Image,
   Youtube,
   Github,
@@ -158,8 +158,8 @@ const Index = () => {
                     {/* App Grid */}
                     <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
                       <AppIcon
-                        icon={Settings}
-                        label="Settings"
+                        icon={Info}
+                        label="Info"
                         gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
                         onClick={() => setOpenApp("profile")}
                       />
@@ -245,8 +245,8 @@ const Index = () => {
           <AnimatePresence>
             {openApp === "profile" && (
               <AppPage
-                title="Settings"
-                icon={Settings}
+                title="Info"
+                icon={Info}
                 onClose={() => setOpenApp(null)}
               >
                 <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
@@ -294,7 +294,7 @@ const Index = () => {
                       className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-gray-600 flex items-center justify-center flex-shrink-0">
-                        <Settings className="w-5 h-5 text-white" />
+                        <Info className="w-5 h-5 text-white" />
                       </div>
                       <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Privacy settings</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
@@ -569,7 +569,7 @@ const Index = () => {
             {openApp === "privacy" && (
               <AppPage
                 title="Privacy Settings"
-                icon={Settings}
+                icon={Info}
                 onClose={() => setOpenApp("profile")}
               >
                 <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
