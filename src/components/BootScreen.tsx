@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import logo from "@/assets/logo.png";
+import bootLogo from "@/assets/boot-logo.svg";
 
 interface BootScreenProps {
   onComplete: () => void;
@@ -40,7 +40,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           ease: "easeOut",
         }}
       >
-        <img src={logo} alt="Logo" className="w-24 h-24" />
+        <img src={bootLogo} alt="Boot Logo" className="w-32 h-32" />
       </motion.div>
 
       {/* Loading bar */}
