@@ -59,8 +59,8 @@ const Index = () => {
                     {/* App Grid */}
                     <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
                       <AppIcon
-                        icon={User}
-                        label="Profile"
+                        icon={Settings}
+                        label="Settings"
                         gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
                         onClick={() => setOpenApp("profile")}
                       />
@@ -143,8 +143,8 @@ const Index = () => {
           <AnimatePresence>
             {openApp === "profile" && (
               <AppPage
-                title="Profile"
-                icon={User}
+                title="Settings"
+                icon={Settings}
                 onClose={() => setOpenApp(null)}
               >
                 <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
@@ -279,9 +279,9 @@ const Index = () => {
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div
                       key={i}
-                      className="aspect-square rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
+                      className="aspect-square rounded-2xl bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm flex items-center justify-center"
                     >
-                      <Image className="w-12 h-12 text-white/50" />
+                      <Image className="w-12 h-12 text-white/50 dark:text-gray-400" />
                     </div>
                   ))}
                 </div>
@@ -298,9 +298,9 @@ const Index = () => {
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
-                      className="aspect-video rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
+                      className="aspect-video rounded-2xl bg-white/20 dark:bg-gray-800/50 backdrop-blur-sm flex items-center justify-center"
                     >
-                      <Youtube className="w-16 h-16 text-white/50" />
+                      <Youtube className="w-16 h-16 text-white/50 dark:text-gray-400" />
                     </div>
                   ))}
                 </div>
@@ -315,9 +315,9 @@ const Index = () => {
               >
                 <div className="space-y-4">
                   {["Project Alpha", "Project Beta", "Project Gamma"].map((project, i) => (
-                    <div key={i} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-                      <h3 className="text-white text-xl font-bold mb-2">{project}</h3>
-                      <p className="text-white/70">A detailed case study of {project.toLowerCase()}...</p>
+                    <div key={i} className="bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6">
+                      <h3 className="text-white dark:text-gray-200 text-xl font-bold mb-2">{project}</h3>
+                      <p className="text-white/70 dark:text-gray-400">A detailed case study of {project.toLowerCase()}...</p>
                     </div>
                   ))}
                 </div>
@@ -335,10 +335,10 @@ const Index = () => {
                     { school: "University Name", degree: "Bachelor's Degree", year: "2018 - 2022" },
                     { school: "High School", degree: "High School Diploma", year: "2014 - 2018" },
                   ].map((edu, i) => (
-                    <div key={i} className="bg-white/90 backdrop-blur-lg rounded-2xl p-6">
-                      <h3 className="text-xl font-bold text-gray-900">{edu.school}</h3>
-                      <p className="text-gray-600 mt-1">{edu.degree}</p>
-                      <p className="text-gray-500 text-sm mt-2">{edu.year}</p>
+                    <div key={i} className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-6">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">{edu.school}</h3>
+                      <p className="text-gray-600 dark:text-gray-300 mt-1">{edu.degree}</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">{edu.year}</p>
                     </div>
                   ))}
                 </div>
@@ -356,10 +356,10 @@ const Index = () => {
                     { company: "Company A", position: "Senior Designer", period: "2022 - Present" },
                     { company: "Company B", position: "Designer", period: "2020 - 2022" },
                   ].map((work, i) => (
-                    <div key={i} className="bg-white/90 backdrop-blur-lg rounded-2xl p-6">
-                      <h3 className="text-xl font-bold text-gray-900">{work.company}</h3>
-                      <p className="text-gray-600 mt-1">{work.position}</p>
-                      <p className="text-gray-500 text-sm mt-2">{work.period}</p>
+                    <div key={i} className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-6">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">{work.company}</h3>
+                      <p className="text-gray-600 dark:text-gray-300 mt-1">{work.position}</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">{work.period}</p>
                     </div>
                   ))}
                 </div>
@@ -372,13 +372,13 @@ const Index = () => {
                 icon={FileText}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6">
-                  <p className="text-gray-700 mb-4">Leave a message in the guest book!</p>
+                <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-6">
+                  <p className="text-gray-700 dark:text-gray-300 mb-4">Leave a message in the guest book!</p>
                   <textarea
-                    className="w-full h-40 p-4 rounded-xl border-2 border-gray-200 focus:border-yellow-400 focus:outline-none resize-none"
+                    className="w-full h-40 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-yellow-400 dark:focus:border-yellow-500 focus:outline-none resize-none"
                     placeholder="Write your message here..."
                   />
-                  <button className="mt-4 w-full bg-yellow-500 text-white py-3 rounded-xl font-semibold hover:bg-yellow-600 transition-colors">
+                  <button className="mt-4 w-full bg-yellow-500 dark:bg-yellow-600 text-white py-3 rounded-xl font-semibold hover:bg-yellow-600 dark:hover:bg-yellow-700 transition-colors">
                     Submit
                   </button>
                 </div>
@@ -426,7 +426,7 @@ const Index = () => {
                     </svg>
 
                     {/* Clock Face */}
-                    <div className="absolute inset-4 rounded-full bg-gray-900 flex items-center justify-center">
+                    <div className="absolute inset-4 rounded-full bg-gray-900 dark:bg-gray-800 flex items-center justify-center">
                       {/* Hour Markers */}
                       {[0, 3, 6, 9].map((hour) => {
                         const angle = (hour * 30 - 90) * (Math.PI / 180);
@@ -488,6 +488,23 @@ const Index = () => {
                   </div>
 
                   {/* World Clocks */}
+                  <div className="space-y-4 w-full max-w-md">
+                    <div className="bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between">
+                      <div>
+                        <div className="text-white/70 dark:text-gray-400 text-sm">San Francisco</div>
+                        <div className="text-white dark:text-gray-200 text-2xl font-bold">8:45 AM</div>
+                      </div>
+                      <div className="text-white/50 dark:text-gray-500 text-sm">Today, -3hr</div>
+                    </div>
+                    
+                    <div className="bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between">
+                      <div>
+                        <div className="text-white/70 dark:text-gray-400 text-sm">London</div>
+                        <div className="text-white dark:text-gray-200 text-2xl font-bold">7:45 PM</div>
+                      </div>
+                      <div className="text-white/50 dark:text-gray-500 text-sm">Today, +8hr</div>
+                    </div>
+                  </div>
                   <div className="w-full max-w-md space-y-6">
                     <div className="text-center bg-white/90 backdrop-blur-lg rounded-3xl p-6">
                       <p className="text-gray-900 text-4xl font-light tracking-wide">
@@ -549,44 +566,44 @@ const Index = () => {
                 icon={Settings}
                 onClose={() => setOpenApp("profile")}
               >
-                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Account Privacy</h3>
-                      <p className="text-gray-600 text-sm">Control who can see your content and interact with you</p>
+                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Account Privacy</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Control who can see your content and interact with you</p>
                     </div>
 
                     <div className="flex items-center justify-between py-3">
                       <div>
-                        <p className="text-gray-900 font-medium">Private Account</p>
-                        <p className="text-gray-500 text-sm">Only approved followers can see your posts</p>
+                        <p className="text-gray-900 dark:text-white font-medium">Private Account</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">Only approved followers can see your posts</p>
                       </div>
-                      <div className="w-12 h-7 bg-blue-500 rounded-full"></div>
+                      <div className="w-12 h-7 bg-blue-500 dark:bg-blue-600 rounded-full"></div>
                     </div>
 
-                    <div className="flex items-center justify-between py-3 border-t border-gray-100">
+                    <div className="flex items-center justify-between py-3 border-t border-gray-100 dark:border-gray-700">
                       <div>
-                        <p className="text-gray-900 font-medium">Activity Status</p>
-                        <p className="text-gray-500 text-sm">Show when you are active</p>
+                        <p className="text-gray-900 dark:text-white font-medium">Activity Status</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">Show when you are active</p>
                       </div>
-                      <div className="w-12 h-7 bg-gray-300 rounded-full"></div>
+                      <div className="w-12 h-7 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
                     </div>
 
-                    <div className="flex items-center justify-between py-3 border-t border-gray-100">
+                    <div className="flex items-center justify-between py-3 border-t border-gray-100 dark:border-gray-700">
                       <div>
-                        <p className="text-gray-900 font-medium">Story Sharing</p>
-                        <p className="text-gray-500 text-sm">Allow others to share your story</p>
+                        <p className="text-gray-900 dark:text-white font-medium">Story Sharing</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">Allow others to share your story</p>
                       </div>
-                      <div className="w-12 h-7 bg-blue-500 rounded-full"></div>
+                      <div className="w-12 h-7 bg-blue-500 dark:bg-blue-600 rounded-full"></div>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Data & History</h3>
-                      <p className="text-gray-600 text-sm mb-4">Manage your data and viewing history</p>
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Data & History</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Manage your data and viewing history</p>
                       
-                      <button className="w-full p-4 rounded-xl bg-gray-50 text-left">
-                        <p className="text-gray-900 font-medium">Download Your Data</p>
-                        <p className="text-gray-500 text-sm mt-1">Request a copy of your information</p>
+                      <button className="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-800 text-left">
+                        <p className="text-gray-900 dark:text-white font-medium">Download Your Data</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Request a copy of your information</p>
                       </button>
                     </div>
                   </div>
@@ -600,45 +617,45 @@ const Index = () => {
                 icon={User}
                 onClose={() => setOpenApp("profile")}
               >
-                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Contact Information</h3>
-                      <p className="text-gray-600 text-sm">Your personal contact details</p>
+                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Contact Information</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Your personal contact details</p>
                     </div>
 
                     <div className="space-y-4">
                       <div>
-                        <label className="text-sm text-gray-500">Email Address</label>
-                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
-                          <p className="text-gray-900">jonathan@example.com</p>
+                        <label className="text-sm text-gray-500 dark:text-gray-400">Email Address</label>
+                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                          <p className="text-gray-900 dark:text-white">jonathan@example.com</p>
                         </div>
                       </div>
 
                       <div>
-                        <label className="text-sm text-gray-500">Phone Number</label>
-                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
-                          <p className="text-gray-900">+31 6 1234 5678</p>
+                        <label className="text-sm text-gray-500 dark:text-gray-400">Phone Number</label>
+                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                          <p className="text-gray-900 dark:text-white">+31 6 1234 5678</p>
                         </div>
                       </div>
 
                       <div>
-                        <label className="text-sm text-gray-500">Birth Date</label>
-                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
-                          <p className="text-gray-900">January 15, 1995</p>
+                        <label className="text-sm text-gray-500 dark:text-gray-400">Date of Birth</label>
+                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                          <p className="text-gray-900 dark:text-white">January 15, 1990</p>
                         </div>
                       </div>
 
                       <div>
-                        <label className="text-sm text-gray-500">Gender</label>
-                        <div className="mt-1 p-3 bg-gray-50 rounded-xl">
-                          <p className="text-gray-900">Male</p>
+                        <label className="text-sm text-gray-500 dark:text-gray-400">Address</label>
+                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                          <p className="text-gray-900 dark:text-white">Rotterdam, Netherlands</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-200">
-                      <button className="w-full py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors">
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <button className="w-full py-3 bg-blue-500 dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
                         Edit Information
                       </button>
                     </div>
@@ -653,43 +670,43 @@ const Index = () => {
                 icon={CalendarIcon}
                 onClose={() => setOpenApp("profile")}
               >
-                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Schedule Your Posts</h3>
-                      <p className="text-gray-600 text-sm">Automatically publish your content at optimal times</p>
+                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Schedule Your Posts</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Automatically publish your content at optimal times</p>
                     </div>
 
                     <div className="flex items-center justify-between py-3">
                       <div>
-                        <p className="text-gray-900 font-medium">Auto-Schedule</p>
-                        <p className="text-gray-500 text-sm">Post at the best times for engagement</p>
+                        <p className="text-gray-900 dark:text-white font-medium">Auto-Schedule</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">Post at the best times for engagement</p>
                       </div>
-                      <div className="w-12 h-7 bg-blue-500 rounded-full"></div>
+                      <div className="w-12 h-7 bg-blue-500 dark:bg-blue-600 rounded-full"></div>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-100">
-                      <h3 className="text-base font-bold text-gray-900 mb-3">Preferred Posting Times</h3>
+                    <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                      <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3">Preferred Posting Times</h3>
                       
                       <div className="space-y-3">
-                        <div className="p-4 bg-gray-50 rounded-xl">
+                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                           <div className="flex items-center justify-between">
-                            <p className="text-gray-900 font-medium">Monday - Friday</p>
-                            <p className="text-gray-600">9:00 AM, 3:00 PM</p>
+                            <p className="text-gray-900 dark:text-white font-medium">Monday - Friday</p>
+                            <p className="text-gray-600 dark:text-gray-300">9:00 AM, 3:00 PM</p>
                           </div>
                         </div>
 
-                        <div className="p-4 bg-gray-50 rounded-xl">
+                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                           <div className="flex items-center justify-between">
-                            <p className="text-gray-900 font-medium">Saturday - Sunday</p>
-                            <p className="text-gray-600">11:00 AM, 6:00 PM</p>
+                            <p className="text-gray-900 dark:text-white font-medium">Saturday - Sunday</p>
+                            <p className="text-gray-600 dark:text-gray-300">11:00 AM, 6:00 PM</p>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-200">
-                      <button className="w-full py-3 bg-orange-500 text-white font-medium rounded-xl hover:bg-orange-600 transition-colors">
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <button className="w-full py-3 bg-orange-500 dark:bg-orange-600 text-white font-medium rounded-xl hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors">
                         Customize Schedule
                       </button>
                     </div>
@@ -704,64 +721,64 @@ const Index = () => {
                 icon={Github}
                 onClose={() => setOpenApp("profile")}
               >
-                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Connected Accounts</h3>
-                      <p className="text-gray-600 text-sm">Manage your social media connections</p>
+                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Connected Accounts</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Manage your social media connections</p>
                     </div>
 
                     <div className="space-y-3">
-                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
                             <Github className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <p className="text-gray-900 font-medium">Instagram</p>
-                            <p className="text-gray-500 text-sm">@thephotomaniak</p>
+                            <p className="text-gray-900 dark:text-white font-medium">Instagram</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">@thephotomaniak</p>
                           </div>
                         </div>
-                        <button className="text-blue-500 font-medium text-sm">Connected</button>
+                        <button className="text-blue-500 dark:text-blue-400 font-medium text-sm">Connected</button>
                       </div>
 
-                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center">
                             <Youtube className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <p className="text-gray-900 font-medium">YouTube</p>
-                            <p className="text-gray-500 text-sm">Not connected</p>
+                            <p className="text-gray-900 dark:text-white font-medium">YouTube</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">Not connected</p>
                           </div>
                         </div>
-                        <button className="text-gray-500 font-medium text-sm">Connect</button>
+                        <button className="text-gray-500 dark:text-gray-400 font-medium text-sm">Connect</button>
                       </div>
 
-                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl bg-black dark:bg-gray-700 flex items-center justify-center">
                             <Github className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <p className="text-gray-900 font-medium">GitHub</p>
-                            <p className="text-gray-500 text-sm">@jonathan_dev</p>
+                            <p className="text-gray-900 dark:text-white font-medium">GitHub</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">@jonathan_dev</p>
                           </div>
                         </div>
-                        <button className="text-blue-500 font-medium text-sm">Connected</button>
+                        <button className="text-blue-500 dark:text-blue-400 font-medium text-sm">Connected</button>
                       </div>
 
-                      <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-blue-400 flex items-center justify-center">
                             <User className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <p className="text-gray-900 font-medium">Twitter</p>
-                            <p className="text-gray-500 text-sm">Not connected</p>
+                            <p className="text-gray-900 dark:text-white font-medium">Twitter</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">Not connected</p>
                           </div>
                         </div>
-                        <button className="text-gray-500 font-medium text-sm">Connect</button>
+                        <button className="text-gray-500 dark:text-gray-400 font-medium text-sm">Connect</button>
                       </div>
                     </div>
                   </div>
