@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Award, TrendingUp, Facebook, Instagram, Globe, MessageCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -12,8 +12,19 @@ import photo5 from "@/assets/photo5.jpg";
 const AboutApp = () => {
   const [showProfile, setShowProfile] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   const images = [photo1, photo2, photo3, photo4, photo5];
+
+  // Auto-slide carousel
+  useEffect(() => {
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isPaused, images.length]);
 
   const technologies = [
     "HTML", "CSS", "JavaScript", "React", "TypeScript", 
@@ -170,7 +181,11 @@ const AboutApp = () => {
           className="bg-background/80 backdrop-blur-xl rounded-3xl p-6 shadow-lg border border-border/50"
         >
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">Gallery</h3>
-          <div className="relative aspect-video rounded-2xl overflow-hidden bg-muted">
+          <div 
+            className="relative aspect-video rounded-2xl overflow-hidden bg-muted"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImageIndex}
