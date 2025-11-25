@@ -13,6 +13,7 @@ import {
   FileText,
   BookOpen,
   User,
+  ChevronLeft,
 } from "lucide-react";
 import BootScreen from "@/components/BootScreen";
 import StatusBar from "@/components/StatusBar";
@@ -130,38 +131,78 @@ const Index = () => {
           <AnimatePresence>
             {openApp === "settings" && (
               <AppPage
-                title="Profile"
+                title="Settings"
                 icon={Settings}
                 gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
                 onClose={() => setOpenApp(null)}
               >
-                <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center gap-4 pb-4 border-b border-gray-200">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                      <User className="w-10 h-10 text-white" />
+                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                  {/* Profile Header */}
+                  <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                      <User className="w-8 h-8 text-white" />
                     </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Your Name</h2>
-                      <p className="text-gray-600">Designer & Developer</p>
+                    <div className="flex-1">
+                      <h2 className="text-xl font-bold text-gray-900">thephotomaniak</h2>
+                      <button className="text-gray-400 text-sm hover:text-gray-600 transition-colors">
+                        Change profile picture
+                      </button>
                     </div>
                   </div>
+
+                  {/* Profile Details */}
+                  <div className="space-y-4 pb-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-sm">Name</span>
+                      <span className="text-gray-900 font-medium">Jonathan</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-sm">Username</span>
+                      <span className="text-gray-900 font-medium">thephotomaniak</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-sm">Job</span>
+                      <span className="text-gray-900 font-medium">Photographer</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-sm">Location</span>
+                      <span className="text-pink-500 font-medium">Rotterdam, NL</span>
+                    </div>
+                  </div>
+
+                  {/* Settings Menu */}
                   <div className="space-y-3">
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="text-gray-900 font-medium">your.email@example.com</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Phone</p>
-                      <p className="text-gray-900 font-medium">+1 234 567 8900</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Location</p>
-                      <p className="text-gray-900 font-medium">San Francisco, CA</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Bio</p>
-                      <p className="text-gray-900">Passionate about creating beautiful and functional designs.</p>
-                    </div>
+                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                      <div className="w-10 h-10 rounded-xl bg-gray-600 flex items-center justify-center flex-shrink-0">
+                        <Settings className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="flex-1 text-left text-gray-700 font-medium">Privacy settings</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                    </button>
+
+                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="flex-1 text-left text-gray-700 font-medium">Private information</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                    </button>
+
+                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                      <div className="w-10 h-10 rounded-xl bg-orange-400 flex items-center justify-center flex-shrink-0">
+                        <CalendarIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="flex-1 text-left text-gray-700 font-medium">Posting schedule settings</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                    </button>
+
+                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+                      <div className="w-10 h-10 rounded-xl bg-red-400 flex items-center justify-center flex-shrink-0">
+                        <Github className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="flex-1 text-left text-gray-700 font-medium">Linked accounts</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                    </button>
                   </div>
                 </div>
               </AppPage>
