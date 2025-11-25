@@ -227,39 +227,73 @@ const Index = () => {
                 onClose={() => setOpenApp(null)}
               >
                 <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
-                  {/* Profile Section */}
-                  <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-4 mb-6">
-                      <img 
-                        src={profileImage} 
-                        alt="thephotomaniak"
-                        className="w-20 h-20 rounded-full object-cover flex-shrink-0"
-                      />
-                      <div className="flex-1">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">thephotomaniak</h2>
-                        <button className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                          Change profile picture
-                        </button>
-                      </div>
+                  {/* Profile Header */}
+                  <div className="flex items-center gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <img 
+                      src={profileImage} 
+                      alt="Suresh Kaleyannan"
+                      className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1">
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white">Suresh Kaleyannan</h2>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm">Creative Developer, Malaysia</p>
                     </div>
+                  </div>
 
-                    {/* Profile Info Fields */}
-                    <div className="space-y-4">
-                      <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Name</span>
-                        <span className="text-gray-900 dark:text-white font-medium">Jonathan</span>
+                  {/* Dark Mode Toggle */}
+                  <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        {theme === "dark" ? (
+                          <Moon className="w-5 h-5 text-purple-500" />
+                        ) : (
+                          <Sun className="w-5 h-5 text-yellow-500" />
+                        )}
+                        <span className="text-gray-900 dark:text-white font-medium">Dark Mode</span>
                       </div>
-                      <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Username</span>
-                        <span className="text-gray-900 dark:text-white font-medium">thephotomaniak</span>
-                      </div>
-                      <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Job</span>
-                        <span className="text-gray-900 dark:text-white font-medium">Photographer</span>
-                      </div>
-                      <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Location</span>
-                        <span className="text-red-500 font-medium">Rotterdam, NL</span>
+                      <Switch
+                        checked={theme === "dark"}
+                        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Background Gradient Selector */}
+                  <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Background Gradient</h3>
+                    <div className="grid grid-cols-5 gap-3">
+                      {[
+                        { name: "ios-gradient", colors: "from-orange-400 via-pink-500 to-purple-600" },
+                        { name: "gradient-1", colors: "from-orange-400 via-pink-500 to-purple-600" },
+                        { name: "gradient-2", colors: "from-cyan-400 via-blue-500 to-purple-600" },
+                        { name: "gradient-3", colors: "from-green-400 via-teal-500 to-cyan-600" },
+                        { name: "gradient-4", colors: "from-pink-400 via-orange-500 to-yellow-600" },
+                        { name: "gradient-5", colors: "from-purple-400 via-pink-500 to-rose-600" },
+                      ].map((gradient) => (
+                        <button
+                          key={gradient.name}
+                          onClick={() => setSelectedGradient(gradient.name)}
+                          className={`aspect-square rounded-2xl bg-gradient-to-br ${gradient.colors} transition-all ${
+                            selectedGradient === gradient.name
+                              ? "ring-4 ring-white dark:ring-gray-700 scale-105"
+                              : "hover:scale-105"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Credits Section */}
+                  <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Credits</h3>
+                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6">
+                      <div className="text-center">
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">Designed & Developed by</p>
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Suresh Kaleyannan</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">Creative Developer, Malaysia</p>
+                        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                          <p className="text-gray-600 dark:text-gray-400 text-xs">Built with React, Framer Motion & Tailwind CSS</p>
+                        </div>
                       </div>
                     </div>
                   </div>
