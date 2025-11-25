@@ -3,7 +3,8 @@ import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AppIconProps {
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  imageIcon?: string;
   label: string;
   gradient?: string;
   bgColor?: string;
@@ -14,6 +15,7 @@ interface AppIconProps {
 
 const AppIcon = ({
   icon: Icon,
+  imageIcon,
   label,
   gradient,
   bgColor = "bg-blue-500",
@@ -41,7 +43,11 @@ const AppIcon = ({
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
-        <Icon className={cn(iconScale, iconColor)} strokeWidth={1.8} />
+        {imageIcon ? (
+          <img src={imageIcon} alt={label} className="w-full h-full object-cover" />
+        ) : Icon ? (
+          <Icon className={cn(iconScale, iconColor)} strokeWidth={1.8} />
+        ) : null}
       </motion.div>
       <span className="text-white text-[11px] font-medium tracking-tight text-center leading-tight max-w-[70px] drop-shadow-sm">
         {label}

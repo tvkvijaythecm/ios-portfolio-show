@@ -30,6 +30,7 @@ import {
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import profileImage from "@/assets/profile.jpeg";
+import aboutIcon from "@/assets/about-icon.png";
 import photo1 from "@/assets/photo1.jpg";
 import photo2 from "@/assets/photo2.jpg";
 import photo3 from "@/assets/photo3.jpg";
@@ -178,7 +179,7 @@ const Index = () => {
                         onClick={() => setOpenApp("notes")}
                       />
                       <AppIcon
-                        icon={User}
+                        imageIcon={aboutIcon}
                         label="About"
                         gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
                       />
