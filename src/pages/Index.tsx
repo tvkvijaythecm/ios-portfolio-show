@@ -53,7 +53,6 @@ import VideoEmbed from "@/components/VideoEmbed";
 import CaseStudyFolder from "@/components/CaseStudyFolder";
 import CaseStudyGrid from "@/components/CaseStudyGrid";
 import CaseStudyPage from "@/components/CaseStudyPage";
-import LiveWallpaper from "@/components/LiveWallpaper";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
 type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
@@ -126,7 +125,6 @@ const Index = () => {
 
       {!showBoot && (
         <>
-          <LiveWallpaper />
           <StatusBar />
           
           {/* Main content area */}
