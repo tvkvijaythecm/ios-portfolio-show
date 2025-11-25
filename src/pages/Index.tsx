@@ -14,6 +14,7 @@ import {
   BookOpen,
   User,
   ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import BootScreen from "@/components/BootScreen";
 import StatusBar from "@/components/StatusBar";
@@ -341,8 +342,54 @@ const Index = () => {
                 icon={CalendarIcon}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="bg-gray-50 rounded-2xl p-6">
-                  <p className="text-gray-700">Calendar functionality coming soon...</p>
+                <div className="min-h-full bg-black/80 backdrop-blur-sm rounded-3xl p-6">
+                  {/* Year Header */}
+                  <div className="mb-8">
+                    <h2 className="text-5xl font-bold text-red-500">2025</h2>
+                    <div className="h-px bg-white/20 mt-4" />
+                  </div>
+
+                  {/* Year Overview Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8">
+                    {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month, monthIndex) => {
+                      const isCurrentMonth = monthIndex === new Date().getMonth();
+                      const daysInMonth = new Date(2025, monthIndex + 1, 0).getDate();
+                      const firstDay = new Date(2025, monthIndex, 1).getDay();
+                      const today = new Date().getDate();
+                      const currentMonth = new Date().getMonth();
+                      
+                      return (
+                        <div key={month} className="text-white">
+                          <h3 className={`text-2xl font-bold mb-3 ${isCurrentMonth ? 'text-red-500' : ''}`}>
+                            {month}
+                          </h3>
+                          <div className="grid grid-cols-7 gap-1 text-sm">
+                            {/* Days */}
+                            {Array.from({ length: firstDay }).map((_, i) => (
+                              <div key={`empty-${i}`} />
+                            ))}
+                            {Array.from({ length: daysInMonth }).map((_, dayIndex) => {
+                              const day = dayIndex + 1;
+                              const isToday = monthIndex === currentMonth && day === today;
+                              
+                              return (
+                                <div
+                                  key={day}
+                                  className={`aspect-square flex items-center justify-center rounded-full text-center ${
+                                    isToday 
+                                      ? 'bg-red-500 text-white font-bold' 
+                                      : 'text-white/80'
+                                  }`}
+                                >
+                                  {day}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </AppPage>
             )}
