@@ -193,23 +193,23 @@ const WeatherApp = () => {
     
     switch (code) {
       case "01":
-        return <Sun className="w-10 h-10 text-yellow-500 mx-auto" />;
+        return <Sun className="w-6 h-6 text-yellow-500 mx-auto" />;
       case "02":
       case "03":
       case "04":
         return (
-          <div className="relative w-10 h-10 mx-auto">
-            <Sun className="w-7 h-7 text-yellow-500 absolute top-0 left-0" />
-            <Cloud className="w-8 h-8 text-gray-400 absolute bottom-0 right-0" />
+          <div className="relative w-6 h-6 mx-auto">
+            <Sun className="w-4 h-4 text-yellow-500 absolute top-0 left-0" />
+            <Cloud className="w-5 h-5 text-gray-400 absolute bottom-0 right-0" />
           </div>
         );
       case "09":
       case "10":
-        return <CloudRain className="w-10 h-10 text-blue-500 mx-auto" />;
+        return <CloudRain className="w-6 h-6 text-blue-500 mx-auto" />;
       case "13":
-        return <CloudSnow className="w-10 h-10 text-blue-300 mx-auto" />;
+        return <CloudSnow className="w-6 h-6 text-blue-300 mx-auto" />;
       default:
-        return <Cloud className="w-10 h-10 text-gray-400 mx-auto" />;
+        return <Cloud className="w-6 h-6 text-gray-400 mx-auto" />;
     }
   };
 
@@ -346,25 +346,23 @@ const WeatherApp = () => {
       {/* Tomorrow Forecast */}
       {forecast[1] && (
         <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 shadow-2xl border border-white/60">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-5">
-              <div className="bg-blue-100/60 rounded-3xl p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-5 flex-1">
+              <div className="bg-blue-100/60 rounded-3xl p-5 flex-shrink-0">
                 {getSmallWeatherIcon(forecast[1].icon)}
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <div className="text-gray-900 font-bold text-2xl mb-1">Tomorrow</div>
-                <div className="text-gray-600 text-base capitalize font-medium">{forecast[1].description}</div>
+                <div className="text-gray-600 text-base capitalize font-medium truncate">{forecast[1].description}</div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="flex items-center gap-3">
-                <span className="text-red-500 flex items-center gap-1 font-bold text-xl">
-                  <span>↑</span>{forecast[1].temp_max}°
-                </span>
-                <span className="text-blue-500 flex items-center gap-1 font-bold text-xl">
-                  <span>↓</span>{forecast[1].temp_min}°
-                </span>
-              </div>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <span className="text-red-500 flex items-center gap-1 font-bold text-xl">
+                <span>↑</span>{forecast[1].temp_max}°
+              </span>
+              <span className="text-blue-500 flex items-center gap-1 font-bold text-xl">
+                <span>↓</span>{forecast[1].temp_min}°
+              </span>
             </div>
           </div>
         </div>
