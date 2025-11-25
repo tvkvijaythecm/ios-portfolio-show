@@ -8,17 +8,19 @@ interface BootScreenProps {
 
 const BootScreen = ({ onComplete }: BootScreenProps) => {
   const [progress, setProgress] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
+          setTimeout(() => setIsComplete(true), 500);
           return 100;
         }
         return prev + 1;
       });
-    }, 100);
+    }, 30);
 
     return () => clearInterval(interval);
   }, []);
@@ -27,10 +29,11 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     <motion.div
       className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50 gap-12"
       initial={{ opacity: 1 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5, delay: 2 }}
-      onAnimationComplete={onComplete}
+      animate={{ opacity: isComplete ? 0 : 1 }}
+      transition={{ duration: 0.5 }}
+      onAnimationComplete={() => {
+        if (isComplete) onComplete();
+      }}
     >
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
