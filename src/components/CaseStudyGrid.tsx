@@ -53,13 +53,26 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
                 onClick={app.onClick}
               >
                 <div
-                  className={cn(
-                    "w-16 h-16 rounded-[22%] flex items-center justify-center app-shadow",
-                    !app.gradient && app.bgColor
-                  )}
-                  style={app.gradient ? { background: app.gradient } : undefined}
+                  className="w-16 h-16 rounded-[22%] flex items-center justify-center bg-[#1C1C1E] shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                 >
-                  <Icon className="w-8 h-8 text-white" strokeWidth={2} />
+                  <Icon 
+                    className="w-8 h-8" 
+                    strokeWidth={2}
+                    style={app.gradient ? {
+                      stroke: `url(#case-gradient-${index})`,
+                      fill: 'none'
+                    } : undefined}
+                  />
+                  {app.gradient && (
+                    <svg width="0" height="0" style={{ position: 'absolute' }}>
+                      <defs>
+                        <linearGradient id={`case-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" style={{ stopColor: app.gradient.split(',')[0].trim(), stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: app.gradient.split(',')[1].trim(), stopOpacity: 1 }} />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  )}
                 </div>
                 <span className="text-white text-xs font-medium text-center leading-tight">
                   {app.label}

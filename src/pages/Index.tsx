@@ -101,22 +101,22 @@ const Index = () => {
   ];
 
   const caseStudyMiniApps = [
-    { icon: TrendingUp, gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)" },
-    { icon: BarChart, gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)" },
-    { icon: PieChart, gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)" },
-    { icon: LineChart, gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)" },
+    { icon: TrendingUp, gradient: "#FF6B6B, #FF4757" },
+    { icon: BarChart, gradient: "#4ECDC4, #44A08D" },
+    { icon: PieChart, gradient: "#FFA502, #FF6348" },
+    { icon: LineChart, gradient: "#5F27CD, #341F97" },
   ];
 
   const caseStudyApps = [
-    { icon: TrendingUp, label: "Analytics", gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)", onClick: () => setOpenCaseStudyApp("analytics") },
-    { icon: BarChart, label: "Growth", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => setOpenCaseStudyApp("growth") },
-    { icon: PieChart, label: "Performance", gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)", onClick: () => setOpenCaseStudyApp("performance") },
-    { icon: LineChart, label: "Insights", gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)", onClick: () => setOpenCaseStudyApp("insights") },
-    { icon: Target, label: "Metrics", gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", onClick: () => setOpenCaseStudyApp("metrics") },
-    { icon: Award, label: "Goals", gradient: "linear-gradient(135deg, #F093FB 0%, #F5576C 100%)", onClick: () => setOpenCaseStudyApp("goals") },
-    { icon: Lightbulb, label: "Achievements", gradient: "linear-gradient(135deg, #FFD89B 0%, #19547B 100%)", onClick: () => setOpenCaseStudyApp("achievements") },
-    { icon: Layers, label: "Innovation", gradient: "linear-gradient(135deg, #667EEA 0%, #764BA2 100%)", onClick: () => setOpenCaseStudyApp("innovation") },
-    { icon: Folder, label: "Strategy", gradient: "linear-gradient(135deg, #FA709A 0%, #FEE140 100%)", onClick: () => setOpenCaseStudyApp("strategy") },
+    { icon: TrendingUp, label: "Analytics", gradient: "#FF6B6B, #FF4757", onClick: () => setOpenCaseStudyApp("analytics") },
+    { icon: BarChart, label: "Growth", gradient: "#4ECDC4, #44A08D", onClick: () => setOpenCaseStudyApp("growth") },
+    { icon: PieChart, label: "Performance", gradient: "#FFA502, #FF6348", onClick: () => setOpenCaseStudyApp("performance") },
+    { icon: LineChart, label: "Insights", gradient: "#5F27CD, #341F97", onClick: () => setOpenCaseStudyApp("insights") },
+    { icon: Target, label: "Metrics", gradient: "#00D2FF, #3A7BD5", onClick: () => setOpenCaseStudyApp("metrics") },
+    { icon: Award, label: "Goals", gradient: "#F093FB, #F5576C", onClick: () => setOpenCaseStudyApp("goals") },
+    { icon: Lightbulb, label: "Achievements", gradient: "#FFD89B, #19547B", onClick: () => setOpenCaseStudyApp("achievements") },
+    { icon: Layers, label: "Innovation", gradient: "#667EEA, #764BA2", onClick: () => setOpenCaseStudyApp("innovation") },
+    { icon: Folder, label: "Strategy", gradient: "#FA709A, #FEE140", onClick: () => setOpenCaseStudyApp("strategy") },
   ];
   
   useEffect(() => {
@@ -161,43 +161,43 @@ const Index = () => {
                       <AppIcon
                         icon={Info}
                         label="Info"
-                        gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
+                        gradient="#8E8E93, #636366"
                         onClick={() => setOpenApp("profile")}
                       />
                       <AppIcon
                         icon={Image}
                         label="Photos"
-                        gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 50%, #FF3B30 100%)"
+                        gradient="#FF6B00, #FF9500"
                         onClick={() => setOpenApp("photos")}
                       />
                       <AppIcon
                         icon={Youtube}
                         label="YouTube"
-                        gradient="linear-gradient(135deg, #FF0000 0%, #CC0000 100%)"
+                        gradient="#FF0000, #CC0000"
                         onClick={() => setOpenApp("youtube")}
                       />
                       <AppIcon
                         icon={Github}
                         label="GitHub"
-                        bgColor="bg-black"
+                        gradient="#FFFFFF, #CCCCCC"
                         onClick={() => setOpenApp("github")}
                       />
                       <AppIcon
                         icon={BookOpen}
                         label="Education"
-                        gradient="linear-gradient(135deg, #5856D6 0%, #3634A3 100%)"
+                        gradient="#5856D6, #3634A3"
                         onClick={() => setOpenApp("education")}
                       />
                       <AppIcon
                         icon={Briefcase}
                         label="Work"
-                        gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
+                        gradient="#007AFF, #0051D5"
                         onClick={() => setOpenApp("briefcase")}
                       />
                       <AppIcon
                         icon={FileText}
                         label="Notes"
-                        gradient="linear-gradient(135deg, #FFD60A 0%, #FFC107 100%)"
+                        gradient="#FFD60A, #FFC107"
                         onClick={() => setOpenApp("notes")}
                       />
                       <AppIcon
@@ -211,20 +211,19 @@ const Index = () => {
                       <AppIcon
                         icon={CalendarIcon}
                         label="Calendar"
-                        bgColor="bg-white"
-                        iconColor="text-red-500"
+                        gradient="#FF3B30, #FF6B6B"
                         onClick={() => setOpenApp("calendar")}
                       />
                       <AppIcon
                         icon={Clock}
                         label="Clock"
-                        bgColor="bg-black"
+                        gradient="#FF9500, #FFCC00"
                         onClick={() => setOpenApp("clock")}
                       />
                       <AppIcon
                         icon={Cloud}
                         label="Weather"
-                        gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
+                        gradient="#00C6FF, #0072FF"
                         onClick={() => setOpenApp("weather")}
                       />
                       <CaseStudyFolder
