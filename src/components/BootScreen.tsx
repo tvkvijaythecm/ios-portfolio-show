@@ -15,7 +15,6 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => setIsComplete(true), 500);
           return 100;
         }
         return prev + 1;
@@ -24,6 +23,15 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (progress >= 100) {
+      const timer = setTimeout(() => {
+        setIsComplete(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [progress]);
 
   return (
     <motion.div
