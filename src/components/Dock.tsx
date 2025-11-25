@@ -48,40 +48,41 @@ const Dock = () => {
         )}
       </AnimatePresence>
 
-      <motion.div
-        className="fixed bottom-6 left-1/2 ios-glass rounded-[28px] px-5 py-3 z-30"
-        style={{ transform: "translateX(-50%)" }}
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 30 }}
-      >
-        <div className="flex gap-5 items-center justify-center min-w-max">
-          <AppIcon
-            icon={MessageCircle}
-            label="WhatsApp"
-            gradient="linear-gradient(135deg, #25D366 0%, #128C7E 100%)"
-            onClick={() => window.open("https://wa.me/", "_blank")}
-          />
-          <AppIcon
-            icon={Phone}
-            label="Phone"
-            gradient="linear-gradient(135deg, #34C759 0%, #30D158 100%)"
-            onClick={() => window.open("tel:", "_blank")}
-          />
-          <AppIcon
-            icon={Mail}
-            label="Mail"
-            gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
-            onClick={() => window.open("mailto:", "_blank")}
-          />
-          <AppIcon
-            icon={Share2}
-            label="Social"
-            gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
-            onClick={() => setShowSocial(!showSocial)}
-          />
-        </div>
-      </motion.div>
+      <div className="fixed bottom-6 left-0 right-0 flex justify-center z-30">
+        <motion.div
+          className="ios-glass rounded-[28px] px-5 py-3"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 30 }}
+        >
+          <div className="flex gap-5 items-center">
+            <AppIcon
+              icon={MessageCircle}
+              label="WhatsApp"
+              gradient="linear-gradient(135deg, #25D366 0%, #128C7E 100%)"
+              onClick={() => window.open("https://wa.me/", "_blank")}
+            />
+            <AppIcon
+              icon={Phone}
+              label="Phone"
+              gradient="linear-gradient(135deg, #34C759 0%, #30D158 100%)"
+              onClick={() => window.open("tel:", "_blank")}
+            />
+            <AppIcon
+              icon={Mail}
+              label="Mail"
+              gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
+              onClick={() => window.open("mailto:", "_blank")}
+            />
+            <AppIcon
+              icon={Share2}
+              label="Social"
+              gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
+              onClick={() => setShowSocial(!showSocial)}
+            />
+          </div>
+        </motion.div>
+      </div>
     </>
   );
 };
