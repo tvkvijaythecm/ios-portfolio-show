@@ -54,8 +54,9 @@ import VideoEmbed from "@/components/VideoEmbed";
 import CaseStudyFolder from "@/components/CaseStudyFolder";
 import CaseStudyGrid from "@/components/CaseStudyGrid";
 import CaseStudyPage from "@/components/CaseStudyPage";
+import AboutApp from "@/components/AboutApp";
 
-type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
+type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
 type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
 
 const Index = () => {
@@ -182,6 +183,7 @@ const Index = () => {
                         imageIcon={aboutIcon}
                         label="About"
                         gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
+                        onClick={() => setOpenApp("about")}
                       />
                       
                       {/* Basic Apps Row */}
@@ -531,6 +533,16 @@ const Index = () => {
                 onClose={() => setOpenApp(null)}
               >
                 <WeatherApp />
+              </AppPage>
+            )}
+
+            {openApp === "about" && (
+              <AppPage
+                title="About"
+                icon={User}
+                onClose={() => setOpenApp(null)}
+              >
+                <AboutApp />
               </AppPage>
             )}
 
