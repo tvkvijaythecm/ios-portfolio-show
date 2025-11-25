@@ -36,7 +36,7 @@ const AppIcon = ({
       <motion.div
         className={cn(
           iconSize,
-          "rounded-3xl flex items-center justify-center relative overflow-hidden",
+          "rounded-[22%] flex items-center justify-center relative overflow-hidden",
           imageIcon ? "" : "bg-gradient-to-br from-purple-900/90 via-blue-900/80 to-purple-900/90",
           !imageIcon && "border-2"
         )}

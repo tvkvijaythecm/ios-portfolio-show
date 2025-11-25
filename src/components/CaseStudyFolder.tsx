@@ -21,7 +21,7 @@ const CaseStudyFolder = ({ miniApps, label, onClick }: CaseStudyFolderProps) => 
       onClick={onClick}
     >
       <motion.div
-        className="w-[60px] h-[60px] rounded-3xl flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-purple-900/90 via-blue-900/80 to-purple-900/90 border-2"
+        className="w-[60px] h-[60px] rounded-[22%] flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-purple-900/90 via-blue-900/80 to-purple-900/90 border-2"
         style={{
           borderImage: 'linear-gradient(135deg, #FF00FF, #00E5FF, #FF6B00) 1',
           boxShadow: `
@@ -46,7 +46,7 @@ const CaseStudyFolder = ({ miniApps, label, onClick }: CaseStudyFolderProps) => 
             return (
               <div
                 key={index}
-                className="w-6 h-6 rounded-xl flex items-center justify-center bg-gradient-to-br from-purple-800/50 to-blue-800/50"
+                className="w-6 h-6 rounded-[18%] flex items-center justify-center bg-gradient-to-br from-purple-800/50 to-blue-800/50"
                 style={{
                   boxShadow: `0 0 10px rgba(255, 0, 255, 0.3)`
                 }}

@@ -53,7 +53,7 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
                 onClick={app.onClick}
               >
                 <div
-                  className="w-16 h-16 rounded-3xl flex items-center justify-center bg-gradient-to-br from-purple-900/90 via-blue-900/80 to-purple-900/90 border-2 relative overflow-hidden"
+                  className="w-16 h-16 rounded-[22%] flex items-center justify-center bg-gradient-to-br from-purple-900/90 via-blue-900/80 to-purple-900/90 border-2 relative overflow-hidden"
                   style={{
                     borderImage: 'linear-gradient(135deg, #FF00FF, #00E5FF, #FF6B00) 1',
                     boxShadow: `
