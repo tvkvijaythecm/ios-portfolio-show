@@ -21,9 +21,9 @@ const AppPage = ({ title, icon: Icon, onClose, children, gradient, bgColor = "bg
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       style={gradient ? { background: gradient } : undefined}
     >
-      <div className={!gradient ? bgColor : ""}>
+      <div className={`flex flex-col h-full ${!gradient ? bgColor : ""}`}>
         {/* Header with iOS-style back button */}
-        <div className="h-20 flex items-end justify-between px-6 pb-3 relative">
+        <div className="h-20 flex items-end justify-between px-6 pb-3 relative flex-shrink-0">
           <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
           <motion.button
             onClick={onClose}
@@ -42,7 +42,7 @@ const AppPage = ({ title, icon: Icon, onClose, children, gradient, bgColor = "bg
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto px-6 pb-6">
+        <div className="flex-1 overflow-y-auto px-6 pb-6">
           {children}
         </div>
       </div>
