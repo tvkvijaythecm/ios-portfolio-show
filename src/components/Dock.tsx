@@ -59,13 +59,13 @@ const Dock = () => {
               onClick={() => setShowSocial(false)}
             />
             <motion.div
-              className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-gray-100/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl p-6 z-50 shadow-2xl"
+              className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-gray-100/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-3xl p-4 z-50 shadow-2xl"
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 {socialLinks.map((social) => (
                   <AppIcon
                     key={social.label}
@@ -74,7 +74,6 @@ const Dock = () => {
                     bgColor={social.color}
                     gradient={social.gradient}
                     onClick={() => window.open(social.url, "_blank")}
-                    size="large"
                   />
                 ))}
               </div>
