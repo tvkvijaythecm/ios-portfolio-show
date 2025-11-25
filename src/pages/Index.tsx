@@ -353,8 +353,118 @@ const Index = () => {
                 icon={Clock}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="text-white text-center">
-                  <p className="text-6xl font-thin">{new Date().toLocaleTimeString()}</p>
+                <div className="flex flex-col items-center justify-start pt-8 pb-12 min-h-full">
+                  {/* Main Clock */}
+                  <div className="relative w-80 h-80 mb-16">
+                    {/* Gradient Ring */}
+                    <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 200 200">
+                      <defs>
+                        <linearGradient id="clockGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" style={{ stopColor: '#FF6B6B', stopOpacity: 1 }} />
+                          <stop offset="25%" style={{ stopColor: '#FF8E53', stopOpacity: 1 }} />
+                          <stop offset="50%" style={{ stopColor: '#9B59B6', stopOpacity: 1 }} />
+                          <stop offset="75%" style={{ stopColor: '#3498DB', stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: '#2980B9', stopOpacity: 1 }} />
+                        </linearGradient>
+                      </defs>
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="90"
+                        fill="none"
+                        stroke="url(#clockGradient)"
+                        strokeWidth="8"
+                      />
+                    </svg>
+
+                    {/* Clock Face */}
+                    <div className="absolute inset-4 rounded-full bg-gray-900 flex items-center justify-center">
+                      {/* Hour Markers */}
+                      {[0, 3, 6, 9].map((hour) => {
+                        const angle = (hour * 30 - 90) * (Math.PI / 180);
+                        const x = 50 + 42 * Math.cos(angle);
+                        const y = 50 + 42 * Math.sin(angle);
+                        return (
+                          <div
+                            key={hour}
+                            className="absolute w-2 h-2 bg-white rounded-full"
+                            style={{
+                              left: `${x}%`,
+                              top: `${y}%`,
+                              transform: 'translate(-50%, -50%)'
+                            }}
+                          />
+                        );
+                      })}
+
+                      {/* Clock Hands */}
+                      <div className="absolute inset-0">
+                        {/* Hour Hand */}
+                        <div
+                          className="absolute left-1/2 top-1/2 w-1 bg-white rounded-full origin-bottom"
+                          style={{
+                            height: '25%',
+                            transform: `translate(-50%, -100%) rotate(${(new Date().getHours() % 12) * 30 + new Date().getMinutes() * 0.5}deg)`,
+                          }}
+                        />
+                        {/* Minute Hand */}
+                        <div
+                          className="absolute left-1/2 top-1/2 w-1 bg-white rounded-full origin-bottom"
+                          style={{
+                            height: '35%',
+                            transform: `translate(-50%, -100%) rotate(${new Date().getMinutes() * 6}deg)`,
+                          }}
+                        />
+                        {/* Center Dot */}
+                        <div className="absolute left-1/2 top-1/2 w-3 h-3 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                      </div>
+
+                      {/* Digital Time */}
+                      <div className="text-center">
+                        <p className="text-white text-5xl font-light tracking-wider">
+                          {new Date().toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            hour12: true 
+                          })}
+                        </p>
+                        <p className="text-white/60 text-sm mt-2 tracking-wide">
+                          {new Date().toLocaleDateString('en-US', { 
+                            weekday: 'short', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* World Clocks */}
+                  <div className="w-full max-w-md space-y-6">
+                    <div className="text-center bg-white/90 backdrop-blur-lg rounded-3xl p-6">
+                      <p className="text-gray-900 text-4xl font-light tracking-wide">
+                        {new Date().toLocaleTimeString('en-US', { 
+                          hour: 'numeric', 
+                          minute: '2-digit',
+                          hour12: true,
+                          timeZone: 'America/Los_Angeles'
+                        })}
+                      </p>
+                      <p className="text-gray-500 text-sm mt-2 tracking-widest uppercase">San Francisco</p>
+                    </div>
+
+                    <div className="text-center bg-white/90 backdrop-blur-lg rounded-3xl p-6">
+                      <p className="text-gray-900 text-4xl font-light tracking-wide">
+                        {new Date().toLocaleTimeString('en-US', { 
+                          hour: 'numeric', 
+                          minute: '2-digit',
+                          hour12: true,
+                          timeZone: 'Europe/London'
+                        })}
+                      </p>
+                      <p className="text-gray-500 text-sm mt-2 tracking-widest uppercase">London</p>
+                    </div>
+                  </div>
                 </div>
               </AppPage>
             )}
