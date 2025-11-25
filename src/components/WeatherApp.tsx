@@ -258,7 +258,7 @@ const WeatherApp = () => {
         <div className="mb-6">
           <div className="text-white/90 text-base mb-3">{currentTime}</div>
           <div className="flex items-start justify-between mb-4">
-            <div className="text-[120px] leading-none font-bold text-white">
+            <div className="text-7xl leading-none font-bold text-white">
               {weather.temp}°C
             </div>
           </div>
