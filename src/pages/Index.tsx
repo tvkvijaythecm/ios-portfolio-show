@@ -133,7 +133,6 @@ const Index = () => {
               <AppPage
                 title="Settings"
                 icon={Settings}
-                gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
@@ -224,7 +223,6 @@ const Index = () => {
               <AppPage
                 title="Portfolio"
                 icon={Image}
-                gradient="linear-gradient(135deg, #FF9500 0%, #FF3B30 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="grid grid-cols-2 gap-4">
@@ -244,7 +242,6 @@ const Index = () => {
               <AppPage
                 title="Videos"
                 icon={Youtube}
-                gradient="linear-gradient(135deg, #FF0000 0%, #CC0000 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="space-y-4">
@@ -264,7 +261,6 @@ const Index = () => {
               <AppPage
                 title="Case Studies"
                 icon={Github}
-                bgColor="bg-gray-900"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="space-y-4">
@@ -282,7 +278,6 @@ const Index = () => {
               <AppPage
                 title="Education"
                 icon={BookOpen}
-                gradient="linear-gradient(135deg, #5856D6 0%, #3634A3 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="space-y-4">
@@ -304,7 +299,6 @@ const Index = () => {
               <AppPage
                 title="Work History"
                 icon={Briefcase}
-                gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="space-y-4">
@@ -326,7 +320,6 @@ const Index = () => {
               <AppPage
                 title="Guest Book"
                 icon={FileText}
-                gradient="linear-gradient(135deg, #FFD60A 0%, #FFC107 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6">
@@ -346,7 +339,6 @@ const Index = () => {
               <AppPage
                 title="Calendar"
                 icon={CalendarIcon}
-                bgColor="bg-white"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="bg-gray-50 rounded-2xl p-6">
@@ -359,7 +351,6 @@ const Index = () => {
               <AppPage
                 title="Clock"
                 icon={Clock}
-                bgColor="bg-black"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="text-white text-center">
@@ -372,7 +363,6 @@ const Index = () => {
               <AppPage
                 title="Weather"
                 icon={Cloud}
-                gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="text-white text-center">
@@ -386,7 +376,6 @@ const Index = () => {
               <AppPage
                 title="Music"
                 icon={Music}
-                gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
                 onClose={() => setOpenApp(null)}
               >
                 <div className="text-white text-center">
@@ -400,7 +389,6 @@ const Index = () => {
               <AppPage
                 title="Privacy Settings"
                 icon={Settings}
-                gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
                 onClose={() => setOpenApp("settings")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
@@ -452,7 +440,6 @@ const Index = () => {
               <AppPage
                 title="Private Information"
                 icon={User}
-                gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
                 onClose={() => setOpenApp("settings")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
@@ -506,7 +493,6 @@ const Index = () => {
               <AppPage
                 title="Posting Schedule"
                 icon={CalendarIcon}
-                gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 100%)"
                 onClose={() => setOpenApp("settings")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
@@ -558,7 +544,6 @@ const Index = () => {
               <AppPage
                 title="Linked Accounts"
                 icon={Github}
-                gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
                 onClose={() => setOpenApp("settings")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
