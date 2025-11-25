@@ -16,9 +16,9 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           clearInterval(interval);
           return 100;
         }
-        return prev + 5;
+        return prev + 2;
       });
-    }, 50);
+    }, 80);
 
     return () => clearInterval(interval);
   }, []);
