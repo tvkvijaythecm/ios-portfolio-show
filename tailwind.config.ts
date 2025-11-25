@@ -60,6 +60,7 @@ export default {
       },
       fontFamily: {
         'meldina': ['Great Vibes', 'cursive'],
+        'barkentina': ['Barkentina', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
