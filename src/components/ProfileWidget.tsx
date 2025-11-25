@@ -16,7 +16,7 @@ const ProfileWidget = () => {
           className="w-16 h-16 rounded-full object-cover app-shadow"
         />
         <div className="flex-1">
-          <h3 className="text-white dark:text-gray-200 font-semibold text-lg">sureshks</h3>
+          <h3 className="text-white dark:text-gray-200 font-semibold text-lg">Suresh Kaleyannan</h3>
           <p className="text-white/80 dark:text-gray-400 text-sm">Creative Developer, Malaysia</p>
         </div>
       </div>
