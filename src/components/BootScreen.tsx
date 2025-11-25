@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Apple } from "lucide-react";
 import { useState, useEffect } from "react";
+import logo from "@/assets/logo.png";
 
 interface BootScreenProps {
   onComplete: () => void;
@@ -40,7 +40,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           ease: "easeOut",
         }}
       >
-        <Apple className="w-24 h-24 text-white" strokeWidth={1.5} />
+        <img src={logo} alt="Logo" className="w-24 h-24" />
       </motion.div>
 
       {/* Loading bar */}
