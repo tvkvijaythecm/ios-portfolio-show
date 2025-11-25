@@ -328,16 +328,16 @@ const WeatherApp = () => {
       </div>
 
       {/* Hourly Forecast */}
-      <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 mb-4 shadow-2xl border border-white/50">
-        <h3 className="text-gray-900 font-bold text-xl mb-5">Hourly Forecast</h3>
-        <div className="grid grid-cols-4 gap-3">
+      <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 mb-4 shadow-2xl border border-white/60">
+        <h3 className="text-gray-900 font-bold text-2xl mb-5">Hourly Forecast</h3>
+        <div className="grid grid-cols-4 gap-4">
           {hourlyForecast.map((hour, index) => (
             <div key={index} className="text-center">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-3 mb-2">
+              <div className="bg-blue-100/60 rounded-3xl p-4 mb-3">
                 {getSmallWeatherIcon(hour.icon)}
               </div>
-              <div className="text-xs text-gray-600 mb-1 font-medium">{hour.time}</div>
-              <div className="text-xl font-bold text-gray-900">{hour.temp}°</div>
+              <div className="text-xs text-gray-700 mb-2 font-medium">{hour.time}</div>
+              <div className="text-2xl font-bold text-gray-900">{hour.temp}°</div>
             </div>
           ))}
         </div>
@@ -345,23 +345,23 @@ const WeatherApp = () => {
 
       {/* Tomorrow Forecast */}
       {forecast[1] && (
-        <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 shadow-2xl border border-white/50">
+        <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 shadow-2xl border border-white/60">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4">
+            <div className="flex items-center gap-5">
+              <div className="bg-blue-100/60 rounded-3xl p-5">
                 {getSmallWeatherIcon(forecast[1].icon)}
               </div>
               <div>
-                <div className="text-gray-900 font-bold text-xl">Tomorrow</div>
+                <div className="text-gray-900 font-bold text-2xl mb-1">Tomorrow</div>
                 <div className="text-gray-600 text-base capitalize font-medium">{forecast[1].description}</div>
               </div>
             </div>
             <div className="text-right">
               <div className="flex items-center gap-3">
-                <span className="text-red-500 flex items-center gap-1 font-bold text-lg">
+                <span className="text-red-500 flex items-center gap-1 font-bold text-xl">
                   <span>↑</span>{forecast[1].temp_max}°
                 </span>
-                <span className="text-blue-500 flex items-center gap-1 font-bold text-lg">
+                <span className="text-blue-500 flex items-center gap-1 font-bold text-xl">
                   <span>↓</span>{forecast[1].temp_min}°
                 </span>
               </div>
