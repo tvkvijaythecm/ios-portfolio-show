@@ -42,6 +42,7 @@ import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
 import BootScreen from "@/components/BootScreen";
+import WelcomeScreen from "@/components/WelcomeScreen";
 import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
 import Dock from "@/components/Dock";
@@ -62,6 +63,7 @@ type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "m
 
 const Index = () => {
   const [showBoot, setShowBoot] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false);
   const [openApp, setOpenApp] = useState<AppType>(null);
   const [selectedGradient, setSelectedGradient] = useState("ios-gradient");
   const { theme, setTheme } = useTheme();
@@ -130,10 +132,20 @@ const Index = () => {
       <div className="absolute inset-0 bg-black/40" />
       
       <AnimatePresence>
-        {showBoot && <BootScreen onComplete={() => setShowBoot(false)} />}
+        {showBoot && (
+          <BootScreen 
+            onComplete={() => {
+              setShowBoot(false);
+              setShowWelcome(true);
+            }} 
+          />
+        )}
+        {showWelcome && (
+          <WelcomeScreen onComplete={() => setShowWelcome(false)} />
+        )}
       </AnimatePresence>
 
-      {!showBoot && (
+      {!showBoot && !showWelcome && (
         <>
           <StatusBar />
           
