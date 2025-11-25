@@ -47,6 +47,27 @@ All colors MUST be HSL.
     --ios-app-shadow: 0 10px 30px -5px rgb(0 0 0 / 0.3);
     --ios-status-bar: 0 0% 100%;
     --ios-widget-bg: 220 40% 50% / 0.4;
+    
+    /* Background gradient presets */
+    --gradient-1-start: 25 85% 65%;
+    --gradient-1-mid: 340 75% 60%;
+    --gradient-1-end: 260 60% 50%;
+    
+    --gradient-2-start: 200 80% 60%;
+    --gradient-2-mid: 220 70% 55%;
+    --gradient-2-end: 280 65% 50%;
+    
+    --gradient-3-start: 120 70% 60%;
+    --gradient-3-mid: 160 75% 55%;
+    --gradient-3-end: 200 70% 50%;
+    
+    --gradient-4-start: 340 80% 65%;
+    --gradient-4-mid: 20 85% 60%;
+    --gradient-4-end: 40 80% 55%;
+    
+    --gradient-5-start: 270 70% 60%;
+    --gradient-5-mid: 300 75% 55%;
+    --gradient-5-end: 330 70% 50%;
 
     --sidebar-background: 0 0% 98%;
 
@@ -122,6 +143,46 @@ All colors MUST be HSL.
       hsl(var(--ios-bg-start)) 0%,
       hsl(var(--ios-bg-mid)) 50%,
       hsl(var(--ios-bg-end)) 100%
+    );
+  }
+  
+  .gradient-1 {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-1-start)) 0%,
+      hsl(var(--gradient-1-mid)) 50%,
+      hsl(var(--gradient-1-end)) 100%
+    );
+  }
+  
+  .gradient-2 {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-2-start)) 0%,
+      hsl(var(--gradient-2-mid)) 50%,
+      hsl(var(--gradient-2-end)) 100%
+    );
+  }
+  
+  .gradient-3 {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-3-start)) 0%,
+      hsl(var(--gradient-3-mid)) 50%,
+      hsl(var(--gradient-3-end)) 100%
+    );
+  }
+  
+  .gradient-4 {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-4-start)) 0%,
+      hsl(var(--gradient-4-mid)) 50%,
+      hsl(var(--gradient-4-end)) 100%
+    );
+  }
+  
+  .gradient-5 {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-5-start)) 0%,
+      hsl(var(--gradient-5-mid)) 50%,
+      hsl(var(--gradient-5-end)) 100%
     );
   }
   

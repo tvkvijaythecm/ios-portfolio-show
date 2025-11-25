@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Settings,
@@ -15,7 +15,11 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Switch } from "@/components/ui/switch";
 import BootScreen from "@/components/BootScreen";
 import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
@@ -24,14 +28,20 @@ import ProfileWidget from "@/components/ProfileWidget";
 import AppPage from "@/components/AppPage";
 import CalendarView from "@/components/CalendarView";
 
-type AppType = "settings" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
+type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
 
 const Index = () => {
   const [showBoot, setShowBoot] = useState(true);
   const [openApp, setOpenApp] = useState<AppType>(null);
+  const [selectedGradient, setSelectedGradient] = useState("ios-gradient");
+  const { theme, setTheme } = useTheme();
+  
+  useEffect(() => {
+    document.body.className = selectedGradient;
+  }, [selectedGradient]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden ios-gradient">
+    <div className={`relative w-full h-screen overflow-hidden ${selectedGradient}`}>
       <AnimatePresence>
         {showBoot && <BootScreen onComplete={() => setShowBoot(false)} />}
       </AnimatePresence>
@@ -49,10 +59,10 @@ const Index = () => {
                     {/* App Grid */}
                     <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
                       <AppIcon
-                        icon={Settings}
-                        label="Settings"
+                        icon={User}
+                        label="Profile"
                         gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
-                        onClick={() => setOpenApp("settings")}
+                        onClick={() => setOpenApp("profile")}
                       />
                       <AppIcon
                         icon={Image}
@@ -131,43 +141,81 @@ const Index = () => {
 
           {/* App Pages */}
           <AnimatePresence>
-            {openApp === "settings" && (
+            {openApp === "profile" && (
               <AppPage
-                title="Settings"
-                icon={Settings}
+                title="Profile"
+                icon={User}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   {/* Profile Header */}
-                  <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
+                  <div className="flex items-center gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                       <User className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xl font-bold text-gray-900">thephotomaniak</h2>
-                      <button className="text-gray-400 text-sm hover:text-gray-600 transition-colors">
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white">thephotomaniak</h2>
+                      <button className="text-gray-400 text-sm hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                         Change profile picture
                       </button>
                     </div>
                   </div>
 
-                  {/* Profile Details */}
-                  <div className="space-y-4 pb-6 border-b border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">Name</span>
-                      <span className="text-gray-900 font-medium">Jonathan</span>
+                  {/* Dark Mode Toggle */}
+                  <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        {theme === "dark" ? (
+                          <Moon className="w-5 h-5 text-purple-500" />
+                        ) : (
+                          <Sun className="w-5 h-5 text-yellow-500" />
+                        )}
+                        <span className="text-gray-900 dark:text-white font-medium">Dark Mode</span>
+                      </div>
+                      <Switch
+                        checked={theme === "dark"}
+                        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                      />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">Username</span>
-                      <span className="text-gray-900 font-medium">thephotomaniak</span>
+                  </div>
+
+                  {/* Background Gradient Selector */}
+                  <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Background Gradient</h3>
+                    <div className="grid grid-cols-5 gap-3">
+                      {[
+                        { name: "ios-gradient", colors: "from-orange-400 via-pink-500 to-purple-600" },
+                        { name: "gradient-1", colors: "from-orange-400 via-pink-500 to-purple-600" },
+                        { name: "gradient-2", colors: "from-cyan-400 via-blue-500 to-purple-600" },
+                        { name: "gradient-3", colors: "from-green-400 via-teal-500 to-cyan-600" },
+                        { name: "gradient-4", colors: "from-pink-400 via-orange-500 to-yellow-600" },
+                        { name: "gradient-5", colors: "from-purple-400 via-pink-500 to-rose-600" },
+                      ].map((gradient) => (
+                        <button
+                          key={gradient.name}
+                          onClick={() => setSelectedGradient(gradient.name)}
+                          className={`aspect-square rounded-2xl bg-gradient-to-br ${gradient.colors} transition-all ${
+                            selectedGradient === gradient.name
+                              ? "ring-4 ring-white dark:ring-gray-700 scale-105"
+                              : "hover:scale-105"
+                          }`}
+                        />
+                      ))}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">Job</span>
-                      <span className="text-gray-900 font-medium">Photographer</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">Location</span>
-                      <span className="text-pink-500 font-medium">Rotterdam, NL</span>
+                  </div>
+
+                  {/* Credits Section */}
+                  <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Credits</h3>
+                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6">
+                      <div className="text-center">
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">Designed & Developed by</p>
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">thephotomaniak</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">Rotterdam, Netherlands</p>
+                        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                          <p className="text-gray-600 dark:text-gray-400 text-xs">Built with React, Framer Motion & Tailwind CSS</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -175,46 +223,46 @@ const Index = () => {
                   <div className="space-y-3">
                     <button 
                       onClick={() => setOpenApp("privacy")}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-gray-600 flex items-center justify-center flex-shrink-0">
                         <Settings className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 font-medium">Privacy settings</span>
-                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Privacy settings</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
                     <button 
                       onClick={() => setOpenApp("private-info")}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
                         <User className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 font-medium">Private information</span>
-                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Private information</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
                     <button 
                       onClick={() => setOpenApp("schedule")}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-orange-400 flex items-center justify-center flex-shrink-0">
                         <CalendarIcon className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 font-medium">Posting schedule settings</span>
-                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Posting schedule settings</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
                     <button 
                       onClick={() => setOpenApp("linked-accounts")}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group"
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
                     >
                       <div className="w-10 h-10 rounded-xl bg-red-400 flex items-center justify-center flex-shrink-0">
                         <Github className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 font-medium">Linked accounts</span>
-                      <ChevronLeft className="w-5 h-5 text-gray-300 rotate-180" />
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Linked accounts</span>
+                      <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
                   </div>
                 </div>
@@ -499,7 +547,7 @@ const Index = () => {
               <AppPage
                 title="Privacy Settings"
                 icon={Settings}
-                onClose={() => setOpenApp("settings")}
+                onClose={() => setOpenApp("profile")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
@@ -550,7 +598,7 @@ const Index = () => {
               <AppPage
                 title="Private Information"
                 icon={User}
-                onClose={() => setOpenApp("settings")}
+                onClose={() => setOpenApp("profile")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
@@ -603,7 +651,7 @@ const Index = () => {
               <AppPage
                 title="Posting Schedule"
                 icon={CalendarIcon}
-                onClose={() => setOpenApp("settings")}
+                onClose={() => setOpenApp("profile")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
@@ -654,7 +702,7 @@ const Index = () => {
               <AppPage
                 title="Linked Accounts"
                 icon={Github}
-                onClose={() => setOpenApp("settings")}
+                onClose={() => setOpenApp("profile")}
               >
                 <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
                   <div className="space-y-4">
