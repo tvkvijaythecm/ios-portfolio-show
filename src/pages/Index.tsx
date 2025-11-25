@@ -179,7 +179,7 @@ const Index = () => {
                       />
                       <AppIcon
                         icon={User}
-                        label="Profile"
+                        label="About"
                         gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
                       />
                       
