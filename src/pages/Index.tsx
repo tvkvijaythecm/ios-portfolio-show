@@ -27,6 +27,7 @@ import Dock from "@/components/Dock";
 import ProfileWidget from "@/components/ProfileWidget";
 import AppPage from "@/components/AppPage";
 import CalendarView from "@/components/CalendarView";
+import WeatherApp from "@/components/WeatherApp";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "music" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | null;
 
@@ -540,10 +541,7 @@ const Index = () => {
                 icon={Cloud}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="text-white text-center">
-                  <p className="text-7xl font-thin mb-4">22°</p>
-                  <p className="text-2xl">Sunny</p>
-                </div>
+                <WeatherApp />
               </AppPage>
             )}
 
@@ -553,7 +551,7 @@ const Index = () => {
                 icon={Music}
                 onClose={() => setOpenApp(null)}
               >
-                <div className="text-white text-center">
+                <div className="text-white dark:text-gray-200 text-center">
                   <p className="text-xl">Now Playing</p>
                   <p className="text-3xl font-bold mt-4">No music playing</p>
                 </div>
