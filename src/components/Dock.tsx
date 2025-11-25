@@ -25,7 +25,7 @@ const Dock = () => {
               onClick={() => setShowSocial(false)}
             />
             <motion.div
-              className="fixed bottom-32 left-1/2 -translate-x-1/2 ios-glass rounded-3xl p-6 z-50"
+              className="fixed bottom-32 left-1/2 -translate-x-1/2 ios-glass dark:bg-gray-800/30 rounded-3xl p-6 z-50"
               initial={{ scale: 0, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0, opacity: 0, y: 20 }}
@@ -50,7 +50,7 @@ const Dock = () => {
 
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-30">
         <motion.div
-          className="ios-glass rounded-[28px] px-5 py-3"
+          className="ios-glass dark:bg-gray-800/30 rounded-[28px] px-5 py-3"
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 30 }}
