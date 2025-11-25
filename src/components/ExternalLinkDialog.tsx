@@ -19,7 +19,7 @@ const ExternalLinkDialog = ({ onConfirm, onCancel, appName }: ExternalLinkDialog
       
       {/* Dialog */}
       <motion.div
-        className="relative z-10 bg-gray-100/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl max-w-[270px] w-full"
+        className="relative z-10 bg-gray-100/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-lg overflow-hidden shadow-2xl max-w-[220px] w-full"
         initial={{ scale: 1.1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
