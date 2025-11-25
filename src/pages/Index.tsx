@@ -47,121 +47,135 @@ const Index = () => {
         <>
           <StatusBar />
           
-          <motion.div
-            className="absolute inset-0 pt-14 pb-32 px-6"
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            onDragEnd={(_, info) => {
-              if (Math.abs(info.offset.x) > 100) {
-                handleSwipe(info.offset.x);
-              }
-            }}
-          >
+          {/* Swipeable content area - excludes dock */}
+          <div className="absolute inset-0 pt-14 pb-32 overflow-hidden">
             <motion.div
-              animate={{ x: currentPage === 0 ? 0 : "-100%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="h-full"
+              className="h-full px-6"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.3}
+              dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+              onDragEnd={(_, info) => {
+                const swipeThreshold = 50;
+                const swipeVelocity = Math.abs(info.velocity.x);
+                
+                // Enhanced swipe detection
+                if (Math.abs(info.offset.x) > swipeThreshold || swipeVelocity > 500) {
+                  handleSwipe(info.offset.x);
+                }
+              }}
             >
-              {currentPage === 0 ? (
-                <div className="flex flex-col gap-6 h-full">
-                  {/* Profile Widget */}
-                  <ProfileWidget />
+              <motion.div
+                animate={{ x: currentPage === 0 ? 0 : "-100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="h-full flex"
+                style={{ width: "200%" }}
+              >
+                {/* Page 1 - Main Portfolio */}
+                <div className="w-1/2 flex-shrink-0 h-full pr-6">
+                  <div className="flex flex-col gap-6 h-full">
+                    {/* Profile Widget */}
+                    <ProfileWidget />
 
-                  {/* App Grid */}
-                  <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
-                    <AppIcon
-                      icon={Settings}
-                      label="Settings"
-                      gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
-                      onClick={() => setOpenApp("settings")}
-                    />
-                    <AppIcon
-                      icon={Image}
-                      label="Photos"
-                      gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 50%, #FF3B30 100%)"
-                      onClick={() => setOpenApp("photos")}
-                    />
-                    <AppIcon
-                      icon={Youtube}
-                      label="YouTube"
-                      gradient="linear-gradient(135deg, #FF0000 0%, #CC0000 100%)"
-                      onClick={() => setOpenApp("youtube")}
-                    />
-                    <AppIcon
-                      icon={Github}
-                      label="GitHub"
-                      bgColor="bg-black"
-                      onClick={() => setOpenApp("github")}
-                    />
-                    <AppIcon
-                      icon={BookOpen}
-                      label="Education"
-                      gradient="linear-gradient(135deg, #5856D6 0%, #3634A3 100%)"
-                      onClick={() => setOpenApp("education")}
-                    />
-                    <AppIcon
-                      icon={Briefcase}
-                      label="Work"
-                      gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
-                      onClick={() => setOpenApp("briefcase")}
-                    />
-                    <AppIcon
-                      icon={FileText}
-                      label="Notes"
-                      gradient="linear-gradient(135deg, #FFD60A 0%, #FFC107 100%)"
-                      onClick={() => setOpenApp("notes")}
-                    />
-                    <AppIcon
-                      icon={User}
-                      label="Profile"
-                      gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
-                    />
-                    
-                    {/* Basic Apps Row */}
-                    <AppIcon
-                      icon={CalendarIcon}
-                      label="Calendar"
-                      bgColor="bg-white"
-                      iconColor="text-red-500"
-                      onClick={() => setOpenApp("calendar")}
-                    />
-                    <AppIcon
-                      icon={Clock}
-                      label="Clock"
-                      bgColor="bg-black"
-                      onClick={() => setOpenApp("clock")}
-                    />
-                    <AppIcon
-                      icon={Cloud}
-                      label="Weather"
-                      gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
-                      onClick={() => setOpenApp("weather")}
-                    />
-                    <AppIcon
-                      icon={Music}
-                      label="Music"
-                      gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
-                      onClick={() => setOpenApp("music")}
-                    />
+                    {/* App Grid */}
+                    <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
+                      <AppIcon
+                        icon={Settings}
+                        label="Settings"
+                        gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
+                        onClick={() => setOpenApp("settings")}
+                      />
+                      <AppIcon
+                        icon={Image}
+                        label="Photos"
+                        gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 50%, #FF3B30 100%)"
+                        onClick={() => setOpenApp("photos")}
+                      />
+                      <AppIcon
+                        icon={Youtube}
+                        label="YouTube"
+                        gradient="linear-gradient(135deg, #FF0000 0%, #CC0000 100%)"
+                        onClick={() => setOpenApp("youtube")}
+                      />
+                      <AppIcon
+                        icon={Github}
+                        label="GitHub"
+                        bgColor="bg-black"
+                        onClick={() => setOpenApp("github")}
+                      />
+                      <AppIcon
+                        icon={BookOpen}
+                        label="Education"
+                        gradient="linear-gradient(135deg, #5856D6 0%, #3634A3 100%)"
+                        onClick={() => setOpenApp("education")}
+                      />
+                      <AppIcon
+                        icon={Briefcase}
+                        label="Work"
+                        gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
+                        onClick={() => setOpenApp("briefcase")}
+                      />
+                      <AppIcon
+                        icon={FileText}
+                        label="Notes"
+                        gradient="linear-gradient(135deg, #FFD60A 0%, #FFC107 100%)"
+                        onClick={() => setOpenApp("notes")}
+                      />
+                      <AppIcon
+                        icon={User}
+                        label="Profile"
+                        gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
+                      />
+                      
+                      {/* Basic Apps Row */}
+                      <AppIcon
+                        icon={CalendarIcon}
+                        label="Calendar"
+                        bgColor="bg-white"
+                        iconColor="text-red-500"
+                        onClick={() => setOpenApp("calendar")}
+                      />
+                      <AppIcon
+                        icon={Clock}
+                        label="Clock"
+                        bgColor="bg-black"
+                        onClick={() => setOpenApp("clock")}
+                      />
+                      <AppIcon
+                        icon={Cloud}
+                        label="Weather"
+                        gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
+                        onClick={() => setOpenApp("weather")}
+                      />
+                      <AppIcon
+                        icon={Music}
+                        label="Music"
+                        gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
+                        onClick={() => setOpenApp("music")}
+                      />
+                    </div>
                   </div>
                 </div>
-              ) : (
-                <div className="grid grid-cols-4 gap-x-4 gap-y-6 pt-6">
-                  {Array.from({ length: 16 }).map((_, i) => (
-                    <AppIcon
-                      key={i}
-                      icon={Settings}
-                      label={`App ${i + 1}`}
-                      bgColor="bg-gray-400"
-                      onClick={() => {}}
-                    />
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
 
+                {/* Page 2 - Additional Apps */}
+                <div className="w-1/2 flex-shrink-0 h-full pr-6">
+                  <div className="grid grid-cols-4 gap-x-4 gap-y-6 pt-6">
+                    {Array.from({ length: 16 }).map((_, i) => (
+                      <AppIcon
+                        key={i}
+                        icon={Settings}
+                        label={`App ${i + 1}`}
+                        bgColor="bg-gray-400"
+                        onClick={() => {}}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+
+          {/* Fixed elements - outside swipeable area */}
           <PageIndicator currentPage={currentPage} totalPages={2} />
           <Dock />
 
