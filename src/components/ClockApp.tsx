@@ -131,7 +131,7 @@ const ClockApp = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors rounded-3xl overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between p-6 md:p-8">
         <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-900 dark:bg-white flex items-center justify-center">
