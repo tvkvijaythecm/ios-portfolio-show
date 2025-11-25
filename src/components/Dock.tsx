@@ -26,9 +26,9 @@ const Dock = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, label: "Facebook", gradient: "#1877F2, #0C63D4", url: "#" },
-    { icon: Instagram, label: "Instagram", gradient: "#E1306C, #C13584", url: "#" },
-    { icon: Music, label: "TikTok", gradient: "#FE2C55, #000000", url: "#" },
+    { icon: Facebook, label: "Facebook", gradient: "#0099FF, #00E5FF", url: "#" },
+    { icon: Instagram, label: "Instagram", gradient: "#FF1493, #FF00FF", url: "#" },
+    { icon: Music, label: "TikTok", gradient: "#FF00FF, #00E5FF", url: "#" },
   ];
 
   return (
@@ -92,25 +92,25 @@ const Dock = () => {
             <AppIcon
               icon={MessageCircle}
               label="WhatsApp"
-              gradient="#25D366, #128C7E"
+              gradient="#00FF88, #00E5FF"
               onClick={() => handleCommunicationAppClick("WhatsApp", "https://wa.me/")}
             />
             <AppIcon
               icon={Phone}
               label="Phone"
-              gradient="#34C759, #30D158"
+              gradient="#00FF66, #00E5FF"
               onClick={() => handleCommunicationAppClick("Phone", "tel:")}
             />
             <AppIcon
               icon={Mail}
               label="Mail"
-              gradient="#007AFF, #0051D5"
+              gradient="#0099FF, #00E5FF"
               onClick={() => handleCommunicationAppClick("Mail", "mailto:")}
             />
             <AppIcon
               icon={Share2}
               label="Social"
-              gradient="#FF375F, #FF2D55"
+              gradient="#FF00FF, #FF1493"
               onClick={() => setShowSocial(!showSocial)}
             />
           </div>

@@ -53,14 +53,30 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
                 onClick={app.onClick}
               >
                 <div
-                  className="w-16 h-16 rounded-[22%] flex items-center justify-center bg-[#1C1C1E] shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+                  className="w-16 h-16 rounded-[22%] flex items-center justify-center bg-gradient-to-br from-purple-900/90 via-blue-900/80 to-purple-900/90 border-2 relative overflow-hidden"
+                  style={{
+                    borderImage: 'linear-gradient(135deg, #FF00FF, #00E5FF, #FF6B00) 1',
+                    boxShadow: `
+                      0 0 20px rgba(255, 0, 255, 0.5),
+                      0 0 40px rgba(0, 229, 255, 0.3),
+                      inset 0 0 20px rgba(255, 0, 255, 0.1)
+                    `
+                  }}
                 >
+                  {/* Starfield */}
+                  <div className="absolute inset-0 opacity-30">
+                    <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[20%] left-[30%]" />
+                    <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[60%] left-[70%]" />
+                    <div className="absolute w-1 h-1 bg-white rounded-full top-[40%] left-[50%]" />
+                  </div>
+                  
                   <Icon 
-                    className="w-8 h-8" 
-                    strokeWidth={2}
+                    className="w-8 h-8 relative z-10" 
+                    strokeWidth={2.5}
                     style={app.gradient ? {
                       stroke: `url(#case-gradient-${index})`,
-                      fill: 'none'
+                      filter: 'drop-shadow(0 0 8px currentColor) drop-shadow(0 0 15px currentColor)',
+                      color: app.gradient.split(',')[0].trim()
                     } : undefined}
                   />
                   {app.gradient && (

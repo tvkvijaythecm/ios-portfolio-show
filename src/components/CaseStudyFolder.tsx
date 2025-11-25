@@ -21,25 +21,43 @@ const CaseStudyFolder = ({ miniApps, label, onClick }: CaseStudyFolderProps) => 
       onClick={onClick}
     >
       <motion.div
-        className="w-[60px] h-[60px] rounded-[22%] flex items-center justify-center relative overflow-hidden bg-[#1C1C1E] shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+        className="w-[60px] h-[60px] rounded-[22%] flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-purple-900/90 via-blue-900/80 to-purple-900/90 border-2"
+        style={{
+          borderImage: 'linear-gradient(135deg, #FF00FF, #00E5FF, #FF6B00) 1',
+          boxShadow: `
+            0 0 20px rgba(255, 0, 255, 0.5),
+            0 0 40px rgba(0, 229, 255, 0.3),
+            inset 0 0 20px rgba(255, 0, 255, 0.1)
+          `
+        }}
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
-        <div className="grid grid-cols-2 gap-1 p-2">
+        {/* Starfield */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[20%] left-[30%]" />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[60%] left-[70%]" />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-1 p-2 relative z-10">
           {miniApps.slice(0, 4).map((app, index) => {
             const Icon = app.icon;
             const colors = app.gradient?.match(/#[0-9A-F]{6}/gi) || ['#FFFFFF', '#CCCCCC'];
             return (
               <div
                 key={index}
-                className="w-6 h-6 rounded-[18%] flex items-center justify-center bg-[#2C2C2E]"
+                className="w-6 h-6 rounded-[18%] flex items-center justify-center bg-gradient-to-br from-purple-800/50 to-blue-800/50"
+                style={{
+                  boxShadow: `0 0 10px rgba(255, 0, 255, 0.3)`
+                }}
               >
                 <Icon 
                   className="w-3 h-3" 
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                   style={{
                     stroke: `url(#mini-gradient-${index})`,
-                    fill: 'none'
+                    filter: 'drop-shadow(0 0 4px currentColor)',
+                    color: colors[0]
                   }}
                 />
                 <svg width="0" height="0" style={{ position: 'absolute' }}>
