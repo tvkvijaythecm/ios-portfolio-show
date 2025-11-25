@@ -345,22 +345,22 @@ const WeatherApp = () => {
 
       {/* Tomorrow Forecast */}
       {forecast[1] && (
-        <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 shadow-2xl border border-white/60">
+        <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 shadow-2xl border border-white/60 overflow-hidden">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-5 flex-1">
-              <div className="bg-blue-100/60 rounded-3xl p-5 flex-shrink-0">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              <div className="bg-blue-100/60 rounded-3xl p-4 flex-shrink-0">
                 {getSmallWeatherIcon(forecast[1].icon)}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-gray-900 font-bold text-2xl mb-1">Tomorrow</div>
-                <div className="text-gray-600 text-base capitalize font-medium truncate">{forecast[1].description}</div>
+                <div className="text-gray-900 font-bold text-xl mb-1">Tomorrow</div>
+                <div className="text-gray-600 text-sm capitalize font-medium truncate">{forecast[1].description}</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="text-red-500 flex items-center gap-1 font-bold text-xl">
+            <div className="flex items-center gap-2 flex-shrink-0 pr-2">
+              <span className="text-red-500 flex items-center gap-1 font-bold text-lg whitespace-nowrap">
                 <span>↑</span>{forecast[1].temp_max}°
               </span>
-              <span className="text-blue-500 flex items-center gap-1 font-bold text-xl">
+              <span className="text-blue-500 flex items-center gap-1 font-bold text-lg whitespace-nowrap">
                 <span>↓</span>{forecast[1].temp_min}°
               </span>
             </div>
