@@ -21,23 +21,35 @@ const CaseStudyFolder = ({ miniApps, label, onClick }: CaseStudyFolderProps) => 
       onClick={onClick}
     >
       <motion.div
-        className="w-[60px] h-[60px] rounded-[22%] flex items-center justify-center app-shadow relative overflow-hidden bg-gray-400/30 dark:bg-gray-700/50 backdrop-blur-md"
+        className="w-[60px] h-[60px] rounded-[22%] flex items-center justify-center relative overflow-hidden bg-[#1C1C1E] shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
         <div className="grid grid-cols-2 gap-1 p-2">
           {miniApps.slice(0, 4).map((app, index) => {
             const Icon = app.icon;
+            const colors = app.gradient?.match(/#[0-9A-F]{6}/gi) || ['#FFFFFF', '#CCCCCC'];
             return (
               <div
                 key={index}
-                className={cn(
-                  "w-6 h-6 rounded-[18%] flex items-center justify-center",
-                  !app.gradient && app.bgColor
-                )}
-                style={app.gradient ? { background: app.gradient } : undefined}
+                className="w-6 h-6 rounded-[18%] flex items-center justify-center bg-[#2C2C2E]"
               >
-                <Icon className="w-3 h-3 text-white" strokeWidth={2} />
+                <Icon 
+                  className="w-3 h-3" 
+                  strokeWidth={2}
+                  style={{
+                    stroke: `url(#mini-gradient-${index})`,
+                    fill: 'none'
+                  }}
+                />
+                <svg width="0" height="0" style={{ position: 'absolute' }}>
+                  <defs>
+                    <linearGradient id={`mini-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: colors[0], stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: colors[1], stopOpacity: 1 }} />
+                    </linearGradient>
+                  </defs>
+                </svg>
               </div>
             );
           })}
