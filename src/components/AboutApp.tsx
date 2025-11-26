@@ -27,8 +27,16 @@ const AboutApp = () => {
   }, [isPaused, images.length]);
 
   const technologies = [
-    "HTML", "CSS", "JavaScript", "React", "TypeScript", 
-    "Tailwind", "Node.js", "Python", "Swift", "Git"
+    { name: "HTML", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" },
+    { name: "CSS", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" },
+    { name: "JavaScript", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
+    { name: "React", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
+    { name: "TypeScript", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
+    { name: "Tailwind", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
+    { name: "Node.js", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+    { name: "Python", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+    { name: "Swift", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" },
+    { name: "Git", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" },
   ];
 
   const socialLinks = [
@@ -158,17 +166,22 @@ const AboutApp = () => {
           className="bg-background/80 backdrop-blur-xl rounded-3xl p-6 shadow-lg border border-border/50"
         >
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">Technologies</h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-5 gap-4">
             {technologies.map((tech, index) => (
-              <motion.span
-                key={tech}
+              <motion.div
+                key={tech.name}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
-                className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium border border-primary/20"
+                whileHover={{ scale: 1.05 }}
+                className="aspect-square bg-background/50 rounded-2xl flex items-center justify-center p-4 shadow-md border border-border/30 hover:border-primary/30 transition-all"
               >
-                #{tech}
-              </motion.span>
+                <img 
+                  src={tech.logo} 
+                  alt={tech.name}
+                  className="w-full h-full object-contain"
+                />
+              </motion.div>
             ))}
           </div>
         </motion.div>
