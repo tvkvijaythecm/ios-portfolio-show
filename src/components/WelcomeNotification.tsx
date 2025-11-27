@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import aboutIcon from "@/assets/about-icon.png";
 
 interface WelcomeNotificationProps {
   onDismiss: () => void;
@@ -45,8 +46,8 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
 
             {/* Avatar/Icon */}
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center relative">
-                <span className="text-white text-xs font-bold">JS</span>
+              <div className="w-8 h-8 rounded-full overflow-hidden relative shadow-md">
+                <img src={aboutIcon} alt="About" className="w-full h-full object-cover" />
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background"></div>
               </div>
             </div>
