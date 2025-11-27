@@ -58,6 +58,7 @@ import CaseStudyFolder from "@/components/CaseStudyFolder";
 import CaseStudyGrid from "@/components/CaseStudyGrid";
 import CaseStudyPage from "@/components/CaseStudyPage";
 import AboutApp from "@/components/AboutApp";
+import WelcomeNotification from "@/components/WelcomeNotification";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
 type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
@@ -65,6 +66,7 @@ type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "m
 const Index = () => {
   const [showBoot, setShowBoot] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
   const [openApp, setOpenApp] = useState<AppType>(null);
   const [selectedGradient, setSelectedGradient] = useState("ios-gradient");
   const { theme, setTheme } = useTheme();
@@ -123,6 +125,16 @@ const Index = () => {
     document.body.className = selectedGradient;
   }, [selectedGradient]);
 
+  // Show notification 3 seconds after home screen appears
+  useEffect(() => {
+    if (!showBoot && !showWelcome) {
+      const timer = setTimeout(() => {
+        setShowNotification(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showBoot, showWelcome]);
+
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Background Image with Dimming Overlay */}
@@ -148,6 +160,9 @@ const Index = () => {
 
       {!showBoot && !showWelcome && (
         <>
+          {showNotification && (
+            <WelcomeNotification onDismiss={() => setShowNotification(false)} />
+          )}
           <StatusBar />
           
           {/* Main content area */}
