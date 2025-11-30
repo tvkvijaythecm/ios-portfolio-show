@@ -76,6 +76,13 @@ All colors MUST be HSL.
     --gradient-5-start: 270 70% 60%;
     --gradient-5-mid: 300 75% 55%;
     --gradient-5-end: 330 70% 50%;
+    
+    /* Ethereal gradient (blue-purple-pink-red) */
+    --gradient-ethereal-1: 240 80% 45%;
+    --gradient-ethereal-2: 260 70% 35%;
+    --gradient-ethereal-3: 280 75% 50%;
+    --gradient-ethereal-4: 330 80% 55%;
+    --gradient-ethereal-5: 10 90% 55%;
 
     --sidebar-background: 0 0% 98%;
 
@@ -192,6 +199,16 @@ All colors MUST be HSL.
       hsl(var(--gradient-5-mid)) 50%,
       hsl(var(--gradient-5-end)) 100%
     );
+  }
+  
+  /* Ethereal gradient with soft blended colors */
+  .gradient-ethereal {
+    background: 
+      radial-gradient(circle at 20% 80%, hsl(var(--gradient-ethereal-4)) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, hsl(var(--gradient-ethereal-5)) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, hsl(var(--gradient-ethereal-3)) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 0%, hsl(var(--gradient-ethereal-1)) 0%, transparent 70%),
+      hsl(var(--gradient-ethereal-2));
   }
   
   /* Frosted glass effect for iOS dock */
