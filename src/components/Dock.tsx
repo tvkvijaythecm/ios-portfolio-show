@@ -4,6 +4,13 @@ import { useState } from "react";
 import AppIcon from "./AppIcon";
 import LoadingScreen from "./LoadingScreen";
 import ExternalLinkDialog from "./ExternalLinkDialog";
+import whatsappIcon from "@/assets/icons/whatsapp.png";
+import callIcon from "@/assets/icons/call.png";
+import mailIcon from "@/assets/icons/mail.png";
+import socialIcon from "@/assets/icons/social.png";
+import facebookIcon from "@/assets/icons/facebook.png";
+import instagramIcon from "@/assets/icons/instagram.png";
+import tiktokIcon from "@/assets/icons/tiktok.png";
 
 const Dock = () => {
   const [showSocial, setShowSocial] = useState(false);
@@ -26,9 +33,9 @@ const Dock = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, label: "Facebook", color: "bg-blue-600", url: "#" },
-    { icon: Instagram, label: "Instagram", gradient: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", url: "#" },
-    { icon: Music, label: "TikTok", color: "bg-black", url: "#" },
+    { imageIcon: facebookIcon, label: "Facebook", color: "bg-blue-600", url: "#" },
+    { imageIcon: instagramIcon, label: "Instagram", gradient: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", url: "#" },
+    { imageIcon: tiktokIcon, label: "TikTok", color: "bg-black", url: "#" },
   ];
 
   return (
@@ -69,7 +76,7 @@ const Dock = () => {
                 {socialLinks.map((social) => (
                   <AppIcon
                     key={social.label}
-                    icon={social.icon}
+                    imageIcon={social.imageIcon}
                     label={social.label}
                     bgColor={social.color}
                     gradient={social.gradient}
@@ -91,25 +98,25 @@ const Dock = () => {
         >
           <div className="flex gap-5 items-center">
             <AppIcon
-              icon={MessageCircle}
+              imageIcon={whatsappIcon}
               label="WhatsApp"
               gradient="linear-gradient(135deg, #25D366 0%, #128C7E 100%)"
               onClick={() => handleCommunicationAppClick("WhatsApp", "https://wa.me/")}
             />
             <AppIcon
-              icon={Phone}
-              label="Phone"
+              imageIcon={callIcon}
+              label="Call"
               gradient="linear-gradient(135deg, #34C759 0%, #30D158 100%)"
               onClick={() => handleCommunicationAppClick("Phone", "tel:")}
             />
             <AppIcon
-              icon={Mail}
+              imageIcon={mailIcon}
               label="Mail"
               gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
               onClick={() => handleCommunicationAppClick("Mail", "mailto:")}
             />
             <AppIcon
-              icon={Share2}
+              imageIcon={socialIcon}
               label="Social"
               gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
               onClick={() => setShowSocial(!showSocial)}

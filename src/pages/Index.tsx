@@ -42,6 +42,16 @@ import photo6 from "@/assets/photo6.jpg";
 import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
+import sureshIcon from "@/assets/icons/suresh.png";
+import photosIcon from "@/assets/icons/photos.png";
+import videoIcon from "@/assets/icons/video.png";
+import githubIcon from "@/assets/icons/github.png";
+import workIcon from "@/assets/icons/work.png";
+import notesIcon from "@/assets/icons/notes.png";
+import infoIcon from "@/assets/icons/info.png";
+import clockIcon from "@/assets/icons/clock.png";
+import weatherIcon from "@/assets/icons/weather.png";
+import caseStudyIcon from "@/assets/icons/casestudy.png";
 import BootScreen from "@/components/BootScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import StatusBar from "@/components/StatusBar";
@@ -175,77 +185,78 @@ const Index = () => {
                     {/* App Grid */}
                     <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
                       <AppIcon
-                        icon={Info}
-                        label="Info"
+                        imageIcon={sureshIcon}
+                        label="Suresh"
                         gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
                         onClick={() => setOpenApp("profile")}
                       />
                       <AppIcon
-                        icon={Image}
+                        imageIcon={photosIcon}
                         label="Photos"
                         gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 50%, #FF3B30 100%)"
                         onClick={() => setOpenApp("photos")}
                       />
                       <AppIcon
-                        icon={Youtube}
-                        label="YouTube"
+                        imageIcon={videoIcon}
+                        label="Video"
                         gradient="linear-gradient(135deg, #FF0000 0%, #CC0000 100%)"
                         onClick={() => setOpenApp("youtube")}
                       />
                       <AppIcon
-                        icon={Github}
+                        imageIcon={githubIcon}
                         label="GitHub"
                         bgColor="bg-black"
                         onClick={() => setOpenApp("github")}
                       />
                       <AppIcon
-                        icon={BookOpen}
+                        imageIcon="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/appicon/education.png"
                         label="Education"
                         gradient="linear-gradient(135deg, #5856D6 0%, #3634A3 100%)"
                         onClick={() => setOpenApp("education")}
                       />
                       <AppIcon
-                        icon={Briefcase}
+                        imageIcon={workIcon}
                         label="Work"
                         gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
                         onClick={() => setOpenApp("briefcase")}
                       />
                       <AppIcon
-                        icon={FileText}
+                        imageIcon={notesIcon}
                         label="Notes"
                         gradient="linear-gradient(135deg, #FFD60A 0%, #FFC107 100%)"
                         onClick={() => setOpenApp("notes")}
                       />
                       <AppIcon
-                        imageIcon={aboutIcon}
-                        label="About"
+                        imageIcon={infoIcon}
+                        label="Info"
                         gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
                         onClick={() => setOpenApp("about")}
                       />
                       
                       {/* Basic Apps Row */}
                       <AppIcon
-                        icon={CalendarIcon}
+                        imageIcon="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/appicon/calendar.png"
                         label="Calendar"
                         bgColor="bg-white"
                         iconColor="text-red-500"
                         onClick={() => setOpenApp("calendar")}
                       />
                       <AppIcon
-                        icon={Clock}
+                        imageIcon={clockIcon}
                         label="Clock"
                         bgColor="bg-black"
                         onClick={() => setOpenApp("clock")}
                       />
                       <AppIcon
-                        icon={Cloud}
+                        imageIcon={weatherIcon}
                         label="Weather"
                         gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
                         onClick={() => setOpenApp("weather")}
                       />
-                      <CaseStudyFolder
-                        miniApps={caseStudyMiniApps}
+                      <AppIcon
+                        imageIcon={caseStudyIcon}
                         label="Case Study"
+                        gradient="linear-gradient(135deg, #667EEA 0%, #764BA2 100%)"
                         onClick={() => {
                           setShowCaseStudyGrid(true);
                           setOpenApp("case-study");
