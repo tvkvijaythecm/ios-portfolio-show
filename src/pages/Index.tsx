@@ -70,6 +70,7 @@ import CaseStudyPage from "@/components/CaseStudyPage";
 import AboutApp from "@/components/AboutApp";
 import WelcomeNotification from "@/components/WelcomeNotification";
 import EducationApp from "@/components/EducationApp";
+import ParticleBackground from "@/components/ParticleBackground";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
 type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
@@ -148,12 +149,8 @@ const Index = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      {/* Background Image with Dimming Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-      />
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Animated Particle Background */}
+      <ParticleBackground />
       
       <AnimatePresence>
         {showBoot && (
