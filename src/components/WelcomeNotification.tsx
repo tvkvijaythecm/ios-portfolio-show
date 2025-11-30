@@ -38,9 +38,9 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
           }}
           className="fixed top-2 left-4 right-4 z-[200] mx-auto max-w-md"
         >
-          <div className="bg-background/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-border/50 p-4 flex items-start gap-3">
+          <div className="bg-gradient-to-br from-[#1a0f3e] via-[#4a1b5c] to-[#1a0f3e] backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-4 flex items-start gap-3">
             {/* Time */}
-            <span className="text-xs text-muted-foreground font-medium pt-0.5">
+            <span className="text-xs text-white/70 font-medium pt-0.5">
               {currentTime}
             </span>
 
@@ -48,16 +48,16 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
             <div className="flex-shrink-0">
               <div className="w-8 h-8 rounded-full overflow-hidden relative shadow-md">
                 <img src={aboutIcon} alt="About" className="w-full h-full object-cover" />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background"></div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#1a0f3e]"></div>
               </div>
             </div>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-foreground text-sm">
+              <div className="font-semibold text-white text-sm">
                 John Smith
               </div>
-              <div className="text-muted-foreground text-xs">
+              <div className="text-white/70 text-xs">
                 Welcome! Hope you're having a great day.
               </div>
             </div>

@@ -61,6 +61,8 @@ export default {
       fontFamily: {
         'meldina': ['Great Vibes', 'cursive'],
         'barkentina': ['Barkentina', 'serif'],
+        'vintage': ['Vintage Goods', 'cursive'],
+        'sackers': ['Sackers Gothic', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
