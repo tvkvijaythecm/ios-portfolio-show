@@ -287,9 +287,9 @@ const Index = () => {
                         className="w-20 h-20 rounded-full object-cover flex-shrink-0"
                       />
                       <div className="flex-1">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">thephotomaniak</h2>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">eMobile OS</h2>
                         <button className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                          Change profile picture
+                          Version  1.5
                         </button>
                       </div>
                     </div>
@@ -297,20 +297,20 @@ const Index = () => {
                     {/* Profile Info Fields */}
                     <div className="space-y-4">
                       <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Name</span>
-                        <span className="text-gray-900 dark:text-white font-medium">Jonathan</span>
+                        <span className="text-gray-500 dark:text-gray-400 w-32">Codebase</span>
+                        <span className="text-gray-900 dark:text-white font-medium"> Javascript</span>
                       </div>
                       <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Username</span>
-                        <span className="text-gray-900 dark:text-white font-medium">thephotomaniak</span>
+                        <span className="text-gray-500 dark:text-gray-400 w-32">Est.</span>
+                        <span className="text-gray-900 dark:text-white font-medium">2024</span>
                       </div>
                       <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Job</span>
-                        <span className="text-gray-900 dark:text-white font-medium">Photographer</span>
+                        <span className="text-gray-500 dark:text-gray-400 w-32">License</span>
+                        <span className="text-gray-900 dark:text-white font-medium">GNU AGPLv3</span>
                       </div>
                       <div className="flex items-center py-3">
-                        <span className="text-gray-500 dark:text-gray-400 w-32">Location</span>
-                        <span className="text-red-500 font-medium">Rotterdam, NL</span>
+                        <span className="text-gray-500 dark:text-gray-400 w-32">Origin</span>
+                        <span className="text-red-500 font-medium">Kuala Lumpur, MY</span>
                       </div>
                     </div>
                   </div>
@@ -324,7 +324,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-gray-600 flex items-center justify-center flex-shrink-0">
                         <Info className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Privacy settings</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Privacy Policy</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
@@ -335,7 +335,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
                         <User className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Private information</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">GNU AGPLv3</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
@@ -346,7 +346,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-orange-400 flex items-center justify-center flex-shrink-0">
                         <CalendarIcon className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Posting schedule settings</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">System Logs</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
@@ -357,7 +357,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-red-400 flex items-center justify-center flex-shrink-0">
                         <Github className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Linked accounts</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Acknowledgements</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
                   </div>
