@@ -111,7 +111,7 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-[#121212] text-[#e0e0e0]"
+      className="fixed inset-0 z-50 flex flex-col bg-[#121212] text-[#e0e0e0] overflow-hidden"
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
@@ -264,8 +264,8 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
       </div>
 
       {/* Grid Content */}
-      <div className="relative z-10 flex-1 overflow-y-auto p-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div className="relative z-10 flex-1 overflow-y-auto p-6 min-h-0">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 pb-6">
           {activeTab === "institute" &&
             captions.institute.map((caption, index) => (
               <motion.div
