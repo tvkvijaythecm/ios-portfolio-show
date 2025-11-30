@@ -36,15 +36,13 @@ const AppIcon = ({
       <motion.div
         className={cn(
           iconSize,
-          "rounded-[22%] flex items-center justify-center app-shadow relative overflow-hidden",
-          !gradient && bgColor
+          "flex items-center justify-center relative"
         )}
-        style={gradient ? { background: gradient } : undefined}
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
         {imageIcon ? (
-          <img src={imageIcon} alt={label} className="w-full h-full object-cover" />
+          <img src={imageIcon} alt={label} className="w-full h-full object-contain" />
         ) : Icon ? (
           <Icon className={cn(iconScale, iconColor)} strokeWidth={1.8} />
         ) : null}
