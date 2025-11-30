@@ -33,6 +33,7 @@ import { Switch } from "@/components/ui/switch";
 import profileImage from "@/assets/profile.jpeg";
 import aboutIcon from "@/assets/about-icon.png";
 import backgroundImage from "@/assets/background.png";
+import homescreenBg from "@/assets/homescreen-bg.jpg";
 import photo1 from "@/assets/photo1.jpg";
 import photo2 from "@/assets/photo2.jpg";
 import photo3 from "@/assets/photo3.jpg";
@@ -148,8 +149,11 @@ const Index = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      {/* Ethereal Gradient Background */}
-      <div className="absolute inset-0 gradient-ethereal" />
+      {/* Homescreen Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${homescreenBg})` }}
+      />
       
       <AnimatePresence>
         {showBoot && (
