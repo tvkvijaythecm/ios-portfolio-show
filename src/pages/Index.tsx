@@ -185,8 +185,8 @@ const Index = () => {
                     {/* App Grid */}
                     <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
                       <AppIcon
-                        imageIcon={sureshIcon}
-                        label="Suresh"
+                        imageIcon={infoIcon}
+                        label="Info"
                         gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
                         onClick={() => setOpenApp("profile")}
                       />
@@ -227,8 +227,8 @@ const Index = () => {
                         onClick={() => setOpenApp("notes")}
                       />
                       <AppIcon
-                        imageIcon={infoIcon}
-                        label="Info"
+                        imageIcon={sureshIcon}
+                        label="Suresh"
                         gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
                         onClick={() => setOpenApp("about")}
                       />
