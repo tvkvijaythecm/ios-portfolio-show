@@ -59,6 +59,7 @@ import CaseStudyGrid from "@/components/CaseStudyGrid";
 import CaseStudyPage from "@/components/CaseStudyPage";
 import AboutApp from "@/components/AboutApp";
 import WelcomeNotification from "@/components/WelcomeNotification";
+import EducationApp from "@/components/EducationApp";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
 type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
@@ -484,65 +485,7 @@ const Index = () => {
             )}
 
             {openApp === "education" && (
-              <AppPage
-                title="Education"
-                icon={BookOpen}
-                onClose={() => setOpenApp(null)}
-              >
-                <div className="relative">
-                  {/* Timeline Line */}
-                  <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-400 via-blue-400 to-teal-400" />
-                  
-                  <div className="space-y-8">
-                    {[
-                      { 
-                        school: "University of Technology", 
-                        degree: "Bachelor of Computer Science", 
-                        year: "2018 - 2022",
-                        description: "Specialized in Web Development and UI/UX Design. Graduated with honors.",
-                        color: "bg-purple-500"
-                      },
-                      { 
-                        school: "Design Institute", 
-                        degree: "Certificate in Digital Design", 
-                        year: "2017",
-                        description: "Focused on modern design principles and creative problem solving.",
-                        color: "bg-blue-500"
-                      },
-                      { 
-                        school: "International High School", 
-                        degree: "High School Diploma", 
-                        year: "2014 - 2018",
-                        description: "Emphasis on Mathematics and Creative Arts.",
-                        color: "bg-teal-500"
-                      },
-                    ].map((edu, i) => (
-                      <div key={i} className="relative pl-20">
-                        {/* Timeline Dot */}
-                        <div className={`absolute left-6 top-6 w-5 h-5 ${edu.color} rounded-full border-4 border-white dark:border-gray-900 z-10`} />
-                        
-                        <motion.div
-                          className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg rounded-2xl p-6 shadow-lg"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <div className="flex items-start justify-between mb-2">
-                            <div>
-                              <h3 className="text-xl font-bold text-gray-900 dark:text-white">{edu.school}</h3>
-                              <p className="text-gray-600 dark:text-gray-300 mt-1 font-medium">{edu.degree}</p>
-                            </div>
-                            <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full whitespace-nowrap">
-                              {edu.year}
-                            </span>
-                          </div>
-                          <p className="text-gray-500 dark:text-gray-400 text-sm mt-3">{edu.description}</p>
-                        </motion.div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </AppPage>
+              <EducationApp onClose={() => setOpenApp(null)} />
             )}
 
             {openApp === "briefcase" && (
