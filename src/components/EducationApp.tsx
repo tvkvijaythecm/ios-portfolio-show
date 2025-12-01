@@ -194,7 +194,7 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
       <div className="relative z-10 flex gap-6 p-6 flex-wrap">
         <div className="absolute inset-0 edu-glass rounded-3xl m-3 -z-10" />
         <img 
-          src="me2.png" 
+          src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
           alt="avatar" 
           className="w-32 h-32 rounded-full object-cover border-2 border-white/15 shadow-lg"
           onError={(e) => {
@@ -272,7 +272,7 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
                 key={`inst-${index}`}
                 className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
                 style={{ background: gradients[index % gradients.length] }}
-                onClick={() => openPopup(`images/inst${index + 1}.jpg`, caption)}
+                onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/inst${index + 1}.jpg`, caption)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, y: 20 }}
@@ -297,7 +297,7 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
                 key={`onc-${index}`}
                 className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
                 style={{ background: gradients[index % gradients.length] }}
-                onClick={() => openPopup(`images/onc${index + 1}.jpg`, caption)}
+                onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/onc${index + 1}.jpg`, caption)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, y: 20 }}
