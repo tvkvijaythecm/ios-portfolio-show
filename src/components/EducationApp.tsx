@@ -111,7 +111,7 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-[#121212] text-[#e0e0e0] overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col bg-[#121212] text-[#e0e0e0] h-screen"
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
@@ -263,59 +263,61 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
         </button>
       </div>
 
-      {/* Grid Content */}
-      <div className="relative z-10 flex-1 overflow-y-auto p-6 min-h-0">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 pb-6">
-          {activeTab === "institute" &&
-            captions.institute.map((caption, index) => (
-              <motion.div
-                key={`inst-${index}`}
-                className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
-                style={{ background: gradients[index % gradients.length] }}
-                onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/inst${index + 1}.jpg`, caption)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                <img
-                  src={`images/inst${index + 1}.jpg`}
-                  alt={caption}
-                  className="w-full h-full object-cover opacity-0 transition-opacity duration-500"
-                  onLoad={(e) => e.currentTarget.classList.add("!opacity-100")}
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </motion.div>
-            ))}
-          {activeTab === "online" &&
-            captions.online.map((caption, index) => (
-              <motion.div
-                key={`onc-${index}`}
-                className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
-                style={{ background: gradients[index % gradients.length] }}
-                onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/onc${index + 1}.jpg`, caption)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                <img
-                  src={`images/onc${index + 1}.jpg`}
-                  alt={caption}
-                  className="w-full h-full object-cover opacity-0 transition-opacity duration-500"
-                  onLoad={(e) => e.currentTarget.classList.add("!opacity-100")}
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </motion.div>
-            ))}
+      {/* Grid Content - Scrollable Area */}
+      <div className="relative z-10 flex-1 min-h-0 overflow-hidden">
+        <div className="h-full overflow-y-auto p-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 pb-6">
+            {activeTab === "institute" &&
+              captions.institute.map((caption, index) => (
+                <motion.div
+                  key={`inst-${index}`}
+                  className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
+                  style={{ background: gradients[index % gradients.length] }}
+                  onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/inst${index + 1}.jpg`, caption)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+                  <img
+                    src={`images/inst${index + 1}.jpg`}
+                    alt={caption}
+                    className="w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                    onLoad={(e) => e.currentTarget.classList.add("!opacity-100")}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </motion.div>
+              ))}
+            {activeTab === "online" &&
+              captions.online.map((caption, index) => (
+                <motion.div
+                  key={`onc-${index}`}
+                  className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
+                  style={{ background: gradients[index % gradients.length] }}
+                  onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/onc${index + 1}.jpg`, caption)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+                  <img
+                    src={`images/onc${index + 1}.jpg`}
+                    alt={caption}
+                    className="w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                    onLoad={(e) => e.currentTarget.classList.add("!opacity-100")}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </motion.div>
+              ))}
+          </div>
         </div>
       </div>
 
