@@ -38,7 +38,7 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
           }}
           className="fixed top-2 left-4 right-4 z-[200] mx-auto max-w-md"
         >
-          <div className="bg-gradient-to-br from-[#1a0f3e] via-[#4a1b5c] to-[#1a0f3e] backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-4 flex items-start gap-3">
+          <div className="bg-gradient-to-br from-blue-600/90 via-purple-600/90 to-orange-500/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-4 flex items-start gap-3">
             {/* Time */}
             <span className="text-xs text-white/70 font-medium pt-0.5">
               {currentTime}
@@ -48,7 +48,7 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
             <div className="flex-shrink-0">
               <div className="w-8 h-8 rounded-full overflow-hidden relative shadow-md">
                 <img src={aboutIcon} alt="About" className="w-full h-full object-cover" />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#1a0f3e]"></div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-blue-600"></div>
               </div>
             </div>
 
