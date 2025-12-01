@@ -22,8 +22,8 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
-      {/* Purple gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a0f3e] via-[#4a1b5c] to-[#1a0f3e]" />
+      {/* Vibrant gradient background matching wallpaper */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500" />
 
       {/* Animated Welcome Text */}
       <motion.div
