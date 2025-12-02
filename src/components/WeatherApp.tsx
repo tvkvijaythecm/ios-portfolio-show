@@ -239,7 +239,7 @@ const WeatherApp = () => {
   });
 
   return (
-    <div className="min-h-full bg-gray-900 p-6 overflow-y-auto">
+    <div className="min-h-full bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500 p-6 overflow-y-auto">
       {/* Main Weather Card */}
       <div className="mb-8">
         {/* Location and Time */}
