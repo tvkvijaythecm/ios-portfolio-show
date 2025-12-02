@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ChevronLeft, GraduationCap, X } from "lucide-react";
+import { useState } from "react";
 
 interface EducationAppProps {
   onClose: () => void;
@@ -44,61 +44,6 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
     ]
   };
 
-  const gradients = [
-    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-    "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
-    "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
-    "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-    "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-    "linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)"
-  ];
-
-  useEffect(() => {
-    // Create colorful floating particles
-    const createParticles = () => {
-      const particlesContainer = document.getElementById('edu-particles');
-      if (!particlesContainer) return;
-      
-      const colors = [
-        'radial-gradient(circle at 30% 30%, rgba(255, 105, 180, 0.8), transparent 70%)',
-        'radial-gradient(circle at 30% 30%, rgba(30, 144, 255, 0.8), transparent 70%)',
-        'radial-gradient(circle at 30% 30%, rgba(50, 205, 50, 0.8), transparent 70%)',
-        'radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.8), transparent 70%)',
-        'radial-gradient(circle at 30% 30%, rgba(138, 43, 226, 0.8), transparent 70%)',
-        'radial-gradient(circle at 30% 30%, rgba(255, 69, 0, 0.8), transparent 70%)',
-        'radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.8), transparent 70%)',
-        'radial-gradient(circle at 30% 30%, rgba(255, 192, 203, 0.8), transparent 70%)'
-      ];
-
-      for (let i = 0; i < 25; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'edu-particle';
-        
-        const size = Math.random() * 60 + 20;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${Math.random() * 100}vw`;
-        particle.style.top = `${Math.random() * 100}vh`;
-        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.animationDelay = `${Math.random() * 15}s`;
-        particle.style.animationDuration = `${15 + Math.random() * 10}s`;
-        
-        particlesContainer.appendChild(particle);
-      }
-    };
-
-    createParticles();
-    
-    return () => {
-      const particlesContainer = document.getElementById('edu-particles');
-      if (particlesContainer) {
-        particlesContainer.innerHTML = '';
-      }
-    };
-  }, []);
-
   const openPopup = (image: string, caption: string) => {
     setPopupImage(image);
     setPopupCaption(caption);
@@ -111,257 +56,227 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-[#121212] text-[#e0e0e0] h-screen"
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.8, opacity: 0 }}
+      className="fixed inset-0 z-50 flex flex-col bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500"
+      initial={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
+      animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
+      exit={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <style>{`
-        .edu-particles {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 0;
-          overflow: hidden;
-          pointer-events: none;
-        }
-        
-        .edu-particle {
-          position: absolute;
-          border-radius: 50%;
-          animation: edu-float 15s infinite linear;
-          box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        
-        @keyframes edu-float {
-          0% {
-            transform: translateY(0) translateX(0) rotate(0deg);
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          90% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-100vh) translateX(100px) rotate(360deg);
-            opacity: 0;
-          }
-        }
-
-        .edu-glass {
-          background: rgba(255, 255, 255, 0.08);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .edu-thumb-card {
-          transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          transform-style: preserve-3d;
-          perspective: 1000px;
-        }
-
-        .edu-thumb-card:hover {
-          transform: scale(1.08) translateY(-10px) rotateX(5deg);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-        }
-      `}</style>
-
-      {/* Particles Background */}
-      <div id="edu-particles" className="edu-particles" />
-
-      {/* Header */}
-      <div className="relative z-10 flex items-center justify-between px-6 py-4 edu-glass border-b border-white/10">
-        <motion.button
-          onClick={onClose}
-          className="flex items-center"
-          whileTap={{ scale: 0.95 }}
-        >
-          <ChevronLeft className="w-9 h-9 text-white" strokeWidth={3} />
-        </motion.button>
-        <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Trajan Pro', sans-serif" }}>
-          CREDENTIALS
-        </h1>
-        <div className="w-9" />
-      </div>
-
-      {/* Info Section */}
-      <div className="relative z-10 flex gap-6 p-6 flex-wrap">
-        <div className="absolute inset-0 edu-glass rounded-3xl m-3 -z-10" />
-        <img 
-          src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
-          alt="avatar" 
-          className="w-32 h-32 rounded-full object-cover border-2 border-white/15 shadow-lg"
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-        <div className="flex-1 min-w-[220px]">
-          <h2 
-            className="text-2xl font-bold mb-3 text-white" 
-            style={{ fontFamily: "'Trajan Pro', sans-serif" }}
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="h-20 flex items-end justify-between px-6 pb-3 relative flex-shrink-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+          <motion.button
+            onClick={onClose}
+            className="relative z-10 flex items-center"
+            whileTap={{ scale: 0.95 }}
           >
-            Suresh Kaleyannan
-          </h2>
-          <div className="flex gap-4 mb-4 text-sm flex-wrap">
-            <div className="edu-glass px-4 py-2 rounded-2xl" style={{ fontFamily: "'Trajan Pro', sans-serif" }}>
-              <strong>10k+</strong> Design
+            <ChevronLeft className="w-9 h-9 text-white drop-shadow-lg" strokeWidth={3} />
+          </motion.button>
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-sm">
+              <GraduationCap className="w-6 h-6 text-white" strokeWidth={2} />
             </div>
-            <div className="edu-glass px-4 py-2 rounded-2xl" style={{ fontFamily: "'Trajan Pro', sans-serif" }}>
-              <strong>500+</strong> Development
-            </div>
-            <div className="edu-glass px-4 py-2 rounded-2xl" style={{ fontFamily: "'Trajan Pro', sans-serif" }}>
-              <strong>15+</strong> Years
-            </div>
+            <h1 className="text-white text-2xl font-bold drop-shadow-lg">Education</h1>
           </div>
-          <div 
-            className="edu-glass p-4 rounded-2xl text-sm leading-relaxed" 
-            style={{ fontFamily: "'Trajan Pro', sans-serif" }}
-          >
-            ACHIEVEMENTS & CREDENTIALS<br /><br />
-            Explore my professional achievements and certifications, showcasing my dedication to continuous learning and skill development.
+          <div className="w-9" />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-6 pb-6">
+          <div className="max-w-4xl mx-auto space-y-4">
+            {/* Profile Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl p-6 shadow-lg"
+            >
+              <div className="flex items-center gap-4">
+                <img 
+                  src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
+                  alt="Profile" 
+                  className="w-20 h-20 rounded-2xl object-cover shadow-md"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Suresh Kaleyannan</h2>
+                  <div className="flex gap-3 flex-wrap">
+                    <div className="bg-primary/10 dark:bg-primary/20 px-4 py-1.5 rounded-full">
+                      <span className="text-sm font-semibold text-primary dark:text-primary-foreground">10k+ Design</span>
+                    </div>
+                    <div className="bg-primary/10 dark:bg-primary/20 px-4 py-1.5 rounded-full">
+                      <span className="text-sm font-semibold text-primary dark:text-primary-foreground">500+ Development</span>
+                    </div>
+                    <div className="bg-primary/10 dark:bg-primary/20 px-4 py-1.5 rounded-full">
+                      <span className="text-sm font-semibold text-primary dark:text-primary-foreground">15+ Years</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Description Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl p-6 shadow-lg"
+            >
+              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+                Achievements & Credentials
+              </h3>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                Explore my professional achievements and certifications, showcasing my dedication to continuous learning and skill development across design, development, and technology.
+              </p>
+            </motion.div>
+
+            {/* Tab Navigation */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl p-2 shadow-lg flex gap-2"
+            >
+              <button
+                onClick={() => setActiveTab("online")}
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all relative ${
+                  activeTab === "online"
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                {activeTab === "online" && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-primary rounded-xl"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">Online Certifications</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("institute")}
+                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all relative ${
+                  activeTab === "institute"
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+              >
+                {activeTab === "institute" && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-primary rounded-xl"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">Institute Credentials</span>
+              </button>
+            </motion.div>
+
+            {/* Credentials Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-6"
+            >
+              {activeTab === "institute" &&
+                captions.institute.map((caption, index) => (
+                  <motion.div
+                    key={`inst-${index}`}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 + index * 0.05 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/inst${index + 1}.jpg`, caption)}
+                    className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-2xl transition-all"
+                  >
+                    <div className="aspect-square bg-gradient-to-br from-primary/20 to-primary/5 relative overflow-hidden">
+                      <img
+                        src={`images/inst${index + 1}.jpg`}
+                        alt={caption}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                    <div className="p-3">
+                      <p className="text-xs text-gray-700 dark:text-gray-300 font-medium line-clamp-2">
+                        {caption}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              {activeTab === "online" &&
+                captions.online.map((caption, index) => (
+                  <motion.div
+                    key={`onc-${index}`}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 + index * 0.05 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/onc${index + 1}.jpg`, caption)}
+                    className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-2xl transition-all"
+                  >
+                    <div className="aspect-square bg-gradient-to-br from-primary/20 to-primary/5 relative overflow-hidden">
+                      <img
+                        src={`images/onc${index + 1}.jpg`}
+                        alt={caption}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                    <div className="p-3">
+                      <p className="text-xs text-gray-700 dark:text-gray-300 font-medium line-clamp-2">
+                        {caption}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+            </motion.div>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="relative z-10 flex edu-glass border-b border-white/10">
-        <button
-          className={`flex-1 py-5 text-xl transition-all relative ${
-            activeTab === "online" ? "text-white" : "text-[#aaa]"
-          }`}
-          onClick={() => setActiveTab("online")}
-        >
-          <i className="fa fa-certificate" />
-          {activeTab === "online" && (
-            <motion.div
-              layoutId="activeTab"
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-1 bg-white rounded-full"
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            />
-          )}
-        </button>
-        <button
-          className={`flex-1 py-5 text-xl transition-all relative ${
-            activeTab === "institute" ? "text-white" : "text-[#aaa]"
-          }`}
-          onClick={() => setActiveTab("institute")}
-        >
-          <i className="fa fa-university" />
-          {activeTab === "institute" && (
-            <motion.div
-              layoutId="activeTab"
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-1 bg-white rounded-full"
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            />
-          )}
-        </button>
-      </div>
-
-      {/* Grid Content - Scrollable Area */}
-      <div className="relative z-10 flex-1 min-h-0 overflow-hidden">
-        <div className="h-full overflow-y-auto p-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 pb-6">
-            {activeTab === "institute" &&
-              captions.institute.map((caption, index) => (
-                <motion.div
-                  key={`inst-${index}`}
-                  className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
-                  style={{ background: gradients[index % gradients.length] }}
-                  onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/inst${index + 1}.jpg`, caption)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                  <img
-                    src={`images/inst${index + 1}.jpg`}
-                    alt={caption}
-                    className="w-full h-full object-cover opacity-0 transition-opacity duration-500"
-                    onLoad={(e) => e.currentTarget.classList.add("!opacity-100")}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </motion.div>
-              ))}
-            {activeTab === "online" &&
-              captions.online.map((caption, index) => (
-                <motion.div
-                  key={`onc-${index}`}
-                  className="edu-thumb-card aspect-square rounded-3xl overflow-hidden cursor-pointer edu-glass relative"
-                  style={{ background: gradients[index % gradients.length] }}
-                  onClick={() => openPopup(`https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/onc${index + 1}.jpg`, caption)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                  <img
-                    src={`images/onc${index + 1}.jpg`}
-                    alt={caption}
-                    className="w-full h-full object-cover opacity-0 transition-opacity duration-500"
-                    onLoad={(e) => e.currentTarget.classList.add("!opacity-100")}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </motion.div>
-              ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div 
-        className="relative z-10 text-center py-5 text-sm text-[#aaa] edu-glass border-t border-white/10" 
-        style={{ fontFamily: "'Trajan Pro', sans-serif" }}
-      >
-        &copy; 2024 Suresh. All rights reserved.
-      </div>
-
-      {/* Popup */}
+      {/* Certificate Popup Modal */}
       <AnimatePresence>
         {popupImage && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closePopup}
           >
             <motion.div
-              className="relative max-w-[90vw] max-h-[90vh] edu-glass rounded-3xl overflow-hidden shadow-2xl"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
+              className="relative max-w-4xl w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={closePopup}
-                className="absolute top-4 right-5 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white text-3xl hover:bg-red-500/70 transition-all z-10"
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-red-500/80 transition-colors z-10"
               >
-                &times;
+                <X className="w-6 h-6" />
               </button>
               <img
                 src={popupImage}
-                alt="popup"
+                alt="Certificate"
                 className="w-full h-auto max-h-[70vh] object-contain"
               />
-              <div 
-                className="p-5 bg-black/60 text-white text-center text-lg" 
-                style={{ fontFamily: "'Trajan Pro', sans-serif" }}
-              >
-                {popupCaption}
+              <div className="p-6 bg-gradient-to-t from-gray-100 to-white dark:from-gray-900 dark:to-gray-800">
+                <p className="text-center text-gray-900 dark:text-white font-semibold text-lg">
+                  {popupCaption}
+                </p>
               </div>
             </motion.div>
           </motion.div>
