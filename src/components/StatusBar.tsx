@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { Wifi, Battery, Signal } from "lucide-react";
+import { Wifi, Battery, Signal, Fingerprint } from "lucide-react";
 
-const StatusBar = () => {
+interface StatusBarProps {
+  onControlCentreOpen?: () => void;
+}
+
+const StatusBar = ({ onControlCentreOpen }: StatusBarProps) => {
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -24,6 +28,13 @@ const StatusBar = () => {
         <Signal className="w-4 h-4" strokeWidth={2.5} />
         <Wifi className="w-4 h-4" strokeWidth={2.5} />
         <Battery className="w-6 h-6" strokeWidth={2.5} />
+        <button 
+          onClick={onControlCentreOpen}
+          className="ml-2 p-1.5 hover:bg-white/10 rounded-full transition-colors"
+          aria-label="Open Control Centre"
+        >
+          <Fingerprint className="w-5 h-5" strokeWidth={2.5} />
+        </button>
       </div>
     </div>
   );

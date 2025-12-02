@@ -71,6 +71,7 @@ import CaseStudyPage from "@/components/CaseStudyPage";
 import AboutApp from "@/components/AboutApp";
 import WelcomeNotification from "@/components/WelcomeNotification";
 import EducationApp from "@/components/EducationApp";
+import ControlCentre from "@/components/ControlCentre";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
 type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
@@ -85,6 +86,7 @@ const Index = () => {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   const [showCaseStudyGrid, setShowCaseStudyGrid] = useState(false);
   const [openCaseStudyApp, setOpenCaseStudyApp] = useState<CaseStudyAppType>(null);
+  const [showControlCentre, setShowControlCentre] = useState(false);
 
   const photos = [photo1, photo2, photo3, photo4, photo5, photo6];
   const projects = [
@@ -174,7 +176,18 @@ const Index = () => {
           {showNotification && (
             <WelcomeNotification onDismiss={() => setShowNotification(false)} />
           )}
-          <StatusBar />
+          <StatusBar onControlCentreOpen={() => setShowControlCentre(true)} />
+          
+          <AnimatePresence>
+            {showControlCentre && (
+              <ControlCentre 
+                isOpen={showControlCentre}
+                onClose={() => setShowControlCentre(false)}
+                onOpenWeather={() => setOpenApp("weather")}
+                onOpenInfo={() => setOpenApp("privacy")}
+              />
+            )}
+          </AnimatePresence>
           
           {/* Main content area */}
           <div className="absolute inset-0 pt-14 pb-32 px-6 overflow-auto z-10">
