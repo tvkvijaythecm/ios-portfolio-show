@@ -85,51 +85,65 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 pb-6">
           <div className="max-w-4xl mx-auto space-y-4">
-            {/* Profile Card */}
+            {/* Combined Profile & Description Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl p-6 shadow-lg"
+              className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl p-8 shadow-lg"
             >
-              <div className="flex items-center gap-4">
-                <img 
-                  src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
-                  alt="Profile" 
-                  className="w-20 h-20 rounded-2xl object-cover shadow-md"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-                <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Suresh Kaleyannan</h2>
-                  <div className="flex gap-3 flex-wrap">
-                    <div className="bg-primary/10 dark:bg-primary/20 px-4 py-1.5 rounded-full">
-                      <span className="text-sm font-semibold text-primary dark:text-primary-foreground">10k+ Design</span>
-                    </div>
-                    <div className="bg-primary/10 dark:bg-primary/20 px-4 py-1.5 rounded-full">
-                      <span className="text-sm font-semibold text-primary dark:text-primary-foreground">500+ Development</span>
-                    </div>
-                    <div className="bg-primary/10 dark:bg-primary/20 px-4 py-1.5 rounded-full">
-                      <span className="text-sm font-semibold text-primary dark:text-primary-foreground">15+ Years</span>
-                    </div>
+              {/* Profile Section */}
+              <div className="flex items-start gap-6 mb-8">
+                <div className="relative flex-shrink-0">
+                  <div className="w-28 h-28 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                    <img 
+                      src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
+                      alt="Profile" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
                 </div>
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-tight">
+                    Suresh Kaleyannan
+                  </h2>
+                  <p className="text-xl text-gray-500 dark:text-gray-400 mb-1">Creative Developer</p>
+                  <p className="text-lg text-gray-500 dark:text-gray-400">Kuala Lumpur, Malaysia</p>
+                </div>
               </div>
-            </motion.div>
 
-            {/* Description Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl p-6 shadow-lg"
-            >
-              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                Achievements & Credentials
-              </h3>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                Explore my professional achievements and certifications, showcasing my dedication to continuous learning and skill development across design, development, and technology.
-              </p>
+              {/* Stats Pills */}
+              <div className="flex gap-3 flex-wrap justify-center mb-8">
+                <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-3 rounded-full shadow-lg">
+                  <span className="text-lg font-bold text-white">10,000+ DESIGNS.</span>
+                </div>
+                <div className="bg-gradient-to-r from-green-500 to-green-600 px-8 py-3 rounded-full shadow-lg">
+                  <span className="text-lg font-bold text-white">500+ DEVELOPMENT.</span>
+                </div>
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-3 rounded-full shadow-lg">
+                  <span className="text-lg font-bold text-white">15+ YEARS.</span>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 dark:border-gray-700 my-6" />
+
+              {/* Description Section */}
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tight mb-4">
+                  Achievements & Credentials
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+                  Explore my professional achievements and certifications, showcasing my dedication to continuous learning and skill development across design, development, and technology.
+                </p>
+              </div>
             </motion.div>
 
             {/* Tab Navigation */}
