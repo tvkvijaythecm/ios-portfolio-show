@@ -36,6 +36,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   const [torchOn, setTorchOn] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [streamUrl, setStreamUrl] = useState("");
+  const [uploadType, setUploadType] = useState<"file" | "stream">("file");
   const { toast } = useToast();
 
   // Detect IP Address
@@ -150,6 +151,18 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     setShowUploadDialog(true);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSongTitle(file.name);
+      setShowUploadDialog(false);
+      toast({
+        title: "Song uploaded",
+        description: `${file.name} ready to play`,
+      });
+    }
+  };
+
   const handleStreamLoad = () => {
     if (streamUrl) {
       setSongTitle(streamUrl.split('/').pop() || "Stream loaded");
@@ -186,12 +199,12 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
         onDragEnd={handleDragEnd}
         className="fixed inset-x-0 bottom-0 z-[101] max-w-2xl mx-auto"
       >
-        <div className="bg-background/95 backdrop-blur-2xl rounded-t-3xl shadow-2xl border-t border-border/50 p-6 pb-8">
+        <div className="bg-background/40 backdrop-blur-3xl rounded-t-3xl shadow-2xl border-t border-white/20 p-6 pb-8">
           {/* Drag Handle */}
           <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mb-6" />
 
           {/* IP Address */}
-          <div className="bg-muted/50 rounded-2xl p-4 mb-3 flex items-center gap-3">
+          <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 mb-3 flex items-center gap-3 border border-white/20">
             <Globe className="w-6 h-6 text-primary" />
             <div>
               <p className="text-xs text-muted-foreground">IP Address</p>
@@ -200,7 +213,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           </div>
 
           {/* Location */}
-          <div className="bg-muted/50 rounded-2xl p-4 mb-4 flex items-center gap-3">
+          <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 mb-4 flex items-center gap-3 border border-white/20">
             <MapPin className="w-6 h-6 text-primary" />
             <div>
               <p className="text-xs text-muted-foreground">Location</p>
@@ -209,7 +222,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           </div>
 
           {/* Music Player */}
-          <div className="bg-muted/50 rounded-2xl p-4 mb-4">
+          <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 mb-4 border border-white/20">
             <div className="flex items-center gap-4 mb-3">
               <div className="w-16 h-16 bg-background rounded-xl flex items-center justify-center border border-border">
                 <span className="text-4xl">🎵</span>
@@ -251,14 +264,14 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
 
           {/* Time & Date */}
           <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="bg-muted/50 rounded-2xl p-4 flex items-center gap-3">
+            <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex items-center gap-3 border border-white/20">
               <Clock className="w-6 h-6 text-primary" />
               <div>
                 <p className="text-xs text-muted-foreground">Time</p>
                 <p className="text-base font-semibold">{currentTime}</p>
               </div>
             </div>
-            <div className="bg-muted/50 rounded-2xl p-4 flex items-center gap-3">
+            <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex items-center gap-3 border border-white/20">
               <Calendar className="w-6 h-6 text-primary" />
               <div>
                 <p className="text-xs text-muted-foreground">{currentDay}</p>
@@ -271,7 +284,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           <div className="grid grid-cols-4 gap-3">
             <button 
               onClick={handleTorchToggle}
-              className={`bg-background rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-muted/50 transition ${torchOn ? 'ring-2 ring-primary' : ''}`}
+              className={`bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/40 transition border border-white/20 ${torchOn ? 'ring-2 ring-primary' : ''}`}
             >
               <Flashlight className={`w-6 h-6 ${torchOn ? 'text-primary' : ''}`} />
               <span className="text-xs">Torch</span>
@@ -281,7 +294,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                 onOpenWeather();
                 onClose();
               }}
-              className="bg-background rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-muted/50 transition"
+              className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/40 transition border border-white/20"
             >
               <Cloud className="w-6 h-6" />
               <span className="text-xs">Weather</span>
@@ -291,17 +304,17 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                 onOpenInfo();
                 onClose();
               }}
-              className="bg-background rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-muted/50 transition"
+              className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/40 transition border border-white/20"
             >
               <Info className="w-6 h-6" />
               <span className="text-xs">Info</span>
             </button>
             <button 
               onClick={handleReboot}
-              className="bg-background rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-destructive/10 transition"
+              className="bg-red-500/80 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-red-600/80 transition border border-red-400/30"
             >
-              <RotateCcw className="w-6 h-6" />
-              <span className="text-xs">Reboot</span>
+              <RotateCcw className="w-6 h-6 text-white" />
+              <span className="text-xs text-white">Reboot</span>
             </button>
           </div>
         </div>
@@ -319,30 +332,71 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-background rounded-2xl p-6 max-w-md w-full shadow-xl"
+            className="bg-background/95 backdrop-blur-2xl rounded-2xl p-6 max-w-md w-full shadow-xl border border-white/20"
           >
             <h3 className="text-xl font-semibold mb-4">Load Music</h3>
-            <input
-              type="text"
-              placeholder="Paste stream URL..."
-              value={streamUrl}
-              onChange={(e) => setStreamUrl(e.target.value)}
-              className="w-full p-3 bg-muted rounded-lg mb-4 outline-none focus:ring-2 focus:ring-primary"
-            />
-            <div className="flex gap-2">
+            
+            {/* Tab Selection */}
+            <div className="flex gap-2 mb-4">
               <button
-                onClick={handleStreamLoad}
-                className="flex-1 bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 transition"
+                onClick={() => setUploadType("file")}
+                className={`flex-1 py-2 px-4 rounded-lg transition ${
+                  uploadType === "file"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted hover:bg-muted/80"
+                }`}
               >
-                Load Stream
+                Upload File
               </button>
               <button
-                onClick={() => setShowUploadDialog(false)}
-                className="px-6 bg-muted py-3 rounded-lg hover:bg-muted/80 transition"
+                onClick={() => setUploadType("stream")}
+                className={`flex-1 py-2 px-4 rounded-lg transition ${
+                  uploadType === "stream"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted hover:bg-muted/80"
+                }`}
               >
-                Cancel
+                Stream URL
               </button>
             </div>
+
+            {uploadType === "file" ? (
+              <div className="mb-4">
+                <label className="block w-full p-4 bg-muted/50 rounded-lg border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 transition cursor-pointer text-center">
+                  <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Click to upload audio file</span>
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  placeholder="Paste stream URL..."
+                  value={streamUrl}
+                  onChange={(e) => setStreamUrl(e.target.value)}
+                  className="w-full p-3 bg-muted rounded-lg mb-4 outline-none focus:ring-2 focus:ring-primary"
+                />
+                <button
+                  onClick={handleStreamLoad}
+                  className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 transition mb-2"
+                >
+                  Load Stream
+                </button>
+              </>
+            )}
+            
+            <button
+              onClick={() => setShowUploadDialog(false)}
+              className="w-full bg-muted py-3 rounded-lg hover:bg-muted/80 transition"
+            >
+              Cancel
+            </button>
           </motion.div>
         </motion.div>
       )}
