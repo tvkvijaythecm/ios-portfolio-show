@@ -17,6 +17,7 @@ import EducationSettings from "./pages/admin/EducationSettings";
 import CaseStudySettings from "./pages/admin/CaseStudySettings";
 import WelcomeSettings from "./pages/admin/WelcomeSettings";
 import ControlCentreSettings from "./pages/admin/ControlCentreSettings";
+import NotesSettings from "./pages/admin/NotesSettings";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="case-studies" element={<CaseStudySettings />} />
               <Route path="welcome" element={<WelcomeSettings />} />
               <Route path="control-centre" element={<ControlCentreSettings />} />
+              <Route path="notes" element={<NotesSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

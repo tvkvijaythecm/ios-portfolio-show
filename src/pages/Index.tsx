@@ -75,6 +75,7 @@ import AboutApp from "@/components/AboutApp";
 import WelcomeNotification from "@/components/WelcomeNotification";
 import EducationApp from "@/components/EducationApp";
 import ControlCentre from "@/components/ControlCentre";
+import NotesApp from "@/components/NotesApp";
 import { useCaseStudyApps, getIconForApp, CaseStudyApp } from "@/hooks/useCaseStudyApps";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
@@ -557,22 +558,7 @@ const Index = () => {
             )}
 
             {openApp === "notes" && (
-              <AppPage
-                title="Guest Book"
-                icon={FileText}
-                onClose={() => setOpenApp(null)}
-              >
-                <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-6">
-                  <p className="text-gray-700 dark:text-gray-300 mb-4">Leave a message in the guest book!</p>
-                  <textarea
-                    className="w-full h-40 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-yellow-400 dark:focus:border-yellow-500 focus:outline-none resize-none"
-                    placeholder="Write your message here..."
-                  />
-                  <button className="mt-4 w-full bg-yellow-500 dark:bg-yellow-600 text-white py-3 rounded-xl font-semibold hover:bg-yellow-600 dark:hover:bg-yellow-700 transition-colors">
-                    Submit
-                  </button>
-                </div>
-              </AppPage>
+              <NotesApp onClose={() => setOpenApp(null)} />
             )}
 
             {openApp === "calendar" && (
