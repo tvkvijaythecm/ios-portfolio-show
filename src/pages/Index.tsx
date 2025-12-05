@@ -27,7 +27,9 @@ import {
   Lightbulb,
   Layers,
   RotateCcw,
+  LogIn,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import profileImage from "@/assets/profile.jpeg";
@@ -78,6 +80,7 @@ type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock
 type CaseStudyAppType = "goip" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
 
 const Index = () => {
+  const navigate = useNavigate();
   const [showBoot, setShowBoot] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -375,6 +378,18 @@ const Index = () => {
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
                   </div>
+
+                  {/* Authorise Login Button */}
+                  <button 
+                    onClick={() => navigate('/admin')}
+                    className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
+                      <LogIn className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Authorise Login</span>
+                    <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
+                  </button>
 
                   {/* Reboot Slider */}
                   <div className="pt-6 mt-6 border-t border-gray-200 dark:border-gray-700">
