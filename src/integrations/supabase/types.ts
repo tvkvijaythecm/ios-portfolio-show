@@ -14,6 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_content: {
+        Row: {
+          about_text: string | null
+          carousel_images: Json | null
+          experience_years: number | null
+          followers: number | null
+          id: string
+          name: string
+          profile_image: string | null
+          skills: Json | null
+          social_links: Json | null
+          technologies: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          about_text?: string | null
+          carousel_images?: Json | null
+          experience_years?: number | null
+          followers?: number | null
+          id?: string
+          name?: string
+          profile_image?: string | null
+          skills?: Json | null
+          social_links?: Json | null
+          technologies?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          about_text?: string | null
+          carousel_images?: Json | null
+          experience_years?: number | null
+          followers?: number | null
+          id?: string
+          name?: string
+          profile_image?: string | null
+          skills?: Json | null
+          social_links?: Json | null
+          technologies?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      app_items: {
+        Row: {
+          app_type: string
+          created_at: string
+          external_url: string | null
+          gradient: string
+          icon_type: string | null
+          icon_url: string | null
+          id: string
+          is_dock_item: boolean
+          is_visible: boolean
+          lucide_icon: string | null
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          app_type: string
+          created_at?: string
+          external_url?: string | null
+          gradient?: string
+          icon_type?: string | null
+          icon_url?: string | null
+          id?: string
+          is_dock_item?: boolean
+          is_visible?: boolean
+          lucide_icon?: string | null
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          app_type?: string
+          created_at?: string
+          external_url?: string | null
+          gradient?: string
+          icon_type?: string | null
+          icon_url?: string | null
+          id?: string
+          is_dock_item?: boolean
+          is_visible?: boolean
+          lucide_icon?: string | null
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       calendar_notes: {
         Row: {
           created_at: string
@@ -38,15 +152,114 @@ export type Database = {
         }
         Relationships: []
       }
+      case_study_apps: {
+        Row: {
+          created_at: string
+          description: string | null
+          embed_url: string | null
+          gradient: string
+          icon_url: string | null
+          id: string
+          is_visible: boolean
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          gradient?: string
+          icon_url?: string | null
+          id?: string
+          is_visible?: boolean
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          gradient?: string
+          icon_url?: string | null
+          id?: string
+          is_visible?: boolean
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      education_items: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_visible: boolean
+          issuer: string
+          sort_order: number
+          title: string
+          year: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          issuer: string
+          sort_order?: number
+          title: string
+          year?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          issuer?: string
+          sort_order?: number
+          title?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -173,6 +386,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
