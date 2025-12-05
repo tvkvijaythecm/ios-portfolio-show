@@ -7,6 +7,7 @@ interface CaseStudyApp {
   label: string;
   gradient?: string;
   bgColor?: string;
+  imageIcon?: string;
   onClick: () => void;
 }
 
@@ -52,15 +53,23 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
                 whileTap={{ scale: 0.9 }}
                 onClick={app.onClick}
               >
-                <div
-                  className={cn(
-                    "w-16 h-16 rounded-[22%] flex items-center justify-center app-shadow",
-                    !app.gradient && app.bgColor
-                  )}
-                  style={app.gradient ? { background: app.gradient } : undefined}
-                >
-                  <Icon className="w-8 h-8 text-white" strokeWidth={2} />
-                </div>
+                {app.imageIcon ? (
+                  <img 
+                    src={app.imageIcon} 
+                    alt={app.label}
+                    className="w-16 h-16 rounded-[22%] app-shadow object-cover"
+                  />
+                ) : (
+                  <div
+                    className={cn(
+                      "w-16 h-16 rounded-[22%] flex items-center justify-center app-shadow",
+                      !app.gradient && app.bgColor
+                    )}
+                    style={app.gradient ? { background: app.gradient } : undefined}
+                  >
+                    <Icon className="w-8 h-8 text-white" strokeWidth={2} />
+                  </div>
+                )}
                 <span className="text-white text-xs font-medium text-center leading-tight">
                   {app.label}
                 </span>
