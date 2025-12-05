@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
 import aboutIcon from "@/assets/about-icon.png";
 
@@ -18,6 +18,13 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
     return () => clearTimeout(timer);
   }, [onDismiss]);
 
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (info.offset.y < -50 || info.velocity.y < -500) {
+      setIsVisible(false);
+      setTimeout(onDismiss, 300);
+    }
+  };
+
   const currentTime = new Date().toLocaleTimeString('en-US', { 
     hour: '2-digit', 
     minute: '2-digit',
@@ -36,7 +43,11 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
             stiffness: 300,
             damping: 30
           }}
-          className="fixed top-2 left-4 right-4 z-[200] mx-auto max-w-md"
+          drag="y"
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={{ top: 0.5, bottom: 0.1 }}
+          onDragEnd={handleDragEnd}
+          className="fixed top-2 left-4 right-4 z-[200] mx-auto max-w-md cursor-grab active:cursor-grabbing"
         >
           <div className="bg-gradient-to-br from-blue-600/90 via-purple-600/90 to-orange-500/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-4 flex items-start gap-3">
             {/* Time */}
