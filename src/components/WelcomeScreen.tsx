@@ -42,9 +42,12 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       return;
     }
     
+    // Duration from DB is in milliseconds, use directly
+    const durationMs = config.duration > 100 ? config.duration : config.duration * 1000;
+    
     const timer = setTimeout(() => {
       onComplete();
-    }, config.duration * 1000);
+    }, durationMs);
 
     return () => clearTimeout(timer);
   }, [onComplete, config.enabled, config.duration]);
