@@ -75,9 +75,9 @@ import AboutApp from "@/components/AboutApp";
 import WelcomeNotification from "@/components/WelcomeNotification";
 import EducationApp from "@/components/EducationApp";
 import ControlCentre from "@/components/ControlCentre";
+import { useCaseStudyApps, getIconForApp, CaseStudyApp } from "@/hooks/useCaseStudyApps";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
-type CaseStudyAppType = "goip" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
 
 const Index = () => {
   const navigate = useNavigate();
@@ -89,8 +89,11 @@ const Index = () => {
   const { theme, setTheme } = useTheme();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   const [showCaseStudyGrid, setShowCaseStudyGrid] = useState(false);
-  const [openCaseStudyApp, setOpenCaseStudyApp] = useState<CaseStudyAppType>(null);
+  const [openCaseStudyApp, setOpenCaseStudyApp] = useState<CaseStudyApp | null>(null);
   const [showControlCentre, setShowControlCentre] = useState(false);
+
+  // Fetch case study apps from Supabase
+  const { apps: dbCaseStudyApps } = useCaseStudyApps();
 
   const photos = [photo1, photo2, photo3, photo4, photo5, photo6];
   const projects = [
@@ -127,17 +130,21 @@ const Index = () => {
     { icon: LineChart, gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)" },
   ];
 
-  const caseStudyApps = [
-    { icon: TrendingUp, label: "GoIP", imageIcon: goipIcon, gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", onClick: () => setOpenCaseStudyApp("goip") },
-    { icon: BarChart, label: "Growth", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => setOpenCaseStudyApp("growth") },
-    { icon: PieChart, label: "Performance", gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)", onClick: () => setOpenCaseStudyApp("performance") },
-    { icon: LineChart, label: "Insights", gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)", onClick: () => setOpenCaseStudyApp("insights") },
-    { icon: Target, label: "Metrics", gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", onClick: () => setOpenCaseStudyApp("metrics") },
-    { icon: Award, label: "Goals", gradient: "linear-gradient(135deg, #F093FB 0%, #F5576C 100%)", onClick: () => setOpenCaseStudyApp("goals") },
-    { icon: Lightbulb, label: "Achievements", gradient: "linear-gradient(135deg, #FFD89B 0%, #19547B 100%)", onClick: () => setOpenCaseStudyApp("achievements") },
-    { icon: Layers, label: "Innovation", gradient: "linear-gradient(135deg, #667EEA 0%, #764BA2 100%)", onClick: () => setOpenCaseStudyApp("innovation") },
-    { icon: Folder, label: "Strategy", gradient: "linear-gradient(135deg, #FA709A 0%, #FEE140 100%)", onClick: () => setOpenCaseStudyApp("strategy") },
-  ];
+  // Convert database apps to UI format
+  const caseStudyApps = dbCaseStudyApps.length > 0 
+    ? dbCaseStudyApps.map(app => ({
+        icon: getIconForApp(app.name),
+        label: app.name,
+        imageIcon: app.icon_url || undefined,
+        gradient: app.gradient,
+        onClick: () => setOpenCaseStudyApp(app)
+      }))
+    : [
+        { icon: TrendingUp, label: "GoIP", imageIcon: goipIcon, gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", onClick: () => {} },
+        { icon: BarChart, label: "Growth", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => {} },
+        { icon: PieChart, label: "Performance", gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)", onClick: () => {} },
+        { icon: LineChart, label: "Insights", gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)", onClick: () => {} },
+      ];
   
   useEffect(() => {
     document.body.className = selectedGradient;
@@ -850,7 +857,7 @@ const Index = () => {
 
           {/* Case Study Individual Pages */}
           <AnimatePresence>
-            {openCaseStudyApp === "goip" && (
+            {openCaseStudyApp && openCaseStudyApp.embed_url && (
               <motion.div
                 className="fixed inset-0 z-[60] flex flex-col bg-white dark:bg-gray-900"
                 initial={{ x: "100%" }}
@@ -872,42 +879,33 @@ const Index = () => {
                   </motion.button>
                   
                   <div className="flex items-center gap-3">
-                    <img src={goipIcon} alt="GoIP" className="w-10 h-10 rounded-xl" />
-                    <h1 className="text-gray-900 dark:text-white text-xl font-bold">GoIP</h1>
+                    {openCaseStudyApp.icon_url ? (
+                      <img src={openCaseStudyApp.icon_url} alt={openCaseStudyApp.name} className="w-10 h-10 rounded-xl" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                        {(() => {
+                          const Icon = getIconForApp(openCaseStudyApp.name);
+                          return <Icon className="w-6 h-6 text-gray-900 dark:text-white" strokeWidth={2} />;
+                        })()}
+                      </div>
+                    )}
+                    <h1 className="text-gray-900 dark:text-white text-xl font-bold">{openCaseStudyApp.name}</h1>
                   </div>
                   
                   <div className="w-20" />
                 </div>
                 <iframe 
-                  src="https://check.goip.my/"
+                  src={openCaseStudyApp.embed_url}
                   className="flex-1 w-full border-0"
-                  title="GoIP"
+                  title={openCaseStudyApp.name}
                   allow="geolocation"
                 />
               </motion.div>
             )}
-            {openCaseStudyApp && openCaseStudyApp !== "goip" && (
+            {openCaseStudyApp && !openCaseStudyApp.embed_url && (
               <CaseStudyPage
-                title={caseStudyApps.find(app => 
-                  (openCaseStudyApp === "growth" && app.label === "Growth") ||
-                  (openCaseStudyApp === "performance" && app.label === "Performance") ||
-                  (openCaseStudyApp === "insights" && app.label === "Insights") ||
-                  (openCaseStudyApp === "metrics" && app.label === "Metrics") ||
-                  (openCaseStudyApp === "goals" && app.label === "Goals") ||
-                  (openCaseStudyApp === "achievements" && app.label === "Achievements") ||
-                  (openCaseStudyApp === "innovation" && app.label === "Innovation") ||
-                  (openCaseStudyApp === "strategy" && app.label === "Strategy")
-                )?.label || "Case Study"}
-                icon={caseStudyApps.find(app => 
-                  (openCaseStudyApp === "growth" && app.label === "Growth") ||
-                  (openCaseStudyApp === "performance" && app.label === "Performance") ||
-                  (openCaseStudyApp === "insights" && app.label === "Insights") ||
-                  (openCaseStudyApp === "metrics" && app.label === "Metrics") ||
-                  (openCaseStudyApp === "goals" && app.label === "Goals") ||
-                  (openCaseStudyApp === "achievements" && app.label === "Achievements") ||
-                  (openCaseStudyApp === "innovation" && app.label === "Innovation") ||
-                  (openCaseStudyApp === "strategy" && app.label === "Strategy")
-                )?.icon || Folder}
+                title={openCaseStudyApp.name}
+                icon={getIconForApp(openCaseStudyApp.name)}
                 onClose={() => {
                   setOpenCaseStudyApp(null);
                   setShowCaseStudyGrid(true);
