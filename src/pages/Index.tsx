@@ -53,6 +53,7 @@ import infoIcon from "@/assets/icons/info.png";
 import clockIcon from "@/assets/icons/clock.png";
 import weatherIcon from "@/assets/icons/weather.png";
 import caseStudyIcon from "@/assets/icons/casestudy.png";
+import goipIcon from "@/assets/icons/goip.png";
 import BootScreen from "@/components/BootScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import StatusBar from "@/components/StatusBar";
@@ -74,7 +75,7 @@ import EducationApp from "@/components/EducationApp";
 import ControlCentre from "@/components/ControlCentre";
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
-type CaseStudyAppType = "analytics" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
+type CaseStudyAppType = "goip" | "growth" | "performance" | "insights" | "metrics" | "goals" | "achievements" | "innovation" | "strategy" | null;
 
 const Index = () => {
   const [showBoot, setShowBoot] = useState(true);
@@ -124,7 +125,7 @@ const Index = () => {
   ];
 
   const caseStudyApps = [
-    { icon: TrendingUp, label: "Analytics", gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)", onClick: () => setOpenCaseStudyApp("analytics") },
+    { icon: TrendingUp, label: "GoIP", imageIcon: goipIcon, gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", onClick: () => setOpenCaseStudyApp("goip") },
     { icon: BarChart, label: "Growth", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => setOpenCaseStudyApp("growth") },
     { icon: PieChart, label: "Performance", gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)", onClick: () => setOpenCaseStudyApp("performance") },
     { icon: LineChart, label: "Insights", gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)", onClick: () => setOpenCaseStudyApp("insights") },
@@ -834,10 +835,45 @@ const Index = () => {
 
           {/* Case Study Individual Pages */}
           <AnimatePresence>
-            {openCaseStudyApp && (
+            {openCaseStudyApp === "goip" && (
+              <motion.div
+                className="fixed inset-0 z-[60] flex flex-col bg-white dark:bg-gray-900"
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <div className="h-20 flex items-end justify-between px-6 pb-3 border-b border-gray-200 dark:border-gray-800">
+                  <motion.button
+                    onClick={() => {
+                      setOpenCaseStudyApp(null);
+                      setShowCaseStudyGrid(true);
+                    }}
+                    className="flex items-center"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <ChevronLeft className="w-8 h-8 text-blue-500" strokeWidth={2.5} />
+                    <span className="text-blue-500 text-lg ml-1">Back</span>
+                  </motion.button>
+                  
+                  <div className="flex items-center gap-3">
+                    <img src={goipIcon} alt="GoIP" className="w-10 h-10 rounded-xl" />
+                    <h1 className="text-gray-900 dark:text-white text-xl font-bold">GoIP</h1>
+                  </div>
+                  
+                  <div className="w-20" />
+                </div>
+                <iframe 
+                  src="https://check.goip.my/"
+                  className="flex-1 w-full border-0"
+                  title="GoIP"
+                  allow="geolocation"
+                />
+              </motion.div>
+            )}
+            {openCaseStudyApp && openCaseStudyApp !== "goip" && (
               <CaseStudyPage
                 title={caseStudyApps.find(app => 
-                  (openCaseStudyApp === "analytics" && app.label === "Analytics") ||
                   (openCaseStudyApp === "growth" && app.label === "Growth") ||
                   (openCaseStudyApp === "performance" && app.label === "Performance") ||
                   (openCaseStudyApp === "insights" && app.label === "Insights") ||
@@ -848,7 +884,6 @@ const Index = () => {
                   (openCaseStudyApp === "strategy" && app.label === "Strategy")
                 )?.label || "Case Study"}
                 icon={caseStudyApps.find(app => 
-                  (openCaseStudyApp === "analytics" && app.label === "Analytics") ||
                   (openCaseStudyApp === "growth" && app.label === "Growth") ||
                   (openCaseStudyApp === "performance" && app.label === "Performance") ||
                   (openCaseStudyApp === "insights" && app.label === "Insights") ||
