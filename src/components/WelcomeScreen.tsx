@@ -1,19 +1,55 @@
 import { motion } from "framer-motion";
-import { useEffect } from "react";
-import backgroundImage from "@/assets/background.png";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface WelcomeScreenProps {
   onComplete: () => void;
 }
 
+interface WelcomeConfig {
+  enabled: boolean;
+  text: string;
+  subtext: string;
+  duration: number;
+}
+
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
+  const [config, setConfig] = useState<WelcomeConfig>({
+    enabled: true,
+    text: "Welcome",
+    subtext: "SURESH.APP",
+    duration: 5
+  });
+
   useEffect(() => {
+    const loadSettings = async () => {
+      const { data } = await supabase
+        .from('app_settings')
+        .select('value')
+        .eq('key', 'welcome')
+        .single();
+      
+      if (data?.value) {
+        setConfig(data.value as unknown as WelcomeConfig);
+      }
+    };
+    loadSettings();
+  }, []);
+
+  useEffect(() => {
+    if (!config.enabled) {
+      onComplete();
+      return;
+    }
+    
     const timer = setTimeout(() => {
       onComplete();
-    }, 5000);
+    }, config.duration * 1000);
 
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, [onComplete, config.enabled, config.duration]);
+
+  if (!config.enabled) return null;
 
   return (
     <motion.div
@@ -33,7 +69,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         transition={{ duration: 0.5 }}
       >
         <div className="text-white text-7xl font-vintage tracking-wide">
-          {"Welcome".split("").map((letter, index) => (
+          {config.text.split("").map((letter, index) => (
             <motion.span
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -60,7 +96,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             ease: "easeOut"
           }}
         >
-          SURESH.APP
+          {config.subtext}
         </motion.div>
       </motion.div>
     </motion.div>
