@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  StickyNote,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,7 @@ const menuItems = [
   { icon: FolderOpen, label: "Case Studies", path: "/admin/dashboard/case-studies" },
   { icon: Bell, label: "Welcome Screen", path: "/admin/dashboard/welcome" },
   { icon: Settings, label: "Control Centre", path: "/admin/dashboard/control-centre" },
+  { icon: StickyNote, label: "Public Notes", path: "/admin/dashboard/notes" },
 ];
 
 const AdminDashboard = () => {
