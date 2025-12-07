@@ -26,6 +26,7 @@ import {
   Phone,
   Share2,
   Code,
+  Settings2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -48,6 +49,7 @@ const menuItems = [
   { icon: Share2, label: "Social Links", path: "/admin/dashboard/social-links" },
   { icon: Code, label: "Custom Apps", path: "/admin/dashboard/custom-apps" },
   { icon: Grid3X3, label: "Iframe Apps", path: "/admin/dashboard/iframe-apps" },
+  { icon: Settings2, label: "Site Settings", path: "/admin/dashboard/site-settings" },
 ];
 
 const AdminDashboard = () => {
