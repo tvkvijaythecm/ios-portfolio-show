@@ -188,6 +188,54 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_settings: {
+        Row: {
+          email_address: string | null
+          id: string
+          phone_number: string | null
+          updated_at: string | null
+          whatsapp_number: string | null
+        }
+        Insert: {
+          email_address?: string | null
+          id?: string
+          phone_number?: string | null
+          updated_at?: string | null
+          whatsapp_number?: string | null
+        }
+        Update: {
+          email_address?: string | null
+          id?: string
+          phone_number?: string | null
+          updated_at?: string | null
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      custom_app_content: {
+        Row: {
+          app_key: string
+          app_name: string
+          html_content: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          app_key: string
+          app_name: string
+          html_content?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          app_key?: string
+          app_name?: string
+          html_content?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       education_items: {
         Row: {
           category: string
@@ -224,6 +272,42 @@ export type Database = {
         }
         Relationships: []
       }
+      github_projects: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string | null
+          demo_url: string | null
+          description: string | null
+          id: string
+          is_visible: boolean | null
+          sort_order: number | null
+          source_url: string | null
+          title: string
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string | null
+          demo_url?: string | null
+          description?: string | null
+          id?: string
+          is_visible?: boolean | null
+          sort_order?: number | null
+          source_url?: string | null
+          title: string
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string | null
+          demo_url?: string | null
+          description?: string | null
+          id?: string
+          is_visible?: boolean | null
+          sort_order?: number | null
+          source_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           author_name: string | null
@@ -248,6 +332,63 @@ export type Database = {
         }
         Relationships: []
       }
+      photos: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string
+          is_visible: boolean | null
+          link_url: string | null
+          sort_order: number | null
+          title: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url: string
+          is_visible?: boolean | null
+          link_url?: string | null
+          sort_order?: number | null
+          title?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          is_visible?: boolean | null
+          link_url?: string | null
+          sort_order?: number | null
+          title?: string | null
+        }
+        Relationships: []
+      }
+      social_links: {
+        Row: {
+          facebook_url: string | null
+          id: string
+          instagram_url: string | null
+          tiktok_url: string | null
+          updated_at: string | null
+          x_twitter_url: string | null
+        }
+        Insert: {
+          facebook_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          tiktok_url?: string | null
+          updated_at?: string | null
+          x_twitter_url?: string | null
+        }
+        Update: {
+          facebook_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          tiktok_url?: string | null
+          updated_at?: string | null
+          x_twitter_url?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -266,6 +407,72 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          sort_order: number | null
+          thumbnail_url: string | null
+          title: string | null
+          video_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          sort_order?: number | null
+          thumbnail_url?: string | null
+          title?: string | null
+          video_url: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          sort_order?: number | null
+          thumbnail_url?: string | null
+          title?: string | null
+          video_url?: string
+        }
+        Relationships: []
+      }
+      work_experience: {
+        Row: {
+          company_name: string
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          job_description: string | null
+          job_title: string
+          sort_order: number | null
+          year_end: string | null
+          year_start: string
+        }
+        Insert: {
+          company_name: string
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          job_description?: string | null
+          job_title: string
+          sort_order?: number | null
+          year_end?: string | null
+          year_start: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          job_description?: string | null
+          job_title?: string
+          sort_order?: number | null
+          year_end?: string | null
+          year_start?: string
         }
         Relationships: []
       }
