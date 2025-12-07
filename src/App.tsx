@@ -25,7 +25,7 @@ import WorkSettings from "./pages/admin/WorkSettings";
 import ContactSettings from "./pages/admin/ContactSettings";
 import SocialLinksSettings from "./pages/admin/SocialLinksSettings";
 import CustomAppsSettings from "./pages/admin/CustomAppsSettings";
-
+import IframeAppsSettings from "./pages/admin/IframeAppsSettings";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -56,6 +56,7 @@ const App = () => (
               <Route path="contact" element={<ContactSettings />} />
               <Route path="social-links" element={<SocialLinksSettings />} />
               <Route path="custom-apps" element={<CustomAppsSettings />} />
+              <Route path="iframe-apps" element={<IframeAppsSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
