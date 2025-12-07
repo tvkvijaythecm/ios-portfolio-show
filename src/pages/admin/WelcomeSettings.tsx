@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
-import { Bell, Check } from "lucide-react";
+import { Bell, Check, Palette, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface WelcomeConfig {
@@ -15,6 +15,18 @@ interface WelcomeConfig {
   text: string;
   subtext: string;
   duration: number;
+  gradientFrom: string;
+  gradientVia: string;
+  gradientTo: string;
+}
+
+interface NotificationConfig {
+  enabled: boolean;
+  name: string;
+  message: string;
+  gradientFrom: string;
+  gradientVia: string;
+  gradientTo: string;
 }
 
 const WelcomeSettings = () => {
@@ -23,7 +35,20 @@ const WelcomeSettings = () => {
     text: "Hello",
     subtext: "Welcome to my portfolio",
     duration: 5000,
+    gradientFrom: "#2563eb",
+    gradientVia: "#9333ea",
+    gradientTo: "#f97316",
   });
+  
+  const [notificationConfig, setNotificationConfig] = useState<NotificationConfig>({
+    enabled: true,
+    name: "John Smith",
+    message: "Welcome! Hope you're having a great day.",
+    gradientFrom: "#2563eb",
+    gradientVia: "#9333ea",
+    gradientTo: "#f97316",
+  });
+  
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -34,14 +59,16 @@ const WelcomeSettings = () => {
   const loadSettings = async () => {
     setLoading(true);
     try {
-      const { data } = await supabase
-        .from("app_settings")
-        .select("value")
-        .eq("key", "welcome")
-        .maybeSingle();
+      const [welcomeRes, notificationRes] = await Promise.all([
+        supabase.from("app_settings").select("value").eq("key", "welcome").maybeSingle(),
+        supabase.from("app_settings").select("value").eq("key", "welcome_notification").maybeSingle(),
+      ]);
 
-      if (data?.value) {
-        setConfig(data.value as unknown as WelcomeConfig);
+      if (welcomeRes.data?.value) {
+        setConfig({ ...config, ...(welcomeRes.data.value as unknown as WelcomeConfig) });
+      }
+      if (notificationRes.data?.value) {
+        setNotificationConfig({ ...notificationConfig, ...(notificationRes.data.value as unknown as NotificationConfig) });
       }
     } catch (error) {
       console.error("Error loading settings:", error);
@@ -53,13 +80,27 @@ const WelcomeSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { error } = await supabase
+      // Upsert welcome settings
+      const { error: welcomeError } = await supabase
         .from("app_settings")
-        .update({ value: JSON.parse(JSON.stringify(config)) })
-        .eq("key", "welcome");
+        .upsert({ 
+          key: "welcome", 
+          value: JSON.parse(JSON.stringify(config)) 
+        }, { onConflict: "key" });
 
-      if (error) throw error;
-      toast.success("Welcome screen settings saved!");
+      if (welcomeError) throw welcomeError;
+
+      // Upsert notification settings
+      const { error: notificationError } = await supabase
+        .from("app_settings")
+        .upsert({ 
+          key: "welcome_notification", 
+          value: JSON.parse(JSON.stringify(notificationConfig)) 
+        }, { onConflict: "key" });
+
+      if (notificationError) throw notificationError;
+
+      toast.success("Settings saved successfully!");
     } catch (error: any) {
       toast.error(error.message || "Failed to save settings");
     } finally {
@@ -81,19 +122,19 @@ const WelcomeSettings = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className="text-2xl font-bold text-white mb-2">Welcome Screen</h2>
-        <p className="text-white/60 mb-6">Customize the welcome animation and text</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Welcome Settings</h2>
+        <p className="text-white/60 mb-6">Customize welcome screen and notification</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Settings */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Welcome Screen Settings */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
-                <Bell className="w-5 h-5" />
-                Welcome Configuration
+                <Palette className="w-5 h-5" />
+                Welcome Screen
               </CardTitle>
               <CardDescription className="text-white/60">
-                Set up the welcome screen appearance
+                Configure the welcome animation screen
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -142,56 +183,223 @@ const WelcomeSettings = () => {
                 />
               </div>
 
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-              >
-                {saving ? "Saving..." : (
-                  <>
-                    <Check className="w-4 h-4 mr-2" />
-                    Save Changes
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+              <div className="space-y-3">
+                <Label className="text-white/80">Gradient Colors</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">From</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={config.gradientFrom}
+                        onChange={(e) => setConfig({ ...config, gradientFrom: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={config.gradientFrom}
+                        onChange={(e) => setConfig({ ...config, gradientFrom: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">Via</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={config.gradientVia}
+                        onChange={(e) => setConfig({ ...config, gradientVia: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={config.gradientVia}
+                        onChange={(e) => setConfig({ ...config, gradientVia: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">To</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={config.gradientTo}
+                        onChange={(e) => setConfig({ ...config, gradientTo: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={config.gradientTo}
+                        onChange={(e) => setConfig({ ...config, gradientTo: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white text-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {/* Preview */}
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Preview</CardTitle>
-              <CardDescription className="text-white/60">
-                How the welcome screen will look
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-[9/16] max-h-96 rounded-2xl overflow-hidden border border-white/20 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500 flex flex-col items-center justify-center">
-                {config.enabled ? (
-                  <>
-                    <motion.p
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-4xl font-bold text-white mb-2"
-                      style={{ fontFamily: "'Barkentina', sans-serif" }}
-                    >
-                      {config.text || "Hello"}
-                    </motion.p>
-                    <motion.p
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="text-white/80 text-sm"
-                    >
-                      {config.subtext || "Welcome"}
-                    </motion.p>
-                  </>
-                ) : (
-                  <p className="text-white/40">Welcome screen disabled</p>
-                )}
+              {/* Welcome Screen Preview */}
+              <div className="space-y-2">
+                <Label className="text-white/80">Preview</Label>
+                <div 
+                  className="aspect-[9/16] max-h-48 rounded-xl overflow-hidden border border-white/20 flex flex-col items-center justify-center"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${config.gradientFrom}, ${config.gradientVia}, ${config.gradientTo})`
+                  }}
+                >
+                  {config.enabled ? (
+                    <>
+                      <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Barkentina', sans-serif" }}>
+                        {config.text || "Hello"}
+                      </p>
+                      <p className="text-white/80 text-xs">
+                        {config.subtext || "Welcome"}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-white/40 text-sm">Disabled</p>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Notification Settings */}
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                Welcome Notification
+              </CardTitle>
+              <CardDescription className="text-white/60">
+                Configure the notification that appears after home screen loads
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-white/80">Enable Notification</Label>
+                  <p className="text-white/40 text-sm">Show welcome notification popup</p>
+                </div>
+                <Switch
+                  checked={notificationConfig.enabled}
+                  onCheckedChange={(checked) => setNotificationConfig({ ...notificationConfig, enabled: checked })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-white/80">Name</Label>
+                <Input
+                  value={notificationConfig.name}
+                  onChange={(e) => setNotificationConfig({ ...notificationConfig, name: e.target.value })}
+                  placeholder="John Smith"
+                  className="bg-white/10 border-white/20 text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-white/80">Message</Label>
+                <Input
+                  value={notificationConfig.message}
+                  onChange={(e) => setNotificationConfig({ ...notificationConfig, message: e.target.value })}
+                  placeholder="Welcome! Hope you're having a great day."
+                  className="bg-white/10 border-white/20 text-white"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-white/80">Gradient Colors</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">From</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={notificationConfig.gradientFrom}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, gradientFrom: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={notificationConfig.gradientFrom}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, gradientFrom: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">Via</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={notificationConfig.gradientVia}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, gradientVia: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={notificationConfig.gradientVia}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, gradientVia: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">To</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={notificationConfig.gradientTo}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, gradientTo: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={notificationConfig.gradientTo}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, gradientTo: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white text-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notification Preview */}
+              <div className="space-y-2">
+                <Label className="text-white/80">Preview</Label>
+                <div 
+                  className="rounded-2xl p-4 flex items-start gap-3"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${notificationConfig.gradientFrom}e6, ${notificationConfig.gradientVia}e6, ${notificationConfig.gradientTo}e6)`
+                  }}
+                >
+                  <span className="text-xs text-white/70 font-medium pt-0.5">
+                    {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                  </span>
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex-shrink-0"></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-white text-sm">
+                      {notificationConfig.name || "Name"}
+                    </div>
+                    <div className="text-white/70 text-xs">
+                      {notificationConfig.message || "Message"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mt-6">
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+          >
+            {saving ? "Saving..." : (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Save All Changes
+              </>
+            )}
+          </Button>
         </div>
       </motion.div>
     </div>
