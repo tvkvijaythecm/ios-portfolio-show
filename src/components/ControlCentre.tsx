@@ -17,6 +17,7 @@ import {
   Calendar
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ControlCentreProps {
   isOpen: boolean;
@@ -24,6 +25,34 @@ interface ControlCentreProps {
   onOpenWeather: () => void;
   onOpenInfo: () => void;
 }
+
+interface ControlCentreConfig {
+  showTorch: boolean;
+  showWeather: boolean;
+  showInfo: boolean;
+  showReboot: boolean;
+  panelBgColor: string;
+  panelBgOpacity: number;
+  cardBgColor: string;
+  cardBgOpacity: number;
+  accentColor: string;
+  textColor: string;
+  borderColor: string;
+}
+
+const defaultConfig: ControlCentreConfig = {
+  showTorch: true,
+  showWeather: true,
+  showInfo: true,
+  showReboot: true,
+  panelBgColor: "#1f2937",
+  panelBgOpacity: 40,
+  cardBgColor: "#ffffff",
+  cardBgOpacity: 30,
+  accentColor: "#8b5cf6",
+  textColor: "#ffffff",
+  borderColor: "#ffffff",
+};
 
 const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCentreProps) => {
   const [ipAddress, setIpAddress] = useState("Detecting...");
@@ -37,7 +66,36 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [streamUrl, setStreamUrl] = useState("");
   const [uploadType, setUploadType] = useState<"file" | "stream">("file");
+  const [config, setConfig] = useState<ControlCentreConfig>(defaultConfig);
   const { toast } = useToast();
+
+  // Load config from Supabase
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const { data } = await supabase
+          .from("app_settings")
+          .select("value")
+          .eq("key", "control_centre")
+          .maybeSingle();
+
+        if (data?.value) {
+          setConfig({ ...defaultConfig, ...(data.value as unknown as ControlCentreConfig) });
+        }
+      } catch (error) {
+        console.error("Error loading control centre config:", error);
+      }
+    };
+    loadConfig();
+  }, []);
+
+  // Helper to convert hex + opacity to rgba
+  const hexToRgba = (hex: string, opacity: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
+  };
 
   // Detect IP Address
   useEffect(() => {
@@ -103,11 +161,9 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   };
 
   const handleReboot = () => {
-    // Clear all storage
     localStorage.clear();
     sessionStorage.clear();
     
-    // Clear cookies
     document.cookie.split(";").forEach((c) => {
       document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
@@ -176,6 +232,12 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
 
   if (!isOpen) return null;
 
+  const cardStyle = {
+    backgroundColor: hexToRgba(config.cardBgColor, config.cardBgOpacity),
+    borderWidth: 1,
+    borderColor: hexToRgba(config.borderColor, 20),
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -199,123 +261,166 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
         onDragEnd={handleDragEnd}
         className="fixed inset-x-0 bottom-0 z-[101] max-w-2xl mx-auto"
       >
-        <div className="bg-background/40 backdrop-blur-3xl rounded-t-3xl shadow-2xl border-t border-white/20 p-6 pb-8">
+        <div 
+          className="rounded-t-3xl shadow-2xl p-4 md:p-6 pb-6 md:pb-8"
+          style={{ 
+            backgroundColor: hexToRgba(config.panelBgColor, config.panelBgOpacity),
+            backdropFilter: 'blur(24px)',
+            borderTop: `1px solid ${hexToRgba(config.borderColor, 20)}`
+          }}
+        >
           {/* Drag Handle */}
-          <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mb-6" />
+          <div 
+            className="w-12 h-1.5 rounded-full mx-auto mb-4 md:mb-6" 
+            style={{ backgroundColor: hexToRgba(config.textColor, 40) }}
+          />
 
           {/* IP Address */}
-          <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 mb-3 flex items-center gap-3 border border-white/20">
-            <Globe className="w-6 h-6 text-primary" />
+          <div 
+            className="rounded-2xl p-3 md:p-4 mb-2 md:mb-3 flex items-center gap-3"
+            style={cardStyle}
+          >
+            <Globe className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
             <div>
-              <p className="text-xs text-muted-foreground">IP Address</p>
-              <p className="text-lg font-semibold">{ipAddress}</p>
+              <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>IP Address</p>
+              <p className="text-base md:text-lg font-semibold" style={{ color: config.textColor }}>{ipAddress}</p>
             </div>
           </div>
 
           {/* Location */}
-          <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 mb-4 flex items-center gap-3 border border-white/20">
-            <MapPin className="w-6 h-6 text-primary" />
+          <div 
+            className="rounded-2xl p-3 md:p-4 mb-3 md:mb-4 flex items-center gap-3"
+            style={cardStyle}
+          >
+            <MapPin className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
             <div>
-              <p className="text-xs text-muted-foreground">Location</p>
-              <p className="text-lg font-semibold">{location}</p>
+              <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>Location</p>
+              <p className="text-base md:text-lg font-semibold" style={{ color: config.textColor }}>{location}</p>
             </div>
           </div>
 
           {/* Music Player */}
-          <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 mb-4 border border-white/20">
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-16 h-16 bg-background rounded-xl flex items-center justify-center border border-border">
-                <span className="text-4xl">🎵</span>
+          <div 
+            className="rounded-2xl p-3 md:p-4 mb-3 md:mb-4"
+            style={cardStyle}
+          >
+            <div className="flex items-center gap-3 md:gap-4 mb-3">
+              <div 
+                className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: hexToRgba(config.textColor, 10), border: `1px solid ${hexToRgba(config.borderColor, 20)}` }}
+              >
+                <span className="text-2xl md:text-4xl">🎵</span>
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-sm mb-1">{songTitle}</p>
-                <div className="h-1 bg-background rounded-full overflow-hidden">
-                  <div className="h-full w-1/3 bg-primary rounded-full" />
+                <p className="font-semibold text-xs md:text-sm mb-1" style={{ color: config.textColor }}>{songTitle}</p>
+                <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: hexToRgba(config.textColor, 20) }}>
+                  <div className="h-full w-1/3 rounded-full" style={{ backgroundColor: config.accentColor }} />
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-center gap-4 mb-3">
-              <button className="p-2 hover:bg-background rounded-full transition">
-                <X className="w-5 h-5" />
+            <div className="flex items-center justify-center gap-3 md:gap-4 mb-3">
+              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
+                <X className="w-4 h-4 md:w-5 md:h-5" />
               </button>
-              <button className="p-2 hover:bg-background rounded-full transition">
-                <SkipBack className="w-5 h-5" />
+              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
+                <SkipBack className="w-4 h-4 md:w-5 md:h-5" />
               </button>
               <button 
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="p-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition"
+                className="p-2 md:p-3 rounded-full transition"
+                style={{ backgroundColor: config.accentColor, color: '#fff' }}
               >
-                {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                {isPlaying ? <Pause className="w-5 h-5 md:w-6 md:h-6" /> : <Play className="w-5 h-5 md:w-6 md:h-6" />}
               </button>
-              <button className="p-2 hover:bg-background rounded-full transition">
-                <SkipForward className="w-5 h-5" />
+              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
+                <SkipForward className="w-4 h-4 md:w-5 md:h-5" />
               </button>
-              <button className="p-2 hover:bg-background rounded-full transition">
+              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
                 <span className="text-sm">📺</span>
               </button>
             </div>
             <button 
               onClick={handleUploadSong}
-              className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto hover:bg-red-600 transition shadow-lg"
+              className="w-8 h-8 md:w-10 md:h-10 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto hover:bg-red-600 transition shadow-lg"
             >
-              <Upload className="w-5 h-5" />
+              <Upload className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </div>
 
           {/* Time & Date */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex items-center gap-3 border border-white/20">
-              <Clock className="w-6 h-6 text-primary" />
+          <div className="grid grid-cols-2 gap-2 md:gap-3 mb-3 md:mb-4">
+            <div 
+              className="rounded-2xl p-3 md:p-4 flex items-center gap-2 md:gap-3"
+              style={cardStyle}
+            >
+              <Clock className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
               <div>
-                <p className="text-xs text-muted-foreground">Time</p>
-                <p className="text-base font-semibold">{currentTime}</p>
+                <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>Time</p>
+                <p className="text-sm md:text-base font-semibold" style={{ color: config.textColor }}>{currentTime}</p>
               </div>
             </div>
-            <div className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex items-center gap-3 border border-white/20">
-              <Calendar className="w-6 h-6 text-primary" />
+            <div 
+              className="rounded-2xl p-3 md:p-4 flex items-center gap-2 md:gap-3"
+              style={cardStyle}
+            >
+              <Calendar className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
               <div>
-                <p className="text-xs text-muted-foreground">{currentDay}</p>
-                <p className="text-base font-semibold">{currentDate}</p>
+                <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>{currentDay}</p>
+                <p className="text-sm md:text-base font-semibold" style={{ color: config.textColor }}>{currentDate}</p>
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-4 gap-3">
-            <button 
-              onClick={handleTorchToggle}
-              className={`bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/40 transition border border-white/20 ${torchOn ? 'ring-2 ring-primary' : ''}`}
-            >
-              <Flashlight className={`w-6 h-6 ${torchOn ? 'text-primary' : ''}`} />
-              <span className="text-xs">Torch</span>
-            </button>
-            <button 
-              onClick={() => {
-                onOpenWeather();
-                onClose();
-              }}
-              className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/40 transition border border-white/20"
-            >
-              <Cloud className="w-6 h-6" />
-              <span className="text-xs">Weather</span>
-            </button>
-            <button 
-              onClick={() => {
-                onOpenInfo();
-                onClose();
-              }}
-              className="bg-white/30 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-white/40 transition border border-white/20"
-            >
-              <Info className="w-6 h-6" />
-              <span className="text-xs">Info</span>
-            </button>
-            <button 
-              onClick={handleReboot}
-              className="bg-red-500/80 backdrop-blur-xl rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-red-600/80 transition border border-red-400/30"
-            >
-              <RotateCcw className="w-6 h-6 text-white" />
-              <span className="text-xs text-white">Reboot</span>
-            </button>
+          <div className="grid grid-cols-4 gap-2 md:gap-3">
+            {config.showTorch && (
+              <button 
+                onClick={handleTorchToggle}
+                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition"
+                style={{ 
+                  ...cardStyle,
+                  boxShadow: torchOn ? `0 0 20px ${config.accentColor}40` : 'none'
+                }}
+              >
+                <Flashlight className="w-5 h-5 md:w-6 md:h-6" style={{ color: torchOn ? config.accentColor : config.textColor }} />
+                <span className="text-xs" style={{ color: hexToRgba(config.textColor, 80) }}>Torch</span>
+              </button>
+            )}
+            {config.showWeather && (
+              <button 
+                onClick={() => {
+                  onOpenWeather();
+                  onClose();
+                }}
+                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition"
+                style={cardStyle}
+              >
+                <Cloud className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.textColor }} />
+                <span className="text-xs" style={{ color: hexToRgba(config.textColor, 80) }}>Weather</span>
+              </button>
+            )}
+            {config.showInfo && (
+              <button 
+                onClick={() => {
+                  onOpenInfo();
+                  onClose();
+                }}
+                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition"
+                style={cardStyle}
+              >
+                <Info className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.textColor }} />
+                <span className="text-xs" style={{ color: hexToRgba(config.textColor, 80) }}>Info</span>
+              </button>
+            )}
+            {config.showReboot && (
+              <button 
+                onClick={handleReboot}
+                className="bg-red-500/80 backdrop-blur-xl rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 hover:bg-red-600/80 transition border border-red-400/30"
+              >
+                <RotateCcw className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                <span className="text-xs text-white">Reboot</span>
+              </button>
+            )}
           </div>
         </div>
       </motion.div>
@@ -332,15 +437,15 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-background/95 backdrop-blur-2xl rounded-2xl p-6 max-w-md w-full shadow-xl border border-white/20"
+            className="bg-background/95 backdrop-blur-2xl rounded-2xl p-4 md:p-6 max-w-md w-full shadow-xl border border-white/20"
           >
-            <h3 className="text-xl font-semibold mb-4">Load Music</h3>
+            <h3 className="text-lg md:text-xl font-semibold mb-4">Load Music</h3>
             
             {/* Tab Selection */}
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() => setUploadType("file")}
-                className={`flex-1 py-2 px-4 rounded-lg transition ${
+                className={`flex-1 py-2 px-3 md:px-4 rounded-lg transition text-sm md:text-base ${
                   uploadType === "file"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted hover:bg-muted/80"
@@ -350,7 +455,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
               </button>
               <button
                 onClick={() => setUploadType("stream")}
-                className={`flex-1 py-2 px-4 rounded-lg transition ${
+                className={`flex-1 py-2 px-3 md:px-4 rounded-lg transition text-sm md:text-base ${
                   uploadType === "stream"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted hover:bg-muted/80"
@@ -380,11 +485,11 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                   placeholder="Paste stream URL..."
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
-                  className="w-full p-3 bg-muted rounded-lg mb-4 outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full p-3 bg-muted rounded-lg mb-4 outline-none focus:ring-2 focus:ring-primary text-sm md:text-base"
                 />
                 <button
                   onClick={handleStreamLoad}
-                  className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 transition mb-2"
+                  className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 transition mb-2 text-sm md:text-base"
                 >
                   Load Stream
                 </button>
@@ -393,7 +498,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             
             <button
               onClick={() => setShowUploadDialog(false)}
-              className="w-full bg-muted py-3 rounded-lg hover:bg-muted/80 transition"
+              className="w-full bg-muted py-3 rounded-lg hover:bg-muted/80 transition text-sm md:text-base"
             >
               Cancel
             </button>
