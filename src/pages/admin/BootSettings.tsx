@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import { Smartphone, Check } from "lucide-react";
 import { motion } from "framer-motion";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 interface BootConfig {
   logo: string;
@@ -84,13 +85,8 @@ const BootSettings = () => {
   }
 
   return (
-    <div className="p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h2 className="text-2xl font-bold text-white mb-2">Boot Screen Settings</h2>
-        <p className="text-white/60 mb-6">Customize the app loading screen</p>
+    <div className="p-4 md:p-8">
+      <AdminHeader title="Boot Screen Settings" description="Customize the app loading screen" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Settings */}
@@ -192,7 +188,6 @@ const BootSettings = () => {
             </CardContent>
           </Card>
         </div>
-      </motion.div>
     </div>
   );
 };

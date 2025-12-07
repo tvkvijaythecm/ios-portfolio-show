@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Image, Upload, Link, Check } from "lucide-react";
-import { motion } from "framer-motion";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 const BackgroundSettings = () => {
   const [bgType, setBgType] = useState<"image" | "url">("image");
@@ -82,13 +82,8 @@ const BackgroundSettings = () => {
   }
 
   return (
-    <div className="p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h2 className="text-2xl font-bold text-white mb-2">Background Settings</h2>
-        <p className="text-white/60 mb-6">Customize the homescreen wallpaper</p>
+    <div className="p-4 md:p-8">
+      <AdminHeader title="Background Settings" description="Customize the homescreen wallpaper" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Settings */}
@@ -189,7 +184,6 @@ const BackgroundSettings = () => {
             </CardContent>
           </Card>
         </div>
-      </motion.div>
     </div>
   );
 };

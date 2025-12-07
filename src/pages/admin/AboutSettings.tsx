@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { User, Check } from "lucide-react";
-import { motion } from "framer-motion";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 interface AboutContent {
   id?: string;
@@ -114,13 +114,8 @@ const AboutSettings = () => {
   }
 
   return (
-    <div className="p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h2 className="text-2xl font-bold text-white mb-2">About Content</h2>
-        <p className="text-white/60 mb-6">Manage your profile and about section</p>
+    <div className="p-4 md:p-8">
+      <AdminHeader title="About Content" description="Manage your profile and about section" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Profile Settings */}
@@ -227,21 +222,20 @@ const AboutSettings = () => {
           </Card>
         </div>
 
-        <div className="mt-6">
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-          >
-            {saving ? "Saving..." : (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                Save All Changes
-              </>
-            )}
-          </Button>
-        </div>
-      </motion.div>
+      <div className="mt-6">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+        >
+          {saving ? "Saving..." : (
+            <>
+              <Check className="w-4 h-4 mr-2" />
+              Save All Changes
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 };

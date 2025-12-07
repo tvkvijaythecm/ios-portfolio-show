@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Settings, Check, Flashlight, Cloud, Info, RotateCcw, Palette, Globe, MapPin, Clock, Calendar as CalendarIcon } from "lucide-react";
-import { motion } from "framer-motion";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 interface ControlCentreConfig {
   showTorch: boolean;
@@ -125,24 +125,17 @@ const ControlCentreSettings = () => {
 
   return (
     <div className="p-4 md:p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-white">Control Centre</h2>
-            <p className="text-white/60 text-sm md:text-base">Configure buttons and color scheme</p>
-          </div>
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 w-full sm:w-auto"
-          >
-            <Check className="w-4 h-4 mr-2" />
-            {saving ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+        <AdminHeader title="Control Centre" description="Configure buttons and color scheme" />
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 w-full sm:w-auto"
+        >
+          <Check className="w-4 h-4 mr-2" />
+          {saving ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* Button Visibility */}
@@ -417,7 +410,6 @@ const ControlCentreSettings = () => {
             </CardContent>
           </Card>
         </div>
-      </motion.div>
     </div>
   );
 };
