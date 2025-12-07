@@ -985,6 +985,8 @@ const Index = () => {
               <CaseStudyPage
                 title={openCaseStudyApp.name}
                 icon={getIconForApp(openCaseStudyApp.name)}
+                iconUrl={openCaseStudyApp.icon_url || undefined}
+                htmlContent={openCaseStudyApp.html_content || undefined}
                 onClose={() => {
                   setOpenCaseStudyApp(null);
                   setShowCaseStudyGrid(true);

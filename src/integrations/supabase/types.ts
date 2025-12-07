@@ -158,6 +158,7 @@ export type Database = {
           description: string | null
           embed_url: string | null
           gradient: string
+          html_content: string | null
           icon_url: string | null
           id: string
           is_visible: boolean
@@ -169,6 +170,7 @@ export type Database = {
           description?: string | null
           embed_url?: string | null
           gradient?: string
+          html_content?: string | null
           icon_url?: string | null
           id?: string
           is_visible?: boolean
@@ -180,6 +182,7 @@ export type Database = {
           description?: string | null
           embed_url?: string | null
           gradient?: string
+          html_content?: string | null
           icon_url?: string | null
           id?: string
           is_visible?: boolean

@@ -20,7 +20,9 @@ export interface CaseStudyApp {
   icon_url: string | null;
   gradient: string;
   embed_url: string | null;
+  html_content: string | null;
   sort_order: number;
+  is_visible: boolean;
 }
 
 const iconMap: Record<string, LucideIcon> = {
