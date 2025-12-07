@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Info,
   Image,
@@ -92,9 +93,33 @@ const Index = () => {
   const [showCaseStudyGrid, setShowCaseStudyGrid] = useState(false);
   const [openCaseStudyApp, setOpenCaseStudyApp] = useState<CaseStudyApp | null>(null);
   const [showControlCentre, setShowControlCentre] = useState(false);
+  const [customBackground, setCustomBackground] = useState<string | null>(null);
 
   // Fetch case study apps from Supabase
   const { apps: dbCaseStudyApps } = useCaseStudyApps();
+
+  // Fetch custom background from Supabase
+  useEffect(() => {
+    const loadBackground = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("app_settings")
+          .select("value")
+          .eq("key", "background")
+          .maybeSingle();
+
+        if (data?.value) {
+          const value = data.value as { type: string; value: string };
+          if (value.value) {
+            setCustomBackground(value.value);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading background:", error);
+      }
+    };
+    loadBackground();
+  }, []);
 
   const photos = [photo1, photo2, photo3, photo4, photo5, photo6];
   const projects = [
@@ -161,12 +186,12 @@ const Index = () => {
     }
   }, [showBoot, showWelcome]);
 
-  return (
+    return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Homescreen Background */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${homescreenBg})` }}
+        style={{ backgroundImage: `url(${customBackground || homescreenBg})` }}
       />
       
       <AnimatePresence>
