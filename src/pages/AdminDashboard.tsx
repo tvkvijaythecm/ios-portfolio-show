@@ -47,6 +47,7 @@ const menuItems = [
   { icon: Phone, label: "Contact Settings", path: "/admin/dashboard/contact" },
   { icon: Share2, label: "Social Links", path: "/admin/dashboard/social-links" },
   { icon: Code, label: "Custom Apps", path: "/admin/dashboard/custom-apps" },
+  { icon: Grid3X3, label: "Iframe Apps", path: "/admin/dashboard/iframe-apps" },
 ];
 
 const AdminDashboard = () => {

@@ -78,7 +78,14 @@ import WelcomeNotification from "@/components/WelcomeNotification";
 import EducationApp from "@/components/EducationApp";
 import ControlCentre from "@/components/ControlCentre";
 import NotesApp from "@/components/NotesApp";
+import IframeApp from "@/components/IframeApp";
 import { useCaseStudyApps, getIconForApp, CaseStudyApp } from "@/hooks/useCaseStudyApps";
+
+interface IframeSettings {
+  calendar_url: string;
+  weather_url: string;
+  goip_url: string;
+}
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
 
@@ -99,6 +106,7 @@ const Index = () => {
   const [dbVideos, setDbVideos] = useState<Array<{ id: string; title: string | null; video_url: string; thumbnail_url: string | null }>>([]);
   const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null }>>([]);
   const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
+  const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "" });
 
   // Fetch case study apps from Supabase
   const { apps: dbCaseStudyApps } = useCaseStudyApps();
@@ -107,12 +115,13 @@ const Index = () => {
   useEffect(() => {
     const loadAllContent = async () => {
       try {
-        const [bgRes, photosRes, videosRes, projectsRes, workRes] = await Promise.all([
+        const [bgRes, photosRes, videosRes, projectsRes, workRes, iframeRes] = await Promise.all([
           supabase.from("app_settings").select("value").eq("key", "background").maybeSingle(),
           supabase.from("photos").select("*").eq("is_visible", true).order("sort_order"),
           supabase.from("videos").select("*").eq("is_visible", true).order("sort_order"),
           supabase.from("github_projects").select("*").eq("is_visible", true).order("sort_order"),
-          supabase.from("work_experience").select("*").eq("is_visible", true).order("sort_order")
+          supabase.from("work_experience").select("*").eq("is_visible", true).order("sort_order"),
+          supabase.from("app_settings").select("value").eq("key", "iframe_apps").maybeSingle()
         ]);
 
         if (bgRes.data?.value) {
@@ -126,6 +135,15 @@ const Index = () => {
         if (videosRes.data) setDbVideos(videosRes.data);
         if (projectsRes.data) setDbProjects(projectsRes.data);
         if (workRes.data) setDbWork(workRes.data);
+        
+        if (iframeRes.data?.value) {
+          const value = iframeRes.data.value as unknown as IframeSettings;
+          setIframeSettings({
+            calendar_url: value.calendar_url || "",
+            weather_url: value.weather_url || "",
+            goip_url: value.goip_url || "",
+          });
+        }
       } catch (error) {
         console.error("Error loading content:", error);
       }
@@ -202,17 +220,44 @@ const Index = () => {
     { icon: LineChart, gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)" },
   ];
 
-  // Convert database apps to UI format
+  // Convert database apps to UI format, with GoIP using iframe settings if available
   const caseStudyApps = dbCaseStudyApps.length > 0 
-    ? dbCaseStudyApps.map(app => ({
-        icon: getIconForApp(app.name),
-        label: app.name,
-        imageIcon: app.icon_url || undefined,
-        gradient: app.gradient,
-        onClick: () => setOpenCaseStudyApp(app)
-      }))
+    ? dbCaseStudyApps.map(app => {
+        // Override GoIP embed_url with iframe settings if available
+        const isGoipApp = app.name.toLowerCase() === "goip";
+        const effectiveEmbedUrl = isGoipApp && iframeSettings.goip_url 
+          ? iframeSettings.goip_url 
+          : app.embed_url;
+        
+        return {
+          icon: getIconForApp(app.name),
+          label: app.name,
+          imageIcon: app.icon_url || undefined,
+          gradient: app.gradient,
+          onClick: () => setOpenCaseStudyApp({
+            ...app,
+            embed_url: effectiveEmbedUrl
+          })
+        };
+      })
     : [
-        { icon: TrendingUp, label: "GoIP", imageIcon: goipIcon, gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", onClick: () => {} },
+        { 
+          icon: TrendingUp, 
+          label: "GoIP", 
+          imageIcon: goipIcon, 
+          gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", 
+          onClick: () => setOpenCaseStudyApp({
+            id: "goip-fallback",
+            name: "GoIP",
+            icon_url: goipIcon,
+            gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)",
+            embed_url: iframeSettings.goip_url || "https://check.goip.my/",
+            description: null,
+            html_content: null,
+            sort_order: 0,
+            is_visible: true
+          })
+        },
         { icon: BarChart, label: "Growth", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => {} },
         { icon: PieChart, label: "Performance", gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)", onClick: () => {} },
         { icon: LineChart, label: "Insights", gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)", onClick: () => {} },
@@ -661,7 +706,11 @@ const Index = () => {
                 icon={CalendarIcon}
                 onClose={() => setOpenApp(null)}
               >
-                <CalendarView />
+                {iframeSettings.calendar_url ? (
+                  <IframeApp url={iframeSettings.calendar_url} title="Calendar" />
+                ) : (
+                  <CalendarView />
+                )}
               </AppPage>
             )}
 
@@ -681,7 +730,11 @@ const Index = () => {
                 icon={Cloud}
                 onClose={() => setOpenApp(null)}
               >
-                <WeatherApp />
+                {iframeSettings.weather_url ? (
+                  <IframeApp url={iframeSettings.weather_url} title="Weather" />
+                ) : (
+                  <WeatherApp />
+                )}
               </AppPage>
             )}
 
