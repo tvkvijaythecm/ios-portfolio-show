@@ -11,6 +11,9 @@ interface WelcomeConfig {
   text: string;
   subtext: string;
   duration: number;
+  gradientFrom: string;
+  gradientVia: string;
+  gradientTo: string;
 }
 
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
@@ -18,7 +21,10 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     enabled: true,
     text: "Welcome",
     subtext: "SURESH.APP",
-    duration: 5
+    duration: 5000,
+    gradientFrom: "#2563eb",
+    gradientVia: "#9333ea",
+    gradientTo: "#f97316",
   });
 
   useEffect(() => {
@@ -30,7 +36,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         .single();
       
       if (data?.value) {
-        setConfig(data.value as unknown as WelcomeConfig);
+        setConfig({ ...config, ...(data.value as unknown as WelcomeConfig) });
       }
     };
     loadSettings();
@@ -61,8 +67,13 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
-      {/* Vibrant gradient background matching wallpaper */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500" />
+      {/* Dynamic gradient background */}
+      <div 
+        className="absolute inset-0" 
+        style={{
+          background: `linear-gradient(to bottom right, ${config.gradientFrom}, ${config.gradientVia}, ${config.gradientTo})`
+        }}
+      />
 
       {/* Animated Welcome Text */}
       <motion.div
