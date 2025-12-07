@@ -94,35 +94,50 @@ const Index = () => {
   const [openCaseStudyApp, setOpenCaseStudyApp] = useState<CaseStudyApp | null>(null);
   const [showControlCentre, setShowControlCentre] = useState(false);
   const [customBackground, setCustomBackground] = useState<string | null>(null);
+  const [dbPhotos, setDbPhotos] = useState<Array<{ id: string; title: string | null; image_url: string; link_url: string | null }>>([]);
+  const [dbVideos, setDbVideos] = useState<Array<{ id: string; title: string | null; video_url: string; thumbnail_url: string | null }>>([]);
+  const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null }>>([]);
+  const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
 
   // Fetch case study apps from Supabase
   const { apps: dbCaseStudyApps } = useCaseStudyApps();
 
-  // Fetch custom background from Supabase
+  // Fetch all dynamic content from Supabase
   useEffect(() => {
-    const loadBackground = async () => {
+    const loadAllContent = async () => {
       try {
-        const { data, error } = await supabase
-          .from("app_settings")
-          .select("value")
-          .eq("key", "background")
-          .maybeSingle();
+        const [bgRes, photosRes, videosRes, projectsRes, workRes] = await Promise.all([
+          supabase.from("app_settings").select("value").eq("key", "background").maybeSingle(),
+          supabase.from("photos").select("*").eq("is_visible", true).order("sort_order"),
+          supabase.from("videos").select("*").eq("is_visible", true).order("sort_order"),
+          supabase.from("github_projects").select("*").eq("is_visible", true).order("sort_order"),
+          supabase.from("work_experience").select("*").eq("is_visible", true).order("sort_order")
+        ]);
 
-        if (data?.value) {
-          const value = data.value as { type: string; value: string };
+        if (bgRes.data?.value) {
+          const value = bgRes.data.value as { type: string; value: string };
           if (value.value) {
             setCustomBackground(value.value);
           }
         }
+        
+        if (photosRes.data) setDbPhotos(photosRes.data);
+        if (videosRes.data) setDbVideos(videosRes.data);
+        if (projectsRes.data) setDbProjects(projectsRes.data);
+        if (workRes.data) setDbWork(workRes.data);
       } catch (error) {
-        console.error("Error loading background:", error);
+        console.error("Error loading content:", error);
       }
     };
-    loadBackground();
+    loadAllContent();
   }, []);
 
-  const photos = [photo1, photo2, photo3, photo4, photo5, photo6];
-  const projects = [
+  // Fallback photos from assets
+  const fallbackPhotos = [photo1, photo2, photo3, photo4, photo5, photo6];
+  const photos = dbPhotos.length > 0 ? dbPhotos.map(p => p.image_url) : fallbackPhotos;
+  
+  // Fallback projects
+  const fallbackProjects = [
     { 
       name: "Project Alpha", 
       description: "A mobile-first e-commerce platform with real-time inventory management",
@@ -142,12 +157,42 @@ const Index = () => {
       tech: "Next.js, Framer Motion, Tailwind"
     },
   ];
+  
+  const projects = dbProjects.length > 0 
+    ? dbProjects.map(p => ({
+        name: p.title,
+        description: p.description || "",
+        thumbnail: p.cover_image_url || project1,
+        sourceUrl: p.source_url,
+        demoUrl: p.demo_url
+      }))
+    : fallbackProjects;
 
-  const videos = [
+  // Fallback videos
+  const fallbackVideos = [
     { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", title: "Creative Showcase Reel" },
     { url: "https://vimeo.com/148751763", title: "Design Process Documentary" },
     { url: "https://www.youtube.com/watch?v=9bZkp7q19f0", title: "Project Walkthrough" },
   ];
+  
+  const videos = dbVideos.length > 0 
+    ? dbVideos.map(v => ({ url: v.video_url, title: v.title || "Untitled" }))
+    : fallbackVideos;
+
+  // Fallback work experience
+  const fallbackWork = [
+    { company: "Company A", position: "Senior Designer", period: "2022 - Present", description: "" },
+    { company: "Company B", position: "Designer", period: "2020 - 2022", description: "" },
+  ];
+  
+  const workExperience = dbWork.length > 0 
+    ? dbWork.map(w => ({
+        company: w.company_name,
+        position: w.job_title,
+        period: `${w.year_start} - ${w.year_end || "Present"}`,
+        description: w.job_description || ""
+      }))
+    : fallbackWork;
 
   const caseStudyMiniApps = [
     { icon: TrendingUp, gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)" },
@@ -524,7 +569,7 @@ const Index = () => {
 
             {openApp === "github" && (
               <AppPage
-                title="Case Studies"
+                title="Projects"
                 icon={Github}
                 onClose={() => setOpenApp(null)}
               >
@@ -536,19 +581,42 @@ const Index = () => {
                       whileHover={{ scale: 1.02 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <img 
-                        src={project.thumbnail} 
-                        alt={project.name}
-                        className="w-full h-48 object-cover"
-                      />
+                      {project.thumbnail && (
+                        <img 
+                          src={project.thumbnail} 
+                          alt={project.name}
+                          className="w-full h-48 object-cover"
+                        />
+                      )}
                       <div className="p-6">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="text-gray-900 dark:text-white text-xl font-bold">{project.name}</h3>
-                          <ExternalLink className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
                         </div>
-                        <p className="text-gray-600 dark:text-gray-300 mb-3">{project.description}</p>
-                        <div className="inline-block px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700">
-                          <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">{project.tech}</p>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
+                        <div className="flex gap-3">
+                          {'sourceUrl' in project && project.sourceUrl && (
+                            <button 
+                              onClick={() => window.open(project.sourceUrl, "_blank")}
+                              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 dark:bg-gray-700 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+                            >
+                              <Github className="w-4 h-4" />
+                              Source
+                            </button>
+                          )}
+                          {'demoUrl' in project && project.demoUrl && (
+                            <button 
+                              onClick={() => window.open(project.demoUrl, "_blank")}
+                              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                              Demo
+                            </button>
+                          )}
+                          {'tech' in project && project.tech && (
+                            <div className="inline-block px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-700">
+                              <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">{project.tech}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </motion.div>
@@ -568,14 +636,14 @@ const Index = () => {
                 onClose={() => setOpenApp(null)}
               >
                 <div className="space-y-4">
-                  {[
-                    { company: "Company A", position: "Senior Designer", period: "2022 - Present" },
-                    { company: "Company B", position: "Designer", period: "2020 - 2022" },
-                  ].map((work, i) => (
+                  {workExperience.map((work, i) => (
                     <div key={i} className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-6">
                       <h3 className="text-xl font-bold text-gray-900 dark:text-white">{work.company}</h3>
                       <p className="text-gray-600 dark:text-gray-300 mt-1">{work.position}</p>
                       <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">{work.period}</p>
+                      {work.description && (
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-3">{work.description}</p>
+                      )}
                     </div>
                   ))}
                 </div>
