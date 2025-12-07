@@ -14,7 +14,24 @@ interface WelcomeConfig {
   gradientFrom: string;
   gradientVia: string;
   gradientTo: string;
+  mainTextFont: string;
+  subtextFont: string;
+  mainTextSize: number;
+  subtextSize: number;
 }
+
+const FONT_MAP: Record<string, string> = {
+  barkentina: "'Barkentina', sans-serif",
+  vintage: "'Vintage Goods', sans-serif",
+  sackers: "'Sackers Gothic', sans-serif",
+  trajan: "'Trajan Pro', serif",
+  playfair: "'Playfair Display', serif",
+  inter: "'Inter', sans-serif",
+  poppins: "'Poppins', sans-serif",
+  montserrat: "'Montserrat', sans-serif",
+  roboto: "'Roboto', sans-serif",
+  oswald: "'Oswald', sans-serif",
+};
 
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [config, setConfig] = useState<WelcomeConfig>({
@@ -25,6 +42,10 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     gradientFrom: "#2563eb",
     gradientVia: "#9333ea",
     gradientTo: "#f97316",
+    mainTextFont: "vintage",
+    subtextFont: "sackers",
+    mainTextSize: 72,
+    subtextSize: 20,
   });
 
   useEffect(() => {
@@ -82,7 +103,13 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="text-white text-7xl font-vintage tracking-wide">
+        <div 
+          className="text-white tracking-wide"
+          style={{ 
+            fontFamily: FONT_MAP[config.mainTextFont] || "'Vintage Goods', sans-serif",
+            fontSize: `${config.mainTextSize}px`
+          }}
+        >
           {config.text.split("").map((letter, index) => (
             <motion.span
               key={index}
@@ -101,7 +128,11 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         </div>
         
         <motion.div
-          className="text-white text-xl font-sackers tracking-[0.3em] uppercase"
+          className="text-white tracking-[0.3em] uppercase"
+          style={{ 
+            fontFamily: FONT_MAP[config.subtextFont] || "'Sackers Gothic', sans-serif",
+            fontSize: `${config.subtextSize}px`
+          }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{

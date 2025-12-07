@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 interface EducationItem {
   id: string;
@@ -137,36 +138,29 @@ const EducationSettings = () => {
   }
 
   return (
-    <div className="p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Education & Credentials</h2>
-            <p className="text-white/60">Manage your educational background and certifications</p>
-          </div>
-          <div className="flex gap-2">
-            <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-40 bg-white/10 border-white/20 text-white">
-                <SelectValue placeholder="Filter" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="institute">Institute</SelectItem>
-                <SelectItem value="online">Online</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              onClick={() => openEditDialog()}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Item
-            </Button>
-          </div>
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+        <AdminHeader title="Education & Credentials" description="Manage your educational background and certifications" />
+        <div className="flex gap-2">
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-40 bg-white/10 border-white/20 text-white">
+              <SelectValue placeholder="Filter" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="institute">Institute</SelectItem>
+              <SelectItem value="online">Online</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            onClick={() => openEditDialog()}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Item
+          </Button>
         </div>
+      </div>
 
         {filteredItems.length === 0 ? (
           <Card className="bg-white/5 border-white/10">
@@ -306,7 +300,6 @@ const EducationSettings = () => {
             </div>
           </DialogContent>
         </Dialog>
-      </motion.div>
     </div>
   );
 };

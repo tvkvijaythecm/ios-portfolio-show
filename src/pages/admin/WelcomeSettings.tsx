@@ -6,9 +6,23 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Bell, Check, Palette, MessageSquare } from "lucide-react";
-import { motion } from "framer-motion";
+import { Check, Palette, MessageSquare, Type } from "lucide-react";
+import AdminHeader from "@/components/admin/AdminHeader";
+
+const FONT_OPTIONS = [
+  { value: "barkentina", label: "Barkentina", preview: "'Barkentina', sans-serif" },
+  { value: "vintage", label: "Vintage Goods", preview: "'Vintage Goods', sans-serif" },
+  { value: "sackers", label: "Sackers Gothic", preview: "'Sackers Gothic', sans-serif" },
+  { value: "trajan", label: "Trajan Pro", preview: "'Trajan Pro', serif" },
+  { value: "playfair", label: "Playfair Display", preview: "'Playfair Display', serif" },
+  { value: "inter", label: "Inter", preview: "'Inter', sans-serif" },
+  { value: "poppins", label: "Poppins", preview: "'Poppins', sans-serif" },
+  { value: "montserrat", label: "Montserrat", preview: "'Montserrat', sans-serif" },
+  { value: "roboto", label: "Roboto", preview: "'Roboto', sans-serif" },
+  { value: "oswald", label: "Oswald", preview: "'Oswald', sans-serif" },
+];
 
 interface WelcomeConfig {
   enabled: boolean;
@@ -18,6 +32,10 @@ interface WelcomeConfig {
   gradientFrom: string;
   gradientVia: string;
   gradientTo: string;
+  mainTextFont: string;
+  subtextFont: string;
+  mainTextSize: number;
+  subtextSize: number;
 }
 
 interface NotificationConfig {
@@ -38,6 +56,10 @@ const WelcomeSettings = () => {
     gradientFrom: "#2563eb",
     gradientVia: "#9333ea",
     gradientTo: "#f97316",
+    mainTextFont: "vintage",
+    subtextFont: "sackers",
+    mainTextSize: 72,
+    subtextSize: 20,
   });
   
   const [notificationConfig, setNotificationConfig] = useState<NotificationConfig>({
@@ -108,6 +130,10 @@ const WelcomeSettings = () => {
     }
   };
 
+  const getFontFamily = (fontKey: string) => {
+    return FONT_OPTIONS.find(f => f.value === fontKey)?.preview || "'Inter', sans-serif";
+  };
+
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center">
@@ -117,13 +143,8 @@ const WelcomeSettings = () => {
   }
 
   return (
-    <div className="p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h2 className="text-2xl font-bold text-white mb-2">Welcome Settings</h2>
-        <p className="text-white/60 mb-6">Customize welcome screen and notification</p>
+    <div className="p-4 md:p-8">
+      <AdminHeader title="Welcome Settings" description="Customize welcome screen and notification" />
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Welcome Screen Settings */}
@@ -182,6 +203,80 @@ const WelcomeSettings = () => {
                   className="py-2"
                 />
               </div>
+
+              {/* Font Settings */}
+              <Card className="bg-white/5 border-white/10">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-sm flex items-center gap-2">
+                    <Type className="w-4 h-4" />
+                    Font Settings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-white/80 text-sm">Main Text Font</Label>
+                      <Select
+                        value={config.mainTextFont}
+                        onValueChange={(value) => setConfig({ ...config, mainTextFont: value })}
+                      >
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {FONT_OPTIONS.map((font) => (
+                            <SelectItem key={font.value} value={font.value}>
+                              <span style={{ fontFamily: font.preview }}>{font.label}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white/80 text-sm">Main Text Size: {config.mainTextSize}px</Label>
+                      <Slider
+                        value={[config.mainTextSize]}
+                        onValueChange={([value]) => setConfig({ ...config, mainTextSize: value })}
+                        min={32}
+                        max={120}
+                        step={4}
+                        className="py-2"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-white/80 text-sm">Subtext Font</Label>
+                      <Select
+                        value={config.subtextFont}
+                        onValueChange={(value) => setConfig({ ...config, subtextFont: value })}
+                      >
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {FONT_OPTIONS.map((font) => (
+                            <SelectItem key={font.value} value={font.value}>
+                              <span style={{ fontFamily: font.preview }}>{font.label}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white/80 text-sm">Subtext Size: {config.subtextSize}px</Label>
+                      <Slider
+                        value={[config.subtextSize]}
+                        onValueChange={([value]) => setConfig({ ...config, subtextSize: value })}
+                        min={12}
+                        max={48}
+                        step={2}
+                        className="py-2"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
               <div className="space-y-3">
                 <Label className="text-white/80">Gradient Colors</Label>
@@ -248,10 +343,22 @@ const WelcomeSettings = () => {
                 >
                   {config.enabled ? (
                     <>
-                      <p className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Barkentina', sans-serif" }}>
+                      <p 
+                        className="text-white mb-1 drop-shadow-lg" 
+                        style={{ 
+                          fontFamily: getFontFamily(config.mainTextFont),
+                          fontSize: `${Math.min(config.mainTextSize / 3, 24)}px`
+                        }}
+                      >
                         {config.text || "Hello"}
                       </p>
-                      <p className="text-white/80 text-xs">
+                      <p 
+                        className="text-white/80 tracking-wider uppercase"
+                        style={{ 
+                          fontFamily: getFontFamily(config.subtextFont),
+                          fontSize: `${Math.min(config.subtextSize / 2, 12)}px`
+                        }}
+                      >
                         {config.subtext || "Welcome"}
                       </p>
                     </>
@@ -387,21 +494,20 @@ const WelcomeSettings = () => {
           </Card>
         </div>
 
-        <div className="mt-6">
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-          >
-            {saving ? "Saving..." : (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                Save All Changes
-              </>
-            )}
-          </Button>
-        </div>
-      </motion.div>
+      <div className="mt-6">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+        >
+          {saving ? "Saving..." : (
+            <>
+              <Check className="w-4 h-4 mr-2" />
+              Save All Changes
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 };
