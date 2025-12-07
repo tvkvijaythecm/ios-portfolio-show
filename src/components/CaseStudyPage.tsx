@@ -13,10 +13,10 @@ const CaseStudyPage = ({ title, icon: Icon, iconUrl, htmlContent, onClose }: Cas
   return (
     <motion.div
       className="fixed inset-0 z-[60] flex flex-col bg-white dark:bg-gray-900"
-      initial={{ x: "100%" }}
-      animate={{ x: 0 }}
-      exit={{ x: "100%" }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
       {/* Header */}
       <div className="h-20 flex items-end justify-between px-6 pb-3 border-b border-gray-200 dark:border-gray-800">
