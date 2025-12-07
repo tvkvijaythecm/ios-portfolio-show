@@ -7,8 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, FolderOpen, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, FolderOpen, ExternalLink, Code } from "lucide-react";
 import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CaseStudyApp {
   id: string;
@@ -17,6 +18,7 @@ interface CaseStudyApp {
   gradient: string;
   embed_url: string | null;
   description: string | null;
+  html_content: string | null;
   sort_order: number;
   is_visible: boolean;
 }
@@ -27,6 +29,7 @@ const defaultItem: Partial<CaseStudyApp> = {
   gradient: "from-blue-500 to-purple-600",
   embed_url: null,
   description: null,
+  html_content: "",
   sort_order: 0,
   is_visible: true,
 };
@@ -70,7 +73,14 @@ const CaseStudySettings = () => {
       if (editingItem.id) {
         const { error } = await supabase
           .from("case_study_apps")
-          .update(editingItem)
+          .update({
+            name: editingItem.name,
+            icon_url: editingItem.icon_url,
+            gradient: editingItem.gradient,
+            embed_url: editingItem.embed_url,
+            description: editingItem.description,
+            html_content: editingItem.html_content,
+          })
           .eq("id", editingItem.id);
 
         if (error) throw error;
@@ -84,6 +94,7 @@ const CaseStudySettings = () => {
             gradient: editingItem.gradient || "from-blue-500 to-purple-600",
             embed_url: editingItem.embed_url,
             description: editingItem.description,
+            html_content: editingItem.html_content || "",
             sort_order: items.length,
           }]);
 
@@ -179,17 +190,14 @@ const CaseStudySettings = () => {
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <h3 className="text-white font-medium">{item.name}</h3>
-                        {item.embed_url && (
-                          <a
-                            href={item.embed_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-purple-400 text-sm flex items-center gap-1 hover:underline"
-                          >
-                            <ExternalLink className="w-3 h-3" />
-                            View embed
-                          </a>
-                        )}
+                        <div className="flex gap-2 mt-1">
+                          {item.embed_url && (
+                            <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Embed</span>
+                          )}
+                          {item.html_content && (
+                            <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded">HTML</span>
+                          )}
+                        </div>
                         {item.description && (
                           <p className="text-white/40 text-xs mt-1 line-clamp-2">{item.description}</p>
                         )}
@@ -222,70 +230,114 @@ const CaseStudySettings = () => {
 
         {/* Edit Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="bg-slate-800 border-white/10 text-white max-w-md">
+          <DialogContent className="bg-slate-800 border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingItem?.id ? "Edit Case Study" : "Add Case Study"}</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-white/80">Name</Label>
-                <Input
-                  value={editingItem?.name || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
-                  placeholder="App name"
-                  className="bg-white/10 border-white/20 text-white"
-                />
-              </div>
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-white/10">
+                <TabsTrigger value="basic" className="text-white/80 data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                  Basic Info
+                </TabsTrigger>
+                <TabsTrigger value="content" className="text-white/80 data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                  <Code className="w-4 h-4 mr-2" />
+                  HTML Content
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="basic" className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <Label className="text-white/80">Name *</Label>
+                  <Input
+                    value={editingItem?.name || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                    placeholder="App name"
+                    className="bg-white/10 border-white/20 text-white"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label className="text-white/80">Icon URL</Label>
-                <Input
-                  value={editingItem?.icon_url || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, icon_url: e.target.value })}
-                  placeholder="https://..."
-                  className="bg-white/10 border-white/20 text-white"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label className="text-white/80">Icon URL</Label>
+                  <Input
+                    value={editingItem?.icon_url || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, icon_url: e.target.value })}
+                    placeholder="https://..."
+                    className="bg-white/10 border-white/20 text-white"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label className="text-white/80">Gradient (Tailwind)</Label>
-                <Input
-                  value={editingItem?.gradient || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, gradient: e.target.value })}
-                  placeholder="from-blue-500 to-purple-600"
-                  className="bg-white/10 border-white/20 text-white"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label className="text-white/80">Gradient (Tailwind)</Label>
+                  <Input
+                    value={editingItem?.gradient || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, gradient: e.target.value })}
+                    placeholder="from-blue-500 to-purple-600"
+                    className="bg-white/10 border-white/20 text-white"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label className="text-white/80">Embed URL</Label>
-                <Input
-                  value={editingItem?.embed_url || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, embed_url: e.target.value })}
-                  placeholder="https://example.com"
-                  className="bg-white/10 border-white/20 text-white"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label className="text-white/80">Embed URL (optional - for iframe)</Label>
+                  <Input
+                    value={editingItem?.embed_url || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, embed_url: e.target.value })}
+                    placeholder="https://example.com"
+                    className="bg-white/10 border-white/20 text-white"
+                  />
+                  <p className="text-white/40 text-xs">If set, app will open as embedded iframe. Otherwise, HTML content below will be used.</p>
+                </div>
 
-              <div className="space-y-2">
-                <Label className="text-white/80">Description</Label>
-                <Textarea
-                  value={editingItem?.description || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-                  placeholder="Brief description..."
-                  className="bg-white/10 border-white/20 text-white resize-none"
-                  rows={3}
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label className="text-white/80">Description</Label>
+                  <Textarea
+                    value={editingItem?.description || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                    placeholder="Brief description..."
+                    className="bg-white/10 border-white/20 text-white resize-none"
+                    rows={3}
+                  />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="content" className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <Label className="text-white/80">HTML Content</Label>
+                  <p className="text-white/40 text-xs mb-2">
+                    Add custom HTML content for this app. This is used when no Embed URL is set.
+                  </p>
+                  <Textarea
+                    value={editingItem?.html_content || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, html_content: e.target.value })}
+                    placeholder={`<div class="p-4">
+  <h1 class="text-2xl font-bold mb-4">My App</h1>
+  <p>Add your content here...</p>
+</div>`}
+                    className="bg-white/10 border-white/20 text-white font-mono text-sm resize-none"
+                    rows={15}
+                  />
+                </div>
 
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-              >
-                {saving ? "Saving..." : "Save"}
-              </Button>
-            </div>
+                {editingItem?.html_content && (
+                  <div className="space-y-2">
+                    <Label className="text-white/80">Preview</Label>
+                    <div className="bg-white rounded-lg p-4 max-h-48 overflow-auto">
+                      <div 
+                        className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: editingItem.html_content }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="w-full mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              {saving ? "Saving..." : "Save"}
+            </Button>
           </DialogContent>
         </Dialog>
       </motion.div>
