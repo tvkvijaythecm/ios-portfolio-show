@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, Mail, MessageCircle, Share2, Facebook, Instagram, Music } from "lucide-react";
-import { useState } from "react";
+import { Phone, Mail, MessageCircle, Share2, Facebook, Instagram, Music, Twitter } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import AppIcon from "./AppIcon";
 import LoadingScreen from "./LoadingScreen";
 import ExternalLinkDialog from "./ExternalLinkDialog";
@@ -11,13 +12,53 @@ import socialIcon from "@/assets/icons/social.png";
 import facebookIcon from "@/assets/icons/facebook.png";
 import instagramIcon from "@/assets/icons/instagram.png";
 import tiktokIcon from "@/assets/icons/tiktok.png";
+import xIcon from "@/assets/icons/x.png";
+
+interface ContactSettings {
+  phone_number: string | null;
+  whatsapp_number: string | null;
+  email_address: string | null;
+}
+
+interface SocialLinks {
+  facebook_url: string | null;
+  instagram_url: string | null;
+  tiktok_url: string | null;
+  x_twitter_url: string | null;
+}
 
 const Dock = () => {
   const [showSocial, setShowSocial] = useState(false);
   const [loadingApp, setLoadingApp] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState<{ app: string; url: string } | null>(null);
+  const [contactSettings, setContactSettings] = useState<ContactSettings | null>(null);
+  const [socialLinksData, setSocialLinksData] = useState<SocialLinks | null>(null);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const [contactRes, socialRes] = await Promise.all([
+          supabase.from("contact_settings").select("*").maybeSingle(),
+          supabase.from("social_links").select("*").maybeSingle()
+        ]);
+
+        if (contactRes.data) {
+          setContactSettings(contactRes.data);
+        }
+        if (socialRes.data) {
+          setSocialLinksData(socialRes.data);
+        }
+      } catch (error) {
+        console.error("Error loading dock settings:", error);
+      }
+    };
+    loadSettings();
+  }, []);
 
   const handleCommunicationAppClick = (appName: string, url: string) => {
+    if (!url || url === "tel:" || url === "mailto:" || url === "https://wa.me/") {
+      return; // Don't open if no valid contact info
+    }
     setLoadingApp(appName);
     setTimeout(() => {
       setLoadingApp(null);
@@ -33,10 +74,41 @@ const Dock = () => {
   };
 
   const socialLinks = [
-    { imageIcon: facebookIcon, label: "Facebook", color: "bg-blue-600", url: "#" },
-    { imageIcon: instagramIcon, label: "Instagram", gradient: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", url: "#" },
-    { imageIcon: tiktokIcon, label: "TikTok", color: "bg-black", url: "#" },
-  ];
+    { 
+      imageIcon: facebookIcon, 
+      label: "Facebook", 
+      color: "bg-blue-600", 
+      url: socialLinksData?.facebook_url || "#" 
+    },
+    { 
+      imageIcon: instagramIcon, 
+      label: "Instagram", 
+      gradient: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", 
+      url: socialLinksData?.instagram_url || "#" 
+    },
+    { 
+      imageIcon: tiktokIcon, 
+      label: "TikTok", 
+      color: "bg-black", 
+      url: socialLinksData?.tiktok_url || "#" 
+    },
+    { 
+      imageIcon: xIcon, 
+      label: "X", 
+      color: "bg-black", 
+      url: socialLinksData?.x_twitter_url || "#" 
+    },
+  ].filter(link => link.url && link.url !== "#");
+
+  const whatsappUrl = contactSettings?.whatsapp_number 
+    ? `https://wa.me/${contactSettings.whatsapp_number.replace(/[^0-9]/g, '')}` 
+    : "";
+  const phoneUrl = contactSettings?.phone_number 
+    ? `tel:${contactSettings.phone_number}` 
+    : "";
+  const emailUrl = contactSettings?.email_address 
+    ? `mailto:${contactSettings.email_address}` 
+    : "";
 
   return (
     <>
@@ -73,16 +145,20 @@ const Dock = () => {
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
               <div className="grid grid-cols-2 gap-4">
-                {socialLinks.map((social) => (
-                  <AppIcon
-                    key={social.label}
-                    imageIcon={social.imageIcon}
-                    label={social.label}
-                    bgColor={social.color}
-                    gradient={social.gradient}
-                    onClick={() => window.open(social.url, "_blank")}
-                  />
-                ))}
+                {socialLinks.length > 0 ? (
+                  socialLinks.map((social) => (
+                    <AppIcon
+                      key={social.label}
+                      imageIcon={social.imageIcon}
+                      label={social.label}
+                      bgColor={social.color}
+                      gradient={social.gradient}
+                      onClick={() => window.open(social.url, "_blank")}
+                    />
+                  ))
+                ) : (
+                  <p className="text-white/60 text-sm col-span-2 text-center py-4">No social links configured</p>
+                )}
               </div>
             </motion.div>
           </>
@@ -101,19 +177,19 @@ const Dock = () => {
               imageIcon={whatsappIcon}
               label="WhatsApp"
               gradient="linear-gradient(135deg, #25D366 0%, #128C7E 100%)"
-              onClick={() => handleCommunicationAppClick("WhatsApp", "https://wa.me/")}
+              onClick={() => handleCommunicationAppClick("WhatsApp", whatsappUrl)}
             />
             <AppIcon
               imageIcon={callIcon}
               label="Call"
               gradient="linear-gradient(135deg, #34C759 0%, #30D158 100%)"
-              onClick={() => handleCommunicationAppClick("Phone", "tel:")}
+              onClick={() => handleCommunicationAppClick("Phone", phoneUrl)}
             />
             <AppIcon
               imageIcon={mailIcon}
               label="Mail"
               gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
-              onClick={() => handleCommunicationAppClick("Mail", "mailto:")}
+              onClick={() => handleCommunicationAppClick("Mail", emailUrl)}
             />
             <AppIcon
               imageIcon={socialIcon}
