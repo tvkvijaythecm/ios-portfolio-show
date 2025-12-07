@@ -260,9 +260,8 @@ const Index = () => {
             is_visible: true
           })
         },
-        { icon: BarChart, label: "Growth", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => {} },
-        { icon: PieChart, label: "Performance", gradient: "linear-gradient(135deg, #FFA502 0%, #FF6348 100%)", onClick: () => {} },
-        { icon: LineChart, label: "Insights", gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)", onClick: () => {} },
+        { icon: Target, label: "Calculator", gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)", onClick: () => {} },
+        { icon: Layers, label: "Bookmark", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => {} },
       ];
   
   useEffect(() => {
@@ -999,10 +998,10 @@ const Index = () => {
             {openCaseStudyApp && openCaseStudyApp.embed_url && (
               <motion.div
                 className="fixed inset-0 z-[60] flex flex-col bg-white dark:bg-gray-900"
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
               >
                 <div className="h-20 flex items-end justify-between px-6 pb-3 border-b border-gray-200 dark:border-gray-800">
                   <motion.button

@@ -40,6 +40,9 @@ const iconMap: Record<string, LucideIcon> = {
 export const getIconForApp = (name: string): LucideIcon => {
   // Try to match icon by name
   const normalizedName = name.toLowerCase();
+  if (normalizedName.includes('calculator')) return Target;
+  if (normalizedName.includes('bookmark')) return Layers;
+  if (normalizedName.includes('goip')) return TrendingUp;
   if (normalizedName.includes('growth')) return TrendingUp;
   if (normalizedName.includes('performance')) return BarChart;
   if (normalizedName.includes('insights')) return PieChart;
