@@ -3,7 +3,7 @@ import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Image,
@@ -57,11 +57,32 @@ const AdminDashboard = () => {
   const location = useLocation();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true);
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Close sidebar on route change on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   const checkAuth = async () => {
     try {
@@ -113,111 +134,145 @@ const AdminDashboard = () => {
   const isOverviewPage = location.pathname === "/admin/dashboard";
 
   return (
-    <div className="min-h-screen bg-slate-900 flex">
-      {/* Sidebar */}
-      <motion.aside
-        initial={false}
-        animate={{ width: sidebarOpen ? 280 : 80 }}
-        className="bg-slate-800/50 backdrop-blur-xl border-r border-white/10 flex flex-col"
-      >
-        {/* Header */}
-        <div className="p-4 border-b border-white/10 flex items-center justify-between">
-          {sidebarOpen && (
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-            >
-              Admin Panel
-            </motion.h1>
-          )}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
-          >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
+    <div className="min-h-screen bg-slate-900 flex flex-col md:flex-row">
+      {/* Mobile Header */}
+      <div className="md:hidden sticky top-0 z-50 bg-slate-800/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 flex items-center justify-between">
+        <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          Admin Panel
+        </h1>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
+        >
+          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          {menuItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all",
-                isActive(item.path)
-                  ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border border-purple-500/30"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
-              )}
-            >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && isMobile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <AnimatePresence>
+        {(sidebarOpen || !isMobile) && (
+          <motion.aside
+            initial={isMobile ? { x: -280 } : false}
+            animate={{ x: 0, width: !isMobile && sidebarOpen ? 280 : !isMobile ? 80 : 280 }}
+            exit={isMobile ? { x: -280 } : undefined}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className={cn(
+              "bg-slate-800/95 backdrop-blur-xl border-r border-white/10 flex flex-col z-50",
+              isMobile ? "fixed inset-y-0 left-0 w-[280px] pt-16" : "relative"
+            )}
+          >
+            {/* Desktop Header */}
+            <div className="hidden md:flex p-4 border-b border-white/10 items-center justify-between">
               {sidebarOpen && (
-                <motion.span
+                <motion.h1
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex-1 text-left"
+                  className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
                 >
-                  {item.label}
-                </motion.span>
+                  Admin Panel
+                </motion.h1>
               )}
-              {sidebarOpen && isActive(item.path) && (
-                <ChevronRight className="w-4 h-4" />
-              )}
-            </button>
-          ))}
-        </nav>
-
-        {/* User section */}
-        <div className="p-4 border-t border-white/10">
-          <div className={cn("flex items-center gap-3", !sidebarOpen && "justify-center")}>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-              {user?.email?.charAt(0).toUpperCase()}
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
+              >
+                {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
             </div>
-            {sidebarOpen && (
-              <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">{user?.email}</p>
-                <p className="text-white/40 text-xs">Administrator</p>
+
+            {/* Navigation */}
+            <nav className="flex-1 p-3 md:p-4 space-y-1 md:space-y-2 overflow-y-auto">
+              {menuItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    if (isMobile) setSidebarOpen(false);
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm md:text-base",
+                    isActive(item.path)
+                      ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border border-purple-500/30"
+                      : "text-white/60 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  {(sidebarOpen || isMobile) && (
+                    <span className="flex-1 text-left truncate">
+                      {item.label}
+                    </span>
+                  )}
+                  {(sidebarOpen || isMobile) && isActive(item.path) && (
+                    <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                  )}
+                </button>
+              ))}
+            </nav>
+
+            {/* User section */}
+            <div className="p-3 md:p-4 border-t border-white/10">
+              <div className={cn("flex items-center gap-3", !sidebarOpen && !isMobile && "justify-center")}>
+                <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm md:text-base flex-shrink-0">
+                  {user?.email?.charAt(0).toUpperCase()}
+                </div>
+                {(sidebarOpen || isMobile) && (
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium truncate">{user?.email}</p>
+                    <p className="text-white/40 text-xs">Administrator</p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            className={cn(
-              "mt-3 text-red-400 hover:text-red-300 hover:bg-red-500/10",
-              sidebarOpen ? "w-full justify-start" : "w-full justify-center"
-            )}
-          >
-            <LogOut className="w-4 h-4" />
-            {sidebarOpen && <span className="ml-2">Logout</span>}
-          </Button>
-        </div>
-      </motion.aside>
+              <Button
+                variant="ghost"
+                onClick={handleLogout}
+                className={cn(
+                  "mt-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 text-sm",
+                  (sidebarOpen || isMobile) ? "w-full justify-start" : "w-full justify-center"
+                )}
+              >
+                <LogOut className="w-4 h-4" />
+                {(sidebarOpen || isMobile) && <span className="ml-2">Logout</span>}
+              </Button>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto min-h-0">
         {isOverviewPage ? (
-          <div className="p-8">
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome back!</h2>
-            <p className="text-white/60 mb-8">Manage your portfolio app from here.</p>
+          <div className="p-4 md:p-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Welcome back!</h2>
+            <p className="text-white/60 mb-6 md:mb-8 text-sm md:text-base">Manage your portfolio app from here.</p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
               {menuItems.slice(1).map((item, index) => (
                 <motion.button
                   key={item.path}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.05 }}
                   onClick={() => navigate(item.path)}
-                  className="p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 transition-all group text-left"
+                  className="p-4 md:p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl hover:bg-white/10 transition-all group text-left"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <item.icon className="w-6 h-6 text-purple-400" />
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform">
+                    <item.icon className="w-5 h-5 md:w-6 md:h-6 text-purple-400" />
                   </div>
-                  <h3 className="text-white font-semibold mb-1">{item.label}</h3>
-                  <p className="text-white/40 text-sm">Manage {item.label.toLowerCase()}</p>
+                  <h3 className="text-white font-semibold mb-0.5 md:mb-1 text-sm md:text-base truncate">{item.label}</h3>
+                  <p className="text-white/40 text-xs md:text-sm hidden sm:block">Manage {item.label.toLowerCase()}</p>
                 </motion.button>
               ))}
             </div>
