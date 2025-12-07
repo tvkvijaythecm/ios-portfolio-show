@@ -85,6 +85,7 @@ interface IframeSettings {
   calendar_url: string;
   weather_url: string;
   goip_url: string;
+  clock_url: string;
 }
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
@@ -106,7 +107,7 @@ const Index = () => {
   const [dbVideos, setDbVideos] = useState<Array<{ id: string; title: string | null; video_url: string; thumbnail_url: string | null }>>([]);
   const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null }>>([]);
   const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
-  const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "" });
+  const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "", clock_url: "" });
 
   // Fetch case study apps from Supabase
   const { apps: dbCaseStudyApps } = useCaseStudyApps();
@@ -142,6 +143,7 @@ const Index = () => {
             calendar_url: value.calendar_url || "",
             weather_url: value.weather_url || "",
             goip_url: value.goip_url || "",
+            clock_url: value.clock_url || "",
           });
         }
       } catch (error) {
@@ -720,7 +722,11 @@ const Index = () => {
                 icon={Clock}
                 onClose={() => setOpenApp(null)}
               >
-                <ClockApp />
+                {iframeSettings.clock_url ? (
+                  <IframeApp url={iframeSettings.clock_url} title="Clock" />
+                ) : (
+                  <ClockApp />
+                )}
               </AppPage>
             )}
 

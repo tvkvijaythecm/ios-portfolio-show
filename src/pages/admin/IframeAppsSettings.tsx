@@ -5,13 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Save, Calendar, Cloud, Globe } from "lucide-react";
+import { Save, Calendar, Cloud, Globe, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface IframeSettings {
   calendar_url: string;
   weather_url: string;
   goip_url: string;
+  clock_url: string;
 }
 
 const IframeAppsSettings = () => {
@@ -19,6 +20,7 @@ const IframeAppsSettings = () => {
     calendar_url: "",
     weather_url: "",
     goip_url: "",
+    clock_url: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -43,6 +45,7 @@ const IframeAppsSettings = () => {
           calendar_url: value.calendar_url || "",
           weather_url: value.weather_url || "",
           goip_url: value.goip_url || "",
+          clock_url: value.clock_url || "",
         });
       }
     } catch (error) {
@@ -189,6 +192,32 @@ const IframeAppsSettings = () => {
                 />
                 <p className="text-white/40 text-xs">
                   Enter the GoIP URL to embed in the app.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Clock App */}
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-white" />
+                </div>
+                Clock App
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-white/80">Iframe URL</Label>
+                <Input
+                  value={settings.clock_url}
+                  onChange={(e) => setSettings({ ...settings, clock_url: e.target.value })}
+                  placeholder="https://www.timeanddate.com/worldclock/..."
+                  className="bg-white/10 border-white/20 text-white"
+                />
+                <p className="text-white/40 text-xs">
+                  Leave empty to use the built-in clock app. Enter an iframe URL to embed an external clock widget.
                 </p>
               </div>
             </CardContent>
