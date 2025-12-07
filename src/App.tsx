@@ -18,6 +18,13 @@ import CaseStudySettings from "./pages/admin/CaseStudySettings";
 import WelcomeSettings from "./pages/admin/WelcomeSettings";
 import ControlCentreSettings from "./pages/admin/ControlCentreSettings";
 import NotesSettings from "./pages/admin/NotesSettings";
+import PhotosSettings from "./pages/admin/PhotosSettings";
+import VideosSettings from "./pages/admin/VideosSettings";
+import GithubSettings from "./pages/admin/GithubSettings";
+import WorkSettings from "./pages/admin/WorkSettings";
+import ContactSettings from "./pages/admin/ContactSettings";
+import SocialLinksSettings from "./pages/admin/SocialLinksSettings";
+import CustomAppsSettings from "./pages/admin/CustomAppsSettings";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +49,13 @@ const App = () => (
               <Route path="welcome" element={<WelcomeSettings />} />
               <Route path="control-centre" element={<ControlCentreSettings />} />
               <Route path="notes" element={<NotesSettings />} />
+              <Route path="photos" element={<PhotosSettings />} />
+              <Route path="videos" element={<VideosSettings />} />
+              <Route path="github" element={<GithubSettings />} />
+              <Route path="work" element={<WorkSettings />} />
+              <Route path="contact" element={<ContactSettings />} />
+              <Route path="social-links" element={<SocialLinksSettings />} />
+              <Route path="custom-apps" element={<CustomAppsSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -19,6 +19,13 @@ import {
   X,
   ChevronRight,
   StickyNote,
+  Camera,
+  Video,
+  Github,
+  Briefcase,
+  Phone,
+  Share2,
+  Code,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +40,13 @@ const menuItems = [
   { icon: Bell, label: "Welcome Screen", path: "/admin/dashboard/welcome" },
   { icon: Settings, label: "Control Centre", path: "/admin/dashboard/control-centre" },
   { icon: StickyNote, label: "Public Notes", path: "/admin/dashboard/notes" },
+  { icon: Camera, label: "Photos", path: "/admin/dashboard/photos" },
+  { icon: Video, label: "Videos", path: "/admin/dashboard/videos" },
+  { icon: Github, label: "GitHub Projects", path: "/admin/dashboard/github" },
+  { icon: Briefcase, label: "Work Experience", path: "/admin/dashboard/work" },
+  { icon: Phone, label: "Contact Settings", path: "/admin/dashboard/contact" },
+  { icon: Share2, label: "Social Links", path: "/admin/dashboard/social-links" },
+  { icon: Code, label: "Custom Apps", path: "/admin/dashboard/custom-apps" },
 ];
 
 const AdminDashboard = () => {
