@@ -57,6 +57,7 @@ import clockIcon from "@/assets/icons/clock.png";
 import weatherIcon from "@/assets/icons/weather.png";
 import caseStudyIcon from "@/assets/icons/casestudy.png";
 import goipIcon from "@/assets/icons/goip.png";
+import calendarIcon from "@/assets/icons/calendar.png";
 import BootScreen from "@/components/BootScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import StatusBar from "@/components/StatusBar";
@@ -330,7 +331,7 @@ const Index = () => {
                       
                       {/* Basic Apps Row */}
                       <AppIcon
-                        imageIcon="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/appicon/calendar.png"
+                        imageIcon={calendarIcon}
                         label="Calendar"
                         bgColor="bg-white"
                         iconColor="text-red-500"
