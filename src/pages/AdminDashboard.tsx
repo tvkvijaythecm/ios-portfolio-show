@@ -134,7 +134,7 @@ const AdminDashboard = () => {
   const isOverviewPage = location.pathname === "/admin/dashboard";
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col md:flex-row">
+    <div className="h-screen bg-slate-900 flex flex-col md:flex-row overflow-hidden">
       {/* Mobile Header */}
       <div className="md:hidden sticky top-0 z-50 bg-slate-800/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 flex items-center justify-between">
         <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -252,7 +252,7 @@ const AdminDashboard = () => {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto min-h-0">
+      <main className="flex-1 overflow-y-auto min-h-0 h-full pb-20 md:pb-0">
         {isOverviewPage ? (
           <div className="p-4 md:p-8">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Welcome back!</h2>
