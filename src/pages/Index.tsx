@@ -733,14 +733,20 @@ const Index = () => {
 
             {openApp === "about" && (
               <AppPage
-                title="About"
+                title="Suresh"
                 icon={User}
                 onClose={() => setOpenApp(null)}
               >
                 {iframeSettings.suresh_url ? (
                   <IframeApp url={iframeSettings.suresh_url} title="Suresh" />
                 ) : (
-                  <AboutApp />
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-8">
+                      <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Suresh App</h3>
+                      <p className="text-gray-500 dark:text-gray-400">Configure iframe URL in Admin Panel → Iframe Apps</p>
+                    </div>
+                  </div>
                 )}
               </AppPage>
             )}
