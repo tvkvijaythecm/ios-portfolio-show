@@ -3,9 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Phone, MessageCircle, Mail, Save } from "lucide-react";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 interface ContactSettings {
   id: string;
@@ -15,7 +15,12 @@ interface ContactSettings {
 }
 
 const ContactSettingsPage = () => {
-  const [settings, setSettings] = useState<ContactSettings | null>(null);
+  const [settings, setSettings] = useState<ContactSettings>({
+    id: "",
+    phone_number: "",
+    whatsapp_number: "",
+    email_address: "",
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -31,7 +36,14 @@ const ContactSettingsPage = () => {
         .maybeSingle();
 
       if (error) throw error;
-      setSettings(data);
+      if (data) {
+        setSettings({
+          id: data.id,
+          phone_number: data.phone_number || "",
+          whatsapp_number: data.whatsapp_number || "",
+          email_address: data.email_address || "",
+        });
+      }
     } catch (error) {
       toast.error("Failed to load contact settings");
     } finally {
@@ -40,22 +52,36 @@ const ContactSettingsPage = () => {
   };
 
   const handleSave = async () => {
-    if (!settings) return;
-
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from("contact_settings")
-        .update({
-          phone_number: settings.phone_number,
-          whatsapp_number: settings.whatsapp_number,
-          email_address: settings.email_address,
-        })
-        .eq("id", settings.id);
+      const payload = {
+        phone_number: settings.phone_number || null,
+        whatsapp_number: settings.whatsapp_number || null,
+        email_address: settings.email_address || null,
+      };
 
-      if (error) throw error;
+      if (settings.id) {
+        // Update existing record
+        const { error } = await supabase
+          .from("contact_settings")
+          .update(payload)
+          .eq("id", settings.id);
+        if (error) throw error;
+      } else {
+        // Insert new record
+        const { data, error } = await supabase
+          .from("contact_settings")
+          .insert(payload)
+          .select()
+          .single();
+        if (error) throw error;
+        if (data) {
+          setSettings({ ...settings, id: data.id });
+        }
+      }
       toast.success("Contact settings saved");
     } catch (error) {
+      console.error("Save error:", error);
       toast.error("Failed to save contact settings");
     } finally {
       setSaving(false);
@@ -72,10 +98,8 @@ const ContactSettingsPage = () => {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white">Contact Settings</h2>
-        <p className="text-white/60">Manage phone, WhatsApp, and email settings for the dock apps</p>
-      </div>
+      <AdminHeader title="Contact Settings" />
+      <p className="text-white/60 mb-8">Manage phone, WhatsApp, and email settings for the dock apps</p>
 
       <div className="max-w-2xl space-y-6">
         <Card className="bg-white/5 border-white/10 p-6">
@@ -89,8 +113,8 @@ const ContactSettingsPage = () => {
             </div>
           </div>
           <Input
-            value={settings?.phone_number || ""}
-            onChange={(e) => setSettings({ ...settings!, phone_number: e.target.value })}
+            value={settings.phone_number}
+            onChange={(e) => setSettings({ ...settings, phone_number: e.target.value })}
             className="bg-white/10 border-white/20 text-white"
             placeholder="+1234567890"
           />
@@ -107,8 +131,8 @@ const ContactSettingsPage = () => {
             </div>
           </div>
           <Input
-            value={settings?.whatsapp_number || ""}
-            onChange={(e) => setSettings({ ...settings!, whatsapp_number: e.target.value })}
+            value={settings.whatsapp_number}
+            onChange={(e) => setSettings({ ...settings, whatsapp_number: e.target.value })}
             className="bg-white/10 border-white/20 text-white"
             placeholder="+1234567890"
           />
@@ -125,8 +149,8 @@ const ContactSettingsPage = () => {
             </div>
           </div>
           <Input
-            value={settings?.email_address || ""}
-            onChange={(e) => setSettings({ ...settings!, email_address: e.target.value })}
+            value={settings.email_address}
+            onChange={(e) => setSettings({ ...settings, email_address: e.target.value })}
             className="bg-white/10 border-white/20 text-white"
             placeholder="email@example.com"
           />
