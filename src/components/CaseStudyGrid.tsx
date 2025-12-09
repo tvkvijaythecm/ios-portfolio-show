@@ -34,7 +34,7 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-white text-xl font-bold">Case Study</h2>
+          <h2 className="text-white text-xl font-bold">Other Apps</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
@@ -50,7 +50,9 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
               <motion.div
                 key={index}
                 className="flex flex-col items-center gap-2 cursor-pointer"
+                whileHover={{ scale: 1.1, rotate: 3 }}
                 whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 onClick={app.onClick}
               >
                 {app.imageIcon ? (

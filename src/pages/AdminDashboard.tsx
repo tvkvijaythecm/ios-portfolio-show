@@ -37,7 +37,7 @@ const menuItems = [
   { icon: Grid3X3, label: "App Manager", path: "/admin/dashboard/apps" },
   { icon: User, label: "About Content", path: "/admin/dashboard/about" },
   { icon: GraduationCap, label: "Education", path: "/admin/dashboard/education" },
-  { icon: FolderOpen, label: "Case Studies", path: "/admin/dashboard/case-studies" },
+  { icon: FolderOpen, label: "Other Apps", path: "/admin/dashboard/case-studies" },
   { icon: Bell, label: "Welcome Screen", path: "/admin/dashboard/welcome" },
   { icon: Settings, label: "Control Centre", path: "/admin/dashboard/control-centre" },
   { icon: StickyNote, label: "Public Notes", path: "/admin/dashboard/notes" },

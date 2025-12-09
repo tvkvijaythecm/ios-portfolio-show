@@ -5,14 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Save, Calendar, Cloud, Globe, Clock } from "lucide-react";
+import { Save, Calendar, Cloud, Globe, Clock, User } from "lucide-react";
 import { motion } from "framer-motion";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 interface IframeSettings {
   calendar_url: string;
   weather_url: string;
   goip_url: string;
   clock_url: string;
+  suresh_url: string;
 }
 
 const IframeAppsSettings = () => {
@@ -21,6 +23,7 @@ const IframeAppsSettings = () => {
     weather_url: "",
     goip_url: "",
     clock_url: "",
+    suresh_url: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -46,6 +49,7 @@ const IframeAppsSettings = () => {
           weather_url: value.weather_url || "",
           goip_url: value.goip_url || "",
           clock_url: value.clock_url || "",
+          suresh_url: value.suresh_url || "",
         });
       }
     } catch (error) {
@@ -98,16 +102,14 @@ const IframeAppsSettings = () => {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
+      <AdminHeader title="Iframe Apps" description="Configure iframe URLs for Calendar, Weather, Clock, and Suresh apps" />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Iframe Apps</h2>
-            <p className="text-white/60">Configure iframe URLs for Calendar, Weather, and GoIP apps</p>
-          </div>
+        <div className="flex justify-end mb-6">
           <Button
             onClick={handleSave}
             disabled={saving}
@@ -139,7 +141,7 @@ const IframeAppsSettings = () => {
                   className="bg-white/10 border-white/20 text-white"
                 />
                 <p className="text-white/40 text-xs">
-                  Leave empty to use the built-in calendar. Enter an iframe URL to embed an external calendar.
+                  Enter an iframe URL to embed an external calendar. App will show placeholder if empty.
                 </p>
               </div>
             </CardContent>
@@ -165,33 +167,7 @@ const IframeAppsSettings = () => {
                   className="bg-white/10 border-white/20 text-white"
                 />
                 <p className="text-white/40 text-xs">
-                  Leave empty to use the built-in weather app. Enter an iframe URL to embed an external weather widget.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* GoIP App */}
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-white" />
-                </div>
-                GoIP App
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-white/80">Iframe URL</Label>
-                <Input
-                  value={settings.goip_url}
-                  onChange={(e) => setSettings({ ...settings, goip_url: e.target.value })}
-                  placeholder="https://check.goip.my/"
-                  className="bg-white/10 border-white/20 text-white"
-                />
-                <p className="text-white/40 text-xs">
-                  Enter the GoIP URL to embed in the app.
+                  Enter an iframe URL to embed an external weather widget. App will show placeholder if empty.
                 </p>
               </div>
             </CardContent>
@@ -217,7 +193,59 @@ const IframeAppsSettings = () => {
                   className="bg-white/10 border-white/20 text-white"
                 />
                 <p className="text-white/40 text-xs">
-                  Leave empty to use the built-in clock app. Enter an iframe URL to embed an external clock widget.
+                  Enter an iframe URL to embed an external clock widget. App will show placeholder if empty.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Suresh App */}
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                Suresh App
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-white/80">Iframe URL</Label>
+                <Input
+                  value={settings.suresh_url}
+                  onChange={(e) => setSettings({ ...settings, suresh_url: e.target.value })}
+                  placeholder="https://your-portfolio-url.com"
+                  className="bg-white/10 border-white/20 text-white"
+                />
+                <p className="text-white/40 text-xs">
+                  Enter an iframe URL to embed external content. If empty, the built-in About content will be shown.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* GoIP App - Legacy */}
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-white" />
+                </div>
+                GoIP App (Legacy)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-white/80">Iframe URL</Label>
+                <Input
+                  value={settings.goip_url}
+                  onChange={(e) => setSettings({ ...settings, goip_url: e.target.value })}
+                  placeholder="https://check.goip.my/"
+                  className="bg-white/10 border-white/20 text-white"
+                />
+                <p className="text-white/40 text-xs">
+                  Legacy setting. For new apps, use the "Other Apps" section instead.
                 </p>
               </div>
             </CardContent>
