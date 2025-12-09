@@ -34,19 +34,8 @@ const FONT_MAP: Record<string, string> = {
 };
 
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
-  const [config, setConfig] = useState<WelcomeConfig>({
-    enabled: true,
-    text: "Welcome",
-    subtext: "SURESH.APP",
-    duration: 5000,
-    gradientFrom: "#2563eb",
-    gradientVia: "#9333ea",
-    gradientTo: "#f97316",
-    mainTextFont: "vintage",
-    subtextFont: "sackers",
-    mainTextSize: 72,
-    subtextSize: 20,
-  });
+  const [config, setConfig] = useState<WelcomeConfig | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -57,19 +46,24 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         .single();
       
       if (data?.value) {
-        setConfig({ ...config, ...(data.value as unknown as WelcomeConfig) });
+        setConfig(data.value as unknown as WelcomeConfig);
+      } else {
+        // No settings found, skip welcome screen
+        onComplete();
       }
+      setIsLoading(false);
     };
     loadSettings();
-  }, []);
+  }, [onComplete]);
 
   useEffect(() => {
+    if (isLoading || !config) return;
+    
     if (!config.enabled) {
       onComplete();
       return;
     }
     
-    // Duration from DB is in milliseconds, use directly
     const durationMs = config.duration > 100 ? config.duration : config.duration * 1000;
     
     const timer = setTimeout(() => {
@@ -77,9 +71,10 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     }, durationMs);
 
     return () => clearTimeout(timer);
-  }, [onComplete, config.enabled, config.duration]);
+  }, [onComplete, config, isLoading]);
 
-  if (!config.enabled) return null;
+  // Don't render anything until settings are loaded
+  if (isLoading || !config || !config.enabled) return null;
 
   return (
     <motion.div
