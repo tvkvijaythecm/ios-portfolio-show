@@ -143,22 +143,20 @@ const CaseStudySettings = () => {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Case Studies</h2>
-            <p className="text-white/60">Manage your portfolio case study apps</p>
-          </div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-white">Other Apps</h2>
+          <p className="text-white/60 mb-4">Manage apps in the "Other Apps" folder. Add new apps with iframe embeds or HTML content.</p>
           <Button
             onClick={() => openEditDialog()}
             className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Case Study
+            Add New App
           </Button>
         </div>
 

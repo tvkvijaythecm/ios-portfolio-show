@@ -65,9 +65,6 @@ import AppIcon from "@/components/AppIcon";
 import Dock from "@/components/Dock";
 import ProfileWidget from "@/components/ProfileWidget";
 import AppPage from "@/components/AppPage";
-import CalendarView from "@/components/CalendarView";
-import WeatherApp from "@/components/WeatherApp";
-import ClockApp from "@/components/ClockApp";
 import PhotoViewer from "@/components/PhotoViewer";
 import VideoEmbed from "@/components/VideoEmbed";
 import CaseStudyFolder from "@/components/CaseStudyFolder";
@@ -86,6 +83,7 @@ interface IframeSettings {
   weather_url: string;
   goip_url: string;
   clock_url: string;
+  suresh_url: string;
 }
 
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
@@ -107,7 +105,7 @@ const Index = () => {
   const [dbVideos, setDbVideos] = useState<Array<{ id: string; title: string | null; video_url: string; thumbnail_url: string | null }>>([]);
   const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null }>>([]);
   const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
-  const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "", clock_url: "" });
+  const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "", clock_url: "", suresh_url: "" });
 
   // Fetch case study apps from Supabase
   const { apps: dbCaseStudyApps } = useCaseStudyApps();
@@ -144,6 +142,7 @@ const Index = () => {
             weather_url: value.weather_url || "",
             goip_url: value.goip_url || "",
             clock_url: value.clock_url || "",
+            suresh_url: value.suresh_url || "",
           });
         }
       } catch (error) {
@@ -222,47 +221,18 @@ const Index = () => {
     { icon: LineChart, gradient: "linear-gradient(135deg, #5F27CD 0%, #341F97 100%)" },
   ];
 
-  // Convert database apps to UI format, with GoIP using iframe settings if available
+  // Convert database apps to UI format
   const caseStudyApps = dbCaseStudyApps.length > 0 
     ? dbCaseStudyApps.map(app => {
-        // Override GoIP embed_url with iframe settings if available
-        const isGoipApp = app.name.toLowerCase() === "goip";
-        const effectiveEmbedUrl = isGoipApp && iframeSettings.goip_url 
-          ? iframeSettings.goip_url 
-          : app.embed_url;
-        
         return {
           icon: getIconForApp(app.name),
           label: app.name,
           imageIcon: app.icon_url || undefined,
           gradient: app.gradient,
-          onClick: () => setOpenCaseStudyApp({
-            ...app,
-            embed_url: effectiveEmbedUrl
-          })
+          onClick: () => setOpenCaseStudyApp(app)
         };
       })
-    : [
-        { 
-          icon: TrendingUp, 
-          label: "GoIP", 
-          imageIcon: goipIcon, 
-          gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)", 
-          onClick: () => setOpenCaseStudyApp({
-            id: "goip-fallback",
-            name: "GoIP",
-            icon_url: goipIcon,
-            gradient: "linear-gradient(135deg, #00D2FF 0%, #3A7BD5 100%)",
-            embed_url: iframeSettings.goip_url || "https://check.goip.my/",
-            description: null,
-            html_content: null,
-            sort_order: 0,
-            is_visible: true
-          })
-        },
-        { icon: Target, label: "Calculator", gradient: "linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%)", onClick: () => {} },
-        { icon: Layers, label: "Bookmark", gradient: "linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)", onClick: () => {} },
-      ];
+    : [];
   
   useEffect(() => {
     document.body.className = selectedGradient;
@@ -397,7 +367,7 @@ const Index = () => {
                       />
                       <AppIcon
                         imageIcon={caseStudyIcon}
-                        label="Case Study"
+                        label="Other Apps"
                         gradient="linear-gradient(135deg, #667EEA 0%, #764BA2 100%)"
                         onClick={() => {
                           setShowCaseStudyGrid(true);
@@ -710,7 +680,13 @@ const Index = () => {
                 {iframeSettings.calendar_url ? (
                   <IframeApp url={iframeSettings.calendar_url} title="Calendar" />
                 ) : (
-                  <CalendarView />
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-8">
+                      <CalendarIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Calendar App</h3>
+                      <p className="text-gray-500 dark:text-gray-400">Configure iframe URL in Admin Panel → Iframe Apps</p>
+                    </div>
+                  </div>
                 )}
               </AppPage>
             )}
@@ -724,7 +700,13 @@ const Index = () => {
                 {iframeSettings.clock_url ? (
                   <IframeApp url={iframeSettings.clock_url} title="Clock" />
                 ) : (
-                  <ClockApp />
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-8">
+                      <Clock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Clock App</h3>
+                      <p className="text-gray-500 dark:text-gray-400">Configure iframe URL in Admin Panel → Iframe Apps</p>
+                    </div>
+                  </div>
                 )}
               </AppPage>
             )}
@@ -738,7 +720,13 @@ const Index = () => {
                 {iframeSettings.weather_url ? (
                   <IframeApp url={iframeSettings.weather_url} title="Weather" />
                 ) : (
-                  <WeatherApp />
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl p-8">
+                      <Cloud className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Weather App</h3>
+                      <p className="text-gray-500 dark:text-gray-400">Configure iframe URL in Admin Panel → Iframe Apps</p>
+                    </div>
+                  </div>
                 )}
               </AppPage>
             )}
@@ -749,7 +737,11 @@ const Index = () => {
                 icon={User}
                 onClose={() => setOpenApp(null)}
               >
-                <AboutApp />
+                {iframeSettings.suresh_url ? (
+                  <IframeApp url={iframeSettings.suresh_url} title="Suresh" />
+                ) : (
+                  <AboutApp />
+                )}
               </AppPage>
             )}
 
@@ -980,7 +972,7 @@ const Index = () => {
             )}
           </AnimatePresence>
 
-          {/* Case Study Grid */}
+          {/* Case Study Grid (Other Apps) */}
           <AnimatePresence>
             {showCaseStudyGrid && (
               <CaseStudyGrid

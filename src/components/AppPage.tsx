@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, LucideIcon } from "lucide-react";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AppPageProps {
   title: string;
@@ -9,10 +10,49 @@ interface AppPageProps {
   children: ReactNode;
 }
 
+interface ThemeColors {
+  gradientFrom: string;
+  gradientVia: string;
+  gradientTo: string;
+}
+
 const AppPage = ({ title, icon: Icon, onClose, children }: AppPageProps) => {
+  const [themeColors, setThemeColors] = useState<ThemeColors>({
+    gradientFrom: "#ec4899",
+    gradientVia: "#a855f7",
+    gradientTo: "#6366f1"
+  });
+
+  useEffect(() => {
+    const loadThemeColors = async () => {
+      try {
+        const { data } = await supabase
+          .from("app_settings")
+          .select("value")
+          .eq("key", "welcome")
+          .maybeSingle();
+
+        if (data?.value) {
+          const value = data.value as any;
+          setThemeColors({
+            gradientFrom: value.gradientFrom || "#ec4899",
+            gradientVia: value.gradientVia || "#a855f7",
+            gradientTo: value.gradientTo || "#6366f1"
+          });
+        }
+      } catch (error) {
+        console.error("Error loading theme colors:", error);
+      }
+    };
+    loadThemeColors();
+  }, []);
+
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-500 dark:bg-gray-900"
+      className="fixed inset-0 z-50 flex flex-col dark:bg-gray-900"
+      style={{
+        background: `linear-gradient(to bottom right, ${themeColors.gradientFrom}, ${themeColors.gradientVia}, ${themeColors.gradientTo})`
+      }}
       initial={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
       animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
       exit={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}

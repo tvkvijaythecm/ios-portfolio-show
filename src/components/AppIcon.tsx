@@ -38,11 +38,20 @@ const AppIcon = ({
           iconSize,
           "flex items-center justify-center relative"
         )}
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 1.1, rotate: 3 }}
+        whileTap={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
         {imageIcon ? (
-          <img src={imageIcon} alt={label} className="w-full h-full object-contain" />
+          <motion.img 
+            src={imageIcon} 
+            alt={label} 
+            className="w-full h-full object-contain"
+            whileHover={{ 
+              filter: "brightness(1.1)",
+              boxShadow: "0 8px 25px rgba(0,0,0,0.3)"
+            }}
+          />
         ) : Icon ? (
           <Icon className={cn(iconScale, iconColor)} strokeWidth={1.8} />
         ) : null}
