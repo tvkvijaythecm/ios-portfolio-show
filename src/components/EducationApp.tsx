@@ -17,27 +17,50 @@ interface EducationItem {
   sort_order: number;
 }
 
+interface ThemeColors {
+  gradientFrom: string;
+  gradientVia: string;
+  gradientTo: string;
+}
+
 const EducationApp = ({ onClose }: EducationAppProps) => {
   const [activeTab, setActiveTab] = useState<"online" | "institute">("online");
   const [popupImage, setPopupImage] = useState<string | null>(null);
   const [popupCaption, setPopupCaption] = useState<string>("");
   const [items, setItems] = useState<EducationItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [themeColors, setThemeColors] = useState<ThemeColors | null>(null);
 
   useEffect(() => {
-    const loadItems = async () => {
-      const { data, error } = await supabase
-        .from('education_items')
-        .select('*')
-        .eq('is_visible', true)
-        .order('sort_order', { ascending: true });
+    const loadData = async () => {
+      const [itemsRes, themeRes] = await Promise.all([
+        supabase
+          .from('education_items')
+          .select('*')
+          .eq('is_visible', true)
+          .order('sort_order', { ascending: true }),
+        supabase
+          .from('app_settings')
+          .select('value')
+          .eq('key', 'welcome')
+          .maybeSingle()
+      ]);
       
-      if (data && !error) {
-        setItems(data);
+      if (itemsRes.data && !itemsRes.error) {
+        setItems(itemsRes.data);
+      }
+      
+      if (themeRes.data?.value) {
+        const value = themeRes.data.value as any;
+        setThemeColors({
+          gradientFrom: value.gradientFrom,
+          gradientVia: value.gradientVia,
+          gradientTo: value.gradientTo
+        });
       }
       setLoading(false);
     };
-    loadItems();
+    loadData();
   }, []);
 
   const instituteItems = items.filter(item => item.category === 'institute');
@@ -53,9 +76,21 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
     setPopupCaption("");
   };
 
+  // Don't render until theme is loaded
+  if (!themeColors) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-foreground" />
+      </div>
+    );
+  }
+
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500"
+      className="fixed inset-0 z-50 flex flex-col"
+      style={{
+        background: `linear-gradient(to bottom right, ${themeColors.gradientFrom}, ${themeColors.gradientVia}, ${themeColors.gradientTo})`
+      }}
       initial={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
       animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
       exit={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
