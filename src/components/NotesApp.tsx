@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, User, Clock } from 'lucide-react';
+import { ArrowLeft, Send, User, Clock, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,13 +18,41 @@ interface NotesAppProps {
   onClose: () => void;
 }
 
+interface ThemeColors {
+  gradientFrom: string;
+  gradientVia: string;
+  gradientTo: string;
+}
+
 const NotesApp = ({ onClose }: NotesAppProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNote, setNewNote] = useState('');
   const [authorName, setAuthorName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [themeColors, setThemeColors] = useState<ThemeColors | null>(null);
 
   useEffect(() => {
+    const loadData = async () => {
+      // Load theme colors and notes in parallel
+      const [themeRes] = await Promise.all([
+        supabase
+          .from('app_settings')
+          .select('value')
+          .eq('key', 'welcome')
+          .maybeSingle()
+      ]);
+      
+      if (themeRes.data?.value) {
+        const value = themeRes.data.value as any;
+        setThemeColors({
+          gradientFrom: value.gradientFrom,
+          gradientVia: value.gradientVia,
+          gradientTo: value.gradientTo
+        });
+      }
+    };
+    
+    loadData();
     fetchNotes();
 
     // Subscribe to realtime changes
@@ -103,12 +131,24 @@ const NotesApp = ({ onClose }: NotesAppProps) => {
     });
   };
 
+  // Don't render until theme is loaded
+  if (!themeColors) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-foreground" />
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="fixed inset-0 z-50 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500"
+      className="fixed inset-0 z-50"
+      style={{
+        background: `linear-gradient(to bottom right, ${themeColors.gradientFrom}, ${themeColors.gradientVia}, ${themeColors.gradientTo})`
+      }}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 pt-12">

@@ -22,6 +22,18 @@ const FONT_OPTIONS = [
   { value: "montserrat", label: "Montserrat", preview: "'Montserrat', sans-serif" },
   { value: "roboto", label: "Roboto", preview: "'Roboto', sans-serif" },
   { value: "oswald", label: "Oswald", preview: "'Oswald', sans-serif" },
+  { value: "dancing", label: "Dancing Script", preview: "'Dancing Script', cursive" },
+  { value: "pacifico", label: "Pacifico", preview: "'Pacifico', cursive" },
+  { value: "lobster", label: "Lobster", preview: "'Lobster', cursive" },
+  { value: "greatvibes", label: "Great Vibes", preview: "'Great Vibes', cursive" },
+  { value: "satisfy", label: "Satisfy", preview: "'Satisfy', cursive" },
+  { value: "sacramento", label: "Sacramento", preview: "'Sacramento', cursive" },
+  { value: "allura", label: "Allura", preview: "'Allura', cursive" },
+  { value: "comfortaa", label: "Comfortaa", preview: "'Comfortaa', cursive" },
+  { value: "righteous", label: "Righteous", preview: "'Righteous', sans-serif" },
+  { value: "orbitron", label: "Orbitron", preview: "'Orbitron', sans-serif" },
+  { value: "cinzel", label: "Cinzel", preview: "'Cinzel', serif" },
+  { value: "cormorant", label: "Cormorant Garamond", preview: "'Cormorant Garamond', serif" },
 ];
 
 interface WelcomeConfig {

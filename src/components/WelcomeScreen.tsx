@@ -31,6 +31,18 @@ const FONT_MAP: Record<string, string> = {
   montserrat: "'Montserrat', sans-serif",
   roboto: "'Roboto', sans-serif",
   oswald: "'Oswald', sans-serif",
+  dancing: "'Dancing Script', cursive",
+  pacifico: "'Pacifico', cursive",
+  lobster: "'Lobster', cursive",
+  greatvibes: "'Great Vibes', cursive",
+  satisfy: "'Satisfy', cursive",
+  sacramento: "'Sacramento', cursive",
+  allura: "'Allura', cursive",
+  comfortaa: "'Comfortaa', cursive",
+  righteous: "'Righteous', sans-serif",
+  orbitron: "'Orbitron', sans-serif",
+  cinzel: "'Cinzel', serif",
+  cormorant: "'Cormorant Garamond', serif",
 };
 
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
@@ -91,7 +103,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         }}
       />
 
-      {/* Animated Welcome Text */}
+      {/* Animated Welcome Text - no background layer */}
       <motion.div
         className="relative z-10 flex flex-col items-center gap-2"
         initial={{ opacity: 0 }}
@@ -115,7 +127,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 delay: index * 0.1,
                 ease: "easeOut"
               }}
-              className="inline-block drop-shadow-[0_4px_20px_rgba(255,255,255,0.4)]"
+              className="inline-block"
             >
               {letter}
             </motion.span>

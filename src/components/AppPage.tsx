@@ -17,11 +17,8 @@ interface ThemeColors {
 }
 
 const AppPage = ({ title, icon: Icon, onClose, children }: AppPageProps) => {
-  const [themeColors, setThemeColors] = useState<ThemeColors>({
-    gradientFrom: "#ec4899",
-    gradientVia: "#a855f7",
-    gradientTo: "#6366f1"
-  });
+  const [themeColors, setThemeColors] = useState<ThemeColors | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadThemeColors = async () => {
@@ -35,17 +32,28 @@ const AppPage = ({ title, icon: Icon, onClose, children }: AppPageProps) => {
         if (data?.value) {
           const value = data.value as any;
           setThemeColors({
-            gradientFrom: value.gradientFrom || "#ec4899",
-            gradientVia: value.gradientVia || "#a855f7",
-            gradientTo: value.gradientTo || "#6366f1"
+            gradientFrom: value.gradientFrom,
+            gradientVia: value.gradientVia,
+            gradientTo: value.gradientTo
           });
         }
       } catch (error) {
         console.error("Error loading theme colors:", error);
+      } finally {
+        setLoading(false);
       }
     };
     loadThemeColors();
   }, []);
+
+  // Don't render until theme is loaded
+  if (loading || !themeColors) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <motion.div
