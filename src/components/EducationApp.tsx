@@ -91,10 +91,15 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
       style={{
         background: `linear-gradient(to bottom right, ${themeColors.gradientFrom}, ${themeColors.gradientVia}, ${themeColors.gradientTo})`
       }}
-      initial={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
+      initial={{ scale: 0.5, opacity: 0, borderRadius: "22%" }}
       animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
-      exit={{ scale: 0.8, opacity: 0, borderRadius: "22%" }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      exit={{ scale: 0.5, opacity: 0, borderRadius: "22%" }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 15,
+        mass: 0.8
+      }}
     >
       <div className="flex flex-col h-full">
         {/* Header */}

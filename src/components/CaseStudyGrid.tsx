@@ -27,10 +27,15 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
     >
       <motion.div
         className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-2xl rounded-3xl p-8 max-w-md w-full mx-4"
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        exit={{ scale: 0.5, opacity: 0 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 400, 
+          damping: 15,
+          mass: 0.8
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">

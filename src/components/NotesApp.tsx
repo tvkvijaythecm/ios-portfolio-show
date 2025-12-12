@@ -142,9 +142,15 @@ const NotesApp = ({ onClose }: NotesAppProps) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
+      initial={{ scale: 0.5, opacity: 0, borderRadius: "22%" }}
+      animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
+      exit={{ scale: 0.5, opacity: 0, borderRadius: "22%" }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 15,
+        mass: 0.8
+      }}
       className="fixed inset-0 z-50"
       style={{
         background: `linear-gradient(to bottom right, ${themeColors.gradientFrom}, ${themeColors.gradientVia}, ${themeColors.gradientTo})`
