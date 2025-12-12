@@ -167,7 +167,7 @@ const Dock = () => {
 
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-30">
         <motion.div
-          className="ios-glass dark:bg-gray-800/30 rounded-[28px] px-5 py-3"
+          className="bg-gray-900/70 backdrop-blur-xl rounded-[28px] px-5 py-3 border border-white/10"
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 30 }}

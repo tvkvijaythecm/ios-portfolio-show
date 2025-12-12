@@ -4,7 +4,7 @@ import profileImage from "@/assets/profile.jpeg";
 const ProfileWidget = () => {
   return (
     <motion.div
-      className="w-full ios-glass dark:bg-gray-800/30 rounded-[28px] p-4 backdrop-blur-xl"
+      className="w-full bg-gray-900/70 backdrop-blur-xl rounded-[28px] p-4 border border-white/10"
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.2 }}
