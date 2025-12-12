@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
 import SEOHead from "./components/SEOHead";
 import Index from "./pages/Index";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -43,6 +44,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/install" element={<Install />} />
               <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin/reset-password" element={<AdminResetPassword />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />}>
