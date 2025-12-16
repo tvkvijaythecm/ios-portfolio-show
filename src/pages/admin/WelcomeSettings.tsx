@@ -48,7 +48,11 @@ interface WelcomeConfig {
   subtextFont: string;
   mainTextSize: number;
   subtextSize: number;
-  textColor: string;
+  mainTextColor: string;
+  subtextColor: string;
+  textShadow: boolean;
+  textShadowColor: string;
+  textShadowBlur: number;
 }
 
 interface NotificationConfig {
@@ -73,7 +77,11 @@ const WelcomeSettings = () => {
     subtextFont: "sackers",
     mainTextSize: 72,
     subtextSize: 20,
-    textColor: "#ffffff",
+    mainTextColor: "#ffffff",
+    subtextColor: "#ffffff",
+    textShadow: true,
+    textShadowColor: "#000000",
+    textShadowBlur: 10,
   });
   
   const [notificationConfig, setNotificationConfig] = useState<NotificationConfig>({
@@ -290,23 +298,82 @@ const WelcomeSettings = () => {
                     </div>
                   </div>
                   
-                  {/* Font Color */}
-                  <div className="space-y-2">
-                    <Label className="text-white/80 text-sm">Font Color</Label>
-                    <div className="flex gap-2">
-                      <input
-                        type="color"
-                        value={config.textColor}
-                        onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
-                        className="w-10 h-10 rounded cursor-pointer"
-                      />
-                      <Input
-                        value={config.textColor}
-                        onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
-                        className="bg-white/10 border-white/20 text-white flex-1"
-                        placeholder="#ffffff"
+                  {/* Text Colors */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-white/80 text-sm">Main Text Color</Label>
+                      <div className="flex gap-2">
+                        <input
+                          type="color"
+                          value={config.mainTextColor}
+                          onChange={(e) => setConfig({ ...config, mainTextColor: e.target.value })}
+                          className="w-10 h-10 rounded cursor-pointer"
+                        />
+                        <Input
+                          value={config.mainTextColor}
+                          onChange={(e) => setConfig({ ...config, mainTextColor: e.target.value })}
+                          className="bg-white/10 border-white/20 text-white flex-1 text-xs"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white/80 text-sm">Subtext Color</Label>
+                      <div className="flex gap-2">
+                        <input
+                          type="color"
+                          value={config.subtextColor}
+                          onChange={(e) => setConfig({ ...config, subtextColor: e.target.value })}
+                          className="w-10 h-10 rounded cursor-pointer"
+                        />
+                        <Input
+                          value={config.subtextColor}
+                          onChange={(e) => setConfig({ ...config, subtextColor: e.target.value })}
+                          className="bg-white/10 border-white/20 text-white flex-1 text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Text Shadow */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white/80 text-sm">Text Shadow</Label>
+                      <Switch
+                        checked={config.textShadow}
+                        onCheckedChange={(checked) => setConfig({ ...config, textShadow: checked })}
                       />
                     </div>
+                    {config.textShadow && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-white/60 text-xs">Shadow Color</Label>
+                          <div className="flex gap-2">
+                            <input
+                              type="color"
+                              value={config.textShadowColor}
+                              onChange={(e) => setConfig({ ...config, textShadowColor: e.target.value })}
+                              className="w-8 h-8 rounded cursor-pointer"
+                            />
+                            <Input
+                              value={config.textShadowColor}
+                              onChange={(e) => setConfig({ ...config, textShadowColor: e.target.value })}
+                              className="bg-white/10 border-white/20 text-white flex-1 text-xs"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-white/60 text-xs">Blur: {config.textShadowBlur}px</Label>
+                          <Slider
+                            value={[config.textShadowBlur]}
+                            onValueChange={([value]) => setConfig({ ...config, textShadowBlur: value })}
+                            min={0}
+                            max={30}
+                            step={1}
+                            className="py-2"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -377,11 +444,12 @@ const WelcomeSettings = () => {
                   {config.enabled ? (
                     <>
                       <p 
-                        className="mb-1 drop-shadow-lg" 
+                        className="mb-1" 
                         style={{ 
                           fontFamily: getFontFamily(config.mainTextFont),
                           fontSize: `${Math.min(config.mainTextSize / 3, 24)}px`,
-                          color: config.textColor || "#ffffff"
+                          color: config.mainTextColor || "#ffffff",
+                          textShadow: config.textShadow ? `0 2px ${config.textShadowBlur / 3}px ${config.textShadowColor}` : "none"
                         }}
                       >
                         {config.text || "Hello"}
@@ -391,8 +459,8 @@ const WelcomeSettings = () => {
                         style={{ 
                           fontFamily: getFontFamily(config.subtextFont),
                           fontSize: `${Math.min(config.subtextSize / 2, 12)}px`,
-                          color: config.textColor || "#ffffff",
-                          opacity: 0.8
+                          color: config.subtextColor || "#ffffff",
+                          textShadow: config.textShadow ? `0 2px ${config.textShadowBlur / 3}px ${config.textShadowColor}` : "none"
                         }}
                       >
                         {config.subtext || "Welcome"}

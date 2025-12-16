@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Smartphone, Check } from "lucide-react";
 import { motion } from "framer-motion";
@@ -14,13 +15,23 @@ interface BootConfig {
   logo: string;
   duration: number;
   progressColor: string;
+  backgroundColor: string;
+  animationStyle: "fade" | "zoom" | "slide";
 }
+
+const ANIMATION_OPTIONS = [
+  { value: "fade", label: "Fade" },
+  { value: "zoom", label: "Zoom" },
+  { value: "slide", label: "Slide Up" },
+];
 
 const BootSettings = () => {
   const [config, setConfig] = useState<BootConfig>({
     logo: "/assets/boot-logo.svg",
     duration: 3000,
     progressColor: "#ffffff",
+    backgroundColor: "#000000",
+    animationStyle: "fade",
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -39,7 +50,14 @@ const BootSettings = () => {
         .maybeSingle();
 
       if (data?.value) {
-        setConfig(data.value as unknown as BootConfig);
+        const val = data.value as unknown as BootConfig;
+        setConfig({
+          logo: val.logo || "/assets/boot-logo.svg",
+          duration: val.duration || 3000,
+          progressColor: val.progressColor || "#ffffff",
+          backgroundColor: val.backgroundColor || "#000000",
+          animationStyle: val.animationStyle || "fade",
+        });
       }
     } catch (error) {
       console.error("Error loading settings:", error);
@@ -79,6 +97,17 @@ const BootSettings = () => {
     reader.readAsDataURL(file);
   };
 
+  const getAnimationProps = () => {
+    switch (config.animationStyle) {
+      case "zoom":
+        return { initial: { scale: 0.5, opacity: 0 }, animate: { scale: 1, opacity: 1 } };
+      case "slide":
+        return { initial: { y: 50, opacity: 0 }, animate: { y: 0, opacity: 1 } };
+      default:
+        return { initial: { opacity: 0 }, animate: { opacity: 1 } };
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center">
@@ -100,7 +129,7 @@ const BootSettings = () => {
                 Boot Configuration
               </CardTitle>
               <CardDescription className="text-white/60">
-                Customize logo, duration, and colors
+                Customize logo, duration, colors and animation
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -126,6 +155,43 @@ const BootSettings = () => {
                   step={500}
                   className="py-2"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-white/80">Animation Style</Label>
+                <Select
+                  value={config.animationStyle}
+                  onValueChange={(value: "fade" | "zoom" | "slide") => setConfig({ ...config, animationStyle: value })}
+                >
+                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ANIMATION_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-white/80">Background Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={config.backgroundColor}
+                    onChange={(e) => setConfig({ ...config, backgroundColor: e.target.value })}
+                    className="w-16 h-10 p-1 bg-white/10 border-white/20"
+                  />
+                  <Input
+                    type="text"
+                    value={config.backgroundColor}
+                    onChange={(e) => setConfig({ ...config, backgroundColor: e.target.value })}
+                    className="flex-1 bg-white/10 border-white/20 text-white"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -170,12 +236,18 @@ const BootSettings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="aspect-[9/16] max-h-96 rounded-2xl overflow-hidden border border-white/20 bg-black flex flex-col items-center justify-center gap-8">
+              <div 
+                className="aspect-[9/16] max-h-96 rounded-2xl overflow-hidden border border-white/20 flex flex-col items-center justify-center gap-8"
+                style={{ backgroundColor: config.backgroundColor }}
+              >
                 {config.logo && (
-                  <img
+                  <motion.img
+                    key={config.animationStyle}
                     src={config.logo}
                     alt="Boot logo"
                     className="w-24 h-24 object-contain"
+                    {...getAnimationProps()}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                   />
                 )}
                 <div className="w-48 h-1 rounded-full overflow-hidden" style={{ backgroundColor: `${config.progressColor}33` }}>
