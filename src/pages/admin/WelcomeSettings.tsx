@@ -48,6 +48,7 @@ interface WelcomeConfig {
   subtextFont: string;
   mainTextSize: number;
   subtextSize: number;
+  textColor: string;
 }
 
 interface NotificationConfig {
@@ -72,6 +73,7 @@ const WelcomeSettings = () => {
     subtextFont: "sackers",
     mainTextSize: 72,
     subtextSize: 20,
+    textColor: "#ffffff",
   });
   
   const [notificationConfig, setNotificationConfig] = useState<NotificationConfig>({
@@ -287,6 +289,25 @@ const WelcomeSettings = () => {
                       />
                     </div>
                   </div>
+                  
+                  {/* Font Color */}
+                  <div className="space-y-2">
+                    <Label className="text-white/80 text-sm">Font Color</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={config.textColor}
+                        onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={config.textColor}
+                        onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white flex-1"
+                        placeholder="#ffffff"
+                      />
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -356,19 +377,22 @@ const WelcomeSettings = () => {
                   {config.enabled ? (
                     <>
                       <p 
-                        className="text-white mb-1 drop-shadow-lg" 
+                        className="mb-1 drop-shadow-lg" 
                         style={{ 
                           fontFamily: getFontFamily(config.mainTextFont),
-                          fontSize: `${Math.min(config.mainTextSize / 3, 24)}px`
+                          fontSize: `${Math.min(config.mainTextSize / 3, 24)}px`,
+                          color: config.textColor || "#ffffff"
                         }}
                       >
                         {config.text || "Hello"}
                       </p>
                       <p 
-                        className="text-white/80 tracking-wider uppercase"
+                        className="tracking-wider uppercase"
                         style={{ 
                           fontFamily: getFontFamily(config.subtextFont),
-                          fontSize: `${Math.min(config.subtextSize / 2, 12)}px`
+                          fontSize: `${Math.min(config.subtextSize / 2, 12)}px`,
+                          color: config.textColor || "#ffffff",
+                          opacity: 0.8
                         }}
                       >
                         {config.subtext || "Welcome"}

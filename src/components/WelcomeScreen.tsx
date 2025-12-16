@@ -18,6 +18,7 @@ interface WelcomeConfig {
   subtextFont: string;
   mainTextSize: number;
   subtextSize: number;
+  textColor: string;
 }
 
 const FONT_MAP: Record<string, string> = {
@@ -111,10 +112,11 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         transition={{ duration: 0.5 }}
       >
         <div 
-          className="text-white tracking-wide"
+          className="tracking-wide"
           style={{ 
             fontFamily: FONT_MAP[config.mainTextFont] || "'Vintage Goods', sans-serif",
-            fontSize: `${config.mainTextSize}px`
+            fontSize: `${config.mainTextSize}px`,
+            color: config.textColor || "#ffffff"
           }}
         >
           {config.text.split("").map((letter, index) => (
@@ -135,10 +137,12 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         </div>
         
         <motion.div
-          className="text-white tracking-[0.3em] uppercase"
+          className="tracking-[0.3em] uppercase"
           style={{ 
             fontFamily: FONT_MAP[config.subtextFont] || "'Sackers Gothic', sans-serif",
-            fontSize: `${config.subtextSize}px`
+            fontSize: `${config.subtextSize}px`,
+            color: config.textColor || "#ffffff",
+            opacity: 0.8
           }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
