@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import bootLogo from "@/assets/boot-logo.svg";
 
 // Import all images to preload
@@ -37,6 +38,12 @@ const imagesToPreload = [
   weatherIcon, caseStudyIcon, goipIcon
 ];
 
+interface BootConfig {
+  logo: string;
+  duration: number;
+  progressColor: string;
+}
+
 interface BootScreenProps {
   onComplete: () => void;
 }
@@ -45,6 +52,39 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [config, setConfig] = useState<BootConfig>({
+    logo: bootLogo,
+    duration: 3000,
+    progressColor: "#ffffff",
+  });
+  const [configLoaded, setConfigLoaded] = useState(false);
+
+  // Fetch boot config from Supabase
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const { data } = await supabase
+          .from("app_settings")
+          .select("value")
+          .eq("key", "boot")
+          .maybeSingle();
+
+        if (data?.value) {
+          const bootConfig = data.value as unknown as BootConfig;
+          setConfig({
+            logo: bootConfig.logo || bootLogo,
+            duration: bootConfig.duration || 3000,
+            progressColor: bootConfig.progressColor || "#ffffff",
+          });
+        }
+      } catch (error) {
+        console.error("Error loading boot config:", error);
+      } finally {
+        setConfigLoaded(true);
+      }
+    };
+    loadConfig();
+  }, []);
 
   // Preload images
   useEffect(() => {
@@ -69,7 +109,11 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     });
   }, []);
 
+  // Progress animation based on configured duration
   useEffect(() => {
+    if (!configLoaded) return;
+    
+    const intervalTime = config.duration / 100;
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -78,10 +122,10 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
         }
         return prev + 1;
       });
-    }, 30);
+    }, intervalTime);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [configLoaded, config.duration]);
 
   useEffect(() => {
     if (progress >= 100 && imagesLoaded) {
@@ -110,13 +154,17 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           ease: "easeOut",
         }}
       >
-        <img src={bootLogo} alt="Boot Logo" className="w-32 h-32" />
+        <img src={config.logo} alt="Boot Logo" className="w-32 h-32 object-contain" />
       </motion.div>
 
       {/* Loading bar */}
-      <div className="w-64 h-1 bg-white/20 rounded-full overflow-hidden">
+      <div 
+        className="w-64 h-1 rounded-full overflow-hidden"
+        style={{ backgroundColor: `${config.progressColor}33` }}
+      >
         <motion.div
-          className="h-full bg-white rounded-full"
+          className="h-full rounded-full"
+          style={{ backgroundColor: config.progressColor }}
           initial={{ width: "0%" }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.1 }}

@@ -53,8 +53,11 @@ const BootSettings = () => {
     try {
       const { error } = await supabase
         .from("app_settings")
-        .update({ value: JSON.parse(JSON.stringify(config)) })
-        .eq("key", "boot");
+        .upsert({ 
+          key: "boot",
+          value: JSON.parse(JSON.stringify(config)),
+          updated_at: new Date().toISOString()
+        }, { onConflict: "key" });
 
       if (error) throw error;
       toast.success("Boot settings saved!");
