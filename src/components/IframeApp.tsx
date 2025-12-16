@@ -18,7 +18,7 @@ const IframeApp = ({ url, title }: IframeAppProps) => {
       <iframe
         src={url}
         title={title}
-        className="w-full h-full min-h-[500px] border-0 rounded-2xl"
+        className="w-full h-full min-h-[500px] border-0"
         onLoad={() => setLoading(false)}
         allow="geolocation"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
