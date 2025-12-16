@@ -42,6 +42,8 @@ interface BootConfig {
   logo: string;
   duration: number;
   progressColor: string;
+  backgroundColor: string;
+  animationStyle: "fade" | "zoom" | "slide";
 }
 
 interface BootScreenProps {
@@ -60,6 +62,8 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     logo: bootLogo,
     duration: 3000,
     progressColor: "#ffffff",
+    backgroundColor: "#000000",
+    animationStyle: "fade",
   };
 
   // Fetch boot config from Supabase
@@ -78,6 +82,8 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
             logo: bootConfig.logo || defaultConfig.logo,
             duration: bootConfig.duration || defaultConfig.duration,
             progressColor: bootConfig.progressColor || defaultConfig.progressColor,
+            backgroundColor: bootConfig.backgroundColor || defaultConfig.backgroundColor,
+            animationStyle: bootConfig.animationStyle || defaultConfig.animationStyle,
           });
         } else {
           setConfig(defaultConfig);
@@ -142,6 +148,19 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     }
   }, [progress, imagesLoaded]);
 
+  const getAnimationProps = () => {
+    if (!config) return { initial: { opacity: 0 }, animate: { opacity: 1 } };
+    
+    switch (config.animationStyle) {
+      case "zoom":
+        return { initial: { scale: 0.5, opacity: 0 }, animate: { scale: 1, opacity: 1 } };
+      case "slide":
+        return { initial: { y: 50, opacity: 0 }, animate: { y: 0, opacity: 1 } };
+      default:
+        return { initial: { opacity: 0 }, animate: { opacity: 1 } };
+    }
+  };
+
   // Don't render until config is loaded
   if (!configLoaded || !config) {
     return (
@@ -151,7 +170,8 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50 gap-12"
+      className="fixed inset-0 flex flex-col items-center justify-center z-50 gap-12"
+      style={{ backgroundColor: config.backgroundColor }}
       initial={{ opacity: 1 }}
       animate={{ opacity: isComplete ? 0 : 1 }}
       transition={{ duration: 0.5 }}
@@ -160,8 +180,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
       }}
     >
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        {...getAnimationProps()}
         transition={{
           duration: 1,
           ease: "easeOut",

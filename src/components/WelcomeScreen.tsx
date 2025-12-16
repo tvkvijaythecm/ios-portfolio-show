@@ -18,7 +18,11 @@ interface WelcomeConfig {
   subtextFont: string;
   mainTextSize: number;
   subtextSize: number;
-  textColor: string;
+  mainTextColor: string;
+  subtextColor: string;
+  textShadow: boolean;
+  textShadowColor: string;
+  textShadowBlur: number;
 }
 
 const FONT_MAP: Record<string, string> = {
@@ -89,6 +93,11 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   // Don't render anything until settings are loaded
   if (isLoading || !config || !config.enabled) return null;
 
+  const getTextShadow = () => {
+    if (!config.textShadow) return "none";
+    return `0 4px ${config.textShadowBlur}px ${config.textShadowColor}`;
+  };
+
   return (
     <motion.div
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
@@ -116,7 +125,8 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           style={{ 
             fontFamily: FONT_MAP[config.mainTextFont] || "'Vintage Goods', sans-serif",
             fontSize: `${config.mainTextSize}px`,
-            color: config.textColor || "#ffffff"
+            color: config.mainTextColor || "#ffffff",
+            textShadow: getTextShadow()
           }}
         >
           {config.text.split("").map((letter, index) => (
@@ -141,8 +151,8 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           style={{ 
             fontFamily: FONT_MAP[config.subtextFont] || "'Sackers Gothic', sans-serif",
             fontSize: `${config.subtextSize}px`,
-            color: config.textColor || "#ffffff",
-            opacity: 0.8
+            color: config.subtextColor || "#ffffff",
+            textShadow: getTextShadow()
           }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
