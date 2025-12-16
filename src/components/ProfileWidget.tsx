@@ -4,8 +4,7 @@ import profileImage from "@/assets/profile.jpeg";
 const ProfileWidget = () => {
   return (
     <motion.div
-      className="w-full backdrop-blur-xl rounded-[28px] p-4 border border-white/10"
-      style={{ backgroundColor: 'rgba(18, 18, 18, 0.85)' }}
+      className="w-full bg-white/15 dark:bg-white/10 backdrop-blur-2xl rounded-[28px] p-4 border border-white/20 shadow-lg"
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.2 }}

@@ -167,8 +167,7 @@ const Dock = () => {
 
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-30">
         <motion.div
-          className="backdrop-blur-xl rounded-[28px] px-5 py-3 border border-white/10"
-          style={{ backgroundColor: 'rgba(18, 18, 18, 0.85)' }}
+          className="bg-white/15 dark:bg-white/10 backdrop-blur-2xl rounded-[28px] px-5 py-3 border border-white/20 shadow-lg"
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 30 }}
