@@ -52,12 +52,15 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [config, setConfig] = useState<BootConfig>({
+  const [config, setConfig] = useState<BootConfig | null>(null);
+  const [configLoaded, setConfigLoaded] = useState(false);
+
+  // Default config - only used after we confirm no admin settings exist
+  const defaultConfig: BootConfig = {
     logo: bootLogo,
     duration: 3000,
     progressColor: "#ffffff",
-  });
-  const [configLoaded, setConfigLoaded] = useState(false);
+  };
 
   // Fetch boot config from Supabase
   useEffect(() => {
@@ -72,13 +75,16 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
         if (data?.value) {
           const bootConfig = data.value as unknown as BootConfig;
           setConfig({
-            logo: bootConfig.logo || bootLogo,
-            duration: bootConfig.duration || 3000,
-            progressColor: bootConfig.progressColor || "#ffffff",
+            logo: bootConfig.logo || defaultConfig.logo,
+            duration: bootConfig.duration || defaultConfig.duration,
+            progressColor: bootConfig.progressColor || defaultConfig.progressColor,
           });
+        } else {
+          setConfig(defaultConfig);
         }
       } catch (error) {
         console.error("Error loading boot config:", error);
+        setConfig(defaultConfig);
       } finally {
         setConfigLoaded(true);
       }
@@ -111,7 +117,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
 
   // Progress animation based on configured duration
   useEffect(() => {
-    if (!configLoaded) return;
+    if (!configLoaded || !config) return;
     
     const intervalTime = config.duration / 100;
     const interval = setInterval(() => {
@@ -125,7 +131,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     }, intervalTime);
 
     return () => clearInterval(interval);
-  }, [configLoaded, config.duration]);
+  }, [configLoaded, config]);
 
   useEffect(() => {
     if (progress >= 100 && imagesLoaded) {
@@ -135,6 +141,13 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
       return () => clearTimeout(timer);
     }
   }, [progress, imagesLoaded]);
+
+  // Don't render until config is loaded
+  if (!configLoaded || !config) {
+    return (
+      <div className="fixed inset-0 bg-black z-50" />
+    );
+  }
 
   return (
     <motion.div
