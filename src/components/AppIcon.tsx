@@ -23,7 +23,7 @@ const AppIcon = ({
   onClick,
   size = "normal",
 }: AppIconProps) => {
-  const iconSize = size === "large" ? "w-20 h-20" : "w-[60px] h-[60px]";
+  const iconSize = size === "large" ? "w-20 h-20" : "w-[61px] h-[61px]";
   const iconScale = size === "large" ? "w-12 h-12" : "w-8 h-8";
 
   return (
