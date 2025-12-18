@@ -24,7 +24,7 @@ const CaseStudyPage = ({ title, icon: Icon, iconUrl, htmlContent, onClose }: Cas
       }}
     >
       {/* Header */}
-      <div className="h-20 flex items-end justify-between px-6 pb-3 border-b border-white/20 bg-white/10 backdrop-blur-md">
+      <div className="h-20 flex items-end justify-between px-6 pb-3 border-b border-white/20 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500">
         <motion.button
           onClick={onClose}
           className="flex items-center"
