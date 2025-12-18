@@ -13,7 +13,6 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminResetPassword from "./pages/AdminResetPassword";
 import BackgroundSettings from "./pages/admin/BackgroundSettings";
-import BootSettings from "./pages/admin/BootSettings";
 import AppManager from "./pages/admin/AppManager";
 import AboutSettings from "./pages/admin/AboutSettings";
 import EducationSettings from "./pages/admin/EducationSettings";
@@ -49,7 +48,6 @@ const App = () => (
               <Route path="/admin/reset-password" element={<AdminResetPassword />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />}>
                 <Route path="background" element={<BackgroundSettings />} />
-                <Route path="boot" element={<BootSettings />} />
                 <Route path="apps" element={<AppManager />} />
                 <Route path="about" element={<AboutSettings />} />
                 <Route path="education" element={<EducationSettings />} />
