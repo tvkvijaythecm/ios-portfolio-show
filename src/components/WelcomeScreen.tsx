@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import startupSound from "@/assets/startup-sound.wav";
 
 interface WelcomeScreenProps {
   onComplete: () => void;
@@ -53,6 +54,7 @@ const FONT_MAP: Record<string, string> = {
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [config, setConfig] = useState<WelcomeConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -72,6 +74,21 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     };
     loadSettings();
   }, [onComplete]);
+
+  // Play startup sound when welcome screen is shown
+  useEffect(() => {
+    if (!isLoading && config?.enabled) {
+      audioRef.current = new Audio(startupSound);
+      audioRef.current.play().catch(console.error);
+    }
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [isLoading, config?.enabled]);
 
   useEffect(() => {
     if (isLoading || !config) return;
