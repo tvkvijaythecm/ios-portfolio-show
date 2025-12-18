@@ -1,21 +1,14 @@
 import { useEffect, useState } from "react";
-import { Wifi, Signal, Fingerprint } from "lucide-react";
+import { Wifi, Signal } from "lucide-react";
 import { motion } from "framer-motion";
+import controlCenterIcon from "@/assets/icons/control-center.svg";
 
 interface StatusBarProps {
   onControlCentreOpen?: () => void;
 }
 
-// Rainbow colors for fingerprint animation
-const RAINBOW_COLORS = [
-  "#ff0000", "#ff7f00", "#ffff00", "#00ff00", 
-  "#0000ff", "#4b0082", "#9400d3", "#ff1493",
-  "#00ffff", "#ff6347", "#32cd32", "#ffd700"
-];
-
 const StatusBar = ({ onControlCentreOpen }: StatusBarProps) => {
   const [currentTime, setCurrentTime] = useState("");
-  const [colorIndex, setColorIndex] = useState(0);
 
   useEffect(() => {
     const updateTime = () => {
@@ -28,14 +21,6 @@ const StatusBar = ({ onControlCentreOpen }: StatusBarProps) => {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Animate fingerprint color
-  useEffect(() => {
-    const colorInterval = setInterval(() => {
-      setColorIndex((prev) => (prev + 1) % RAINBOW_COLORS.length);
-    }, 500);
-    return () => clearInterval(colorInterval);
   }, []);
 
   return (
@@ -56,12 +41,17 @@ const StatusBar = ({ onControlCentreOpen }: StatusBarProps) => {
           className="ml-2 p-1.5 hover:bg-white/10 rounded-full transition-colors"
           aria-label="Open Control Centre"
         >
-          <motion.div
-            animate={{ color: RAINBOW_COLORS[colorIndex] }}
-            transition={{ duration: 0.3 }}
-          >
-            <Fingerprint className="w-5 h-5" strokeWidth={2.5} />
-          </motion.div>
+          <motion.img
+            src={controlCenterIcon}
+            alt="Control Centre"
+            className="w-5 h-5"
+            animate={{ rotate: 360 }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity, 
+              ease: "linear" 
+            }}
+          />
         </button>
       </div>
     </div>
