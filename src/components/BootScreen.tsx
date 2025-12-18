@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import bootLogo from "@/assets/boot-logo.svg";
 
 // Import all images to preload
 import profileImage from "@/assets/profile.jpeg";
@@ -38,65 +36,13 @@ const imagesToPreload = [
   weatherIcon, caseStudyIcon, goipIcon
 ];
 
-interface BootConfig {
-  logo: string;
-  duration: number;
-  progressColor: string;
-  backgroundColor: string;
-  animationStyle: "fade" | "zoom" | "slide";
-}
-
 interface BootScreenProps {
   onComplete: () => void;
 }
 
 const BootScreen = ({ onComplete }: BootScreenProps) => {
-  const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [config, setConfig] = useState<BootConfig | null>(null);
-  const [configLoaded, setConfigLoaded] = useState(false);
-
-  // Default config - only used after we confirm no admin settings exist
-  const defaultConfig: BootConfig = {
-    logo: bootLogo,
-    duration: 3000,
-    progressColor: "#ffffff",
-    backgroundColor: "#000000",
-    animationStyle: "fade",
-  };
-
-  // Fetch boot config from Supabase
-  useEffect(() => {
-    const loadConfig = async () => {
-      try {
-        const { data } = await supabase
-          .from("app_settings")
-          .select("value")
-          .eq("key", "boot")
-          .maybeSingle();
-
-        if (data?.value) {
-          const bootConfig = data.value as unknown as BootConfig;
-          setConfig({
-            logo: bootConfig.logo || defaultConfig.logo,
-            duration: bootConfig.duration || defaultConfig.duration,
-            progressColor: bootConfig.progressColor || defaultConfig.progressColor,
-            backgroundColor: bootConfig.backgroundColor || defaultConfig.backgroundColor,
-            animationStyle: bootConfig.animationStyle || defaultConfig.animationStyle,
-          });
-        } else {
-          setConfig(defaultConfig);
-        }
-      } catch (error) {
-        console.error("Error loading boot config:", error);
-        setConfig(defaultConfig);
-      } finally {
-        setConfigLoaded(true);
-      }
-    };
-    loadConfig();
-  }, []);
 
   // Preload images
   useEffect(() => {
@@ -121,57 +67,27 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     });
   }, []);
 
-  // Progress animation based on configured duration
+  // Wait for animation to complete (20s) then fade out
   useEffect(() => {
-    if (!configLoaded || !config) return;
-    
-    const intervalTime = config.duration / 100;
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, intervalTime);
-
-    return () => clearInterval(interval);
-  }, [configLoaded, config]);
-
-  useEffect(() => {
-    if (progress >= 100 && imagesLoaded) {
-      const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
+      if (imagesLoaded) {
         setIsComplete(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [progress, imagesLoaded]);
+      }
+    }, 20000);
 
-  const getAnimationProps = () => {
-    if (!config) return { initial: { opacity: 0 }, animate: { opacity: 1 } };
-    
-    switch (config.animationStyle) {
-      case "zoom":
-        return { initial: { scale: 0.5, opacity: 0 }, animate: { scale: 1, opacity: 1 } };
-      case "slide":
-        return { initial: { y: 50, opacity: 0 }, animate: { y: 0, opacity: 1 } };
-      default:
-        return { initial: { opacity: 0 }, animate: { opacity: 1 } };
-    }
-  };
+    return () => clearTimeout(timer);
+  }, [imagesLoaded]);
 
-  // Don't render until config is loaded
-  if (!configLoaded || !config) {
-    return (
-      <div className="fixed inset-0 bg-black z-50" />
-    );
-  }
+  // If images loaded early but animation not done, wait for animation
+  useEffect(() => {
+    if (imagesLoaded && !isComplete) {
+      // Animation still running, will complete via the timer above
+    }
+  }, [imagesLoaded, isComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 flex flex-col items-center justify-center z-50 gap-12"
-      style={{ backgroundColor: config.backgroundColor }}
+      className="fixed inset-0 z-50 overflow-hidden"
       initial={{ opacity: 1 }}
       animate={{ opacity: isComplete ? 0 : 1 }}
       transition={{ duration: 0.5 }}
@@ -179,29 +95,50 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
         if (isComplete) onComplete();
       }}
     >
-      <motion.div
-        {...getAnimationProps()}
-        transition={{
-          duration: 1,
-          ease: "easeOut",
-        }}
-      >
-        <img src={config.logo} alt="Boot Logo" className="w-32 h-32 object-contain" />
-      </motion.div>
-
-      {/* Loading bar */}
+      {/* Background */}
       <div 
-        className="w-64 h-1 rounded-full overflow-hidden"
-        style={{ backgroundColor: `${config.progressColor}33` }}
-      >
-        <motion.div
-          className="h-full rounded-full"
-          style={{ backgroundColor: config.progressColor }}
-          initial={{ width: "0%" }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.1 }}
-        />
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ 
+          backgroundColor: '#242424',
+          backgroundImage: 'url(https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/image2vector.svg)'
+        }}
+      />
+
+      {/* Loader Container */}
+      <div className="absolute top-[65%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[400px] text-center">
+        {/* Progress Bar */}
+        <div className="w-full h-[30px] bg-black rounded-[18px] overflow-hidden shadow-md relative">
+          <motion.div
+            className="h-full rounded-[10px]"
+            style={{ 
+              backgroundColor: '#ffcc00',
+              boxShadow: '10px 0 10px #ffcc00, 0 10px 20px #ffcc00'
+            }}
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ 
+              duration: 20,
+              ease: [0.4, 0.0, 0.2, 1],
+              times: [0, 0.1, 0.2, 0.3, 0.5, 0.6, 0.8, 1],
+            }}
+          />
+        </div>
+
+        {/* Loading Text */}
+        <div 
+          className="mt-[13px] text-2xl tracking-[2px] font-semibold opacity-90"
+          style={{ 
+            color: '#ffcc00',
+            textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+            fontFamily: "'GOSTRUS', sans-serif"
+          }}
+        >
+          <i>Hello World!</i>
+        </div>
       </div>
+
+      {/* Google Font */}
+      <link href="https://fonts.cdnfonts.com/css/gostrus" rel="stylesheet" />
     </motion.div>
   );
 };

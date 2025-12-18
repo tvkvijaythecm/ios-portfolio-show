@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Image,
-  Smartphone,
   Grid3X3,
   User,
   GraduationCap,
@@ -33,7 +32,6 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
   { icon: Image, label: "Background", path: "/admin/dashboard/background" },
-  { icon: Smartphone, label: "Boot Screen", path: "/admin/dashboard/boot" },
   { icon: Grid3X3, label: "App Manager", path: "/admin/dashboard/apps" },
   { icon: User, label: "About Content", path: "/admin/dashboard/about" },
   { icon: GraduationCap, label: "Education", path: "/admin/dashboard/education" },
