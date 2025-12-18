@@ -33,6 +33,7 @@ const CaseStudyFolder = ({ miniApps, label, onClick }: CaseStudyFolderProps) => 
                 key={index}
                 className={cn(
                   "w-6 h-6 rounded-[18%] flex items-center justify-center",
+                  "bg-white/10 backdrop-blur-md border border-white/20 shadow-sm",
                   !app.gradient && app.bgColor
                 )}
                 style={app.gradient ? { background: app.gradient } : undefined}
