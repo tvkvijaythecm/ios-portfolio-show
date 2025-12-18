@@ -2,31 +2,36 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit2, Code } from "lucide-react";
+import { Plus, Trash2, Edit2, Globe } from "lucide-react";
 
-interface CustomAppContent {
+interface CustomApp {
   id: string;
-  app_key: string;
-  app_name: string;
-  html_content: string | null;
+  name: string;
+  icon_url: string | null;
+  embed_url: string | null;
+  gradient: string;
+  sort_order: number;
+  is_visible: boolean;
 }
 
-const defaultApp: Partial<CustomAppContent> = {
-  app_key: "",
-  app_name: "",
-  html_content: "",
+const defaultApp: Partial<CustomApp> = {
+  name: "",
+  icon_url: "",
+  embed_url: "",
+  gradient: "from-blue-500 to-purple-600",
+  is_visible: true,
+  sort_order: 0,
 };
 
 const CustomAppsSettings = () => {
-  const [apps, setApps] = useState<CustomAppContent[]>([]);
+  const [apps, setApps] = useState<CustomApp[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingApp, setEditingApp] = useState<Partial<CustomAppContent> | null>(null);
+  const [editingApp, setEditingApp] = useState<Partial<CustomApp> | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -36,9 +41,9 @@ const CustomAppsSettings = () => {
   const loadApps = async () => {
     try {
       const { data, error } = await supabase
-        .from("custom_app_content")
+        .from("case_study_apps")
         .select("*")
-        .order("app_name");
+        .order("sort_order");
 
       if (error) throw error;
       setApps(data || []);
@@ -50,8 +55,8 @@ const CustomAppsSettings = () => {
   };
 
   const handleSave = async () => {
-    if (!editingApp?.app_key || !editingApp?.app_name) {
-      toast.error("App key and name are required");
+    if (!editingApp?.name) {
+      toast.error("App name is required");
       return;
     }
 
@@ -59,55 +64,57 @@ const CustomAppsSettings = () => {
     try {
       if (editingApp.id) {
         const { error } = await supabase
-          .from("custom_app_content")
+          .from("case_study_apps")
           .update({
-            app_key: editingApp.app_key,
-            app_name: editingApp.app_name,
-            html_content: editingApp.html_content,
+            name: editingApp.name,
+            icon_url: editingApp.icon_url || null,
+            embed_url: editingApp.embed_url || null,
+            gradient: editingApp.gradient,
+            is_visible: editingApp.is_visible,
           })
           .eq("id", editingApp.id);
 
         if (error) throw error;
-        toast.success("Custom app updated");
+        toast.success("App updated");
       } else {
-        const { error } = await supabase.from("custom_app_content").insert({
-          app_key: editingApp.app_key,
-          app_name: editingApp.app_name,
-          html_content: editingApp.html_content,
+        const maxSort = apps.length > 0 ? Math.max(...apps.map(a => a.sort_order)) + 1 : 0;
+        const { error } = await supabase.from("case_study_apps").insert({
+          name: editingApp.name,
+          icon_url: editingApp.icon_url || null,
+          embed_url: editingApp.embed_url || null,
+          gradient: editingApp.gradient || "from-blue-500 to-purple-600",
+          is_visible: editingApp.is_visible ?? true,
+          sort_order: maxSort,
         });
 
         if (error) throw error;
-        toast.success("Custom app added");
+        toast.success("App added");
       }
 
       setDialogOpen(false);
       setEditingApp(null);
       loadApps();
     } catch (error: any) {
-      if (error.code === "23505") {
-        toast.error("App key already exists");
-      } else {
-        toast.error("Failed to save custom app");
-      }
+      toast.error("Failed to save app");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this custom app?")) return;
+    if (!confirm("Delete this app?")) return;
 
     try {
-      const { error } = await supabase.from("custom_app_content").delete().eq("id", id);
+      const { error } = await supabase.from("case_study_apps").delete().eq("id", id);
       if (error) throw error;
-      toast.success("Custom app deleted");
+      toast.success("App deleted");
       loadApps();
     } catch (error) {
-      toast.error("Failed to delete custom app");
+      toast.error("Failed to delete app");
     }
   };
 
-  const openEditDialog = (app?: CustomAppContent) => {
+  const openEditDialog = (app?: CustomApp) => {
     setEditingApp(app || { ...defaultApp });
     setDialogOpen(true);
   };
@@ -124,11 +131,11 @@ const CustomAppsSettings = () => {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-white">Custom App Content</h2>
-          <p className="text-white/60">Add HTML content for custom apps</p>
+          <h2 className="text-2xl font-bold text-white">Custom Apps</h2>
+          <p className="text-white/60">Add apps that appear in "Other Apps" folder</p>
         </div>
         <Button onClick={() => openEditDialog()} className="bg-purple-600 hover:bg-purple-700">
-          <Plus className="w-4 h-4 mr-2" /> Add Custom App
+          <Plus className="w-4 h-4 mr-2" /> Add App
         </Button>
       </div>
 
@@ -137,14 +144,21 @@ const CustomAppsSettings = () => {
           <Card key={app.id} className="bg-white/5 border-white/10 p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                  <Code className="w-6 h-6 text-purple-400" />
-                </div>
+                {app.icon_url ? (
+                  <img 
+                    src={app.icon_url} 
+                    alt={app.name}
+                    className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                    <Globe className="w-6 h-6 text-purple-400" />
+                  </div>
+                )}
                 <div>
-                  <p className="text-white font-semibold">{app.app_name}</p>
-                  <p className="text-white/40 text-sm">Key: {app.app_key}</p>
-                  <p className="text-white/40 text-xs mt-1">
-                    {app.html_content ? `${app.html_content.length} characters` : "No content"}
+                  <p className="text-white font-semibold">{app.name}</p>
+                  <p className="text-white/40 text-xs mt-1 truncate max-w-[200px]">
+                    {app.embed_url || "No URL set"}
                   </p>
                 </div>
               </div>
@@ -161,45 +175,46 @@ const CustomAppsSettings = () => {
         ))}
       </div>
 
+      {apps.length === 0 && (
+        <div className="text-center py-12 text-white/40">
+          No apps added yet. Click "Add App" to create your first app.
+        </div>
+      )}
+
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-slate-800 border-white/10 max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-slate-800 border-white/10 max-w-md">
           <DialogHeader>
             <DialogTitle className="text-white">
-              {editingApp?.id ? "Edit Custom App" : "Add Custom App"}
+              {editingApp?.id ? "Edit App" : "Add App"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-white">App Key *</Label>
-                <Input
-                  value={editingApp?.app_key || ""}
-                  onChange={(e) => setEditingApp({ ...editingApp, app_key: e.target.value })}
-                  className="bg-white/10 border-white/20 text-white"
-                  placeholder="privacy-policy"
-                  disabled={!!editingApp?.id}
-                />
-                <p className="text-white/40 text-xs mt-1">Unique identifier (cannot be changed)</p>
-              </div>
-              <div>
-                <Label className="text-white">App Name *</Label>
-                <Input
-                  value={editingApp?.app_name || ""}
-                  onChange={(e) => setEditingApp({ ...editingApp, app_name: e.target.value })}
-                  className="bg-white/10 border-white/20 text-white"
-                  placeholder="Privacy Policy"
-                />
-              </div>
+            <div>
+              <Label className="text-white">App Icon (URL)</Label>
+              <Input
+                value={editingApp?.icon_url || ""}
+                onChange={(e) => setEditingApp({ ...editingApp, icon_url: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="https://example.com/icon.png"
+              />
             </div>
             <div>
-              <Label className="text-white">HTML Content</Label>
-              <Textarea
-                value={editingApp?.html_content || ""}
-                onChange={(e) => setEditingApp({ ...editingApp, html_content: e.target.value })}
-                className="bg-white/10 border-white/20 text-white font-mono text-sm min-h-[300px]"
-                placeholder="<div>Your HTML content here...</div>"
+              <Label className="text-white">App Name *</Label>
+              <Input
+                value={editingApp?.name || ""}
+                onChange={(e) => setEditingApp({ ...editingApp, name: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="My App"
               />
-              <p className="text-white/40 text-xs mt-1">Enter raw HTML that will be rendered in the app</p>
+            </div>
+            <div>
+              <Label className="text-white">Iframe Link</Label>
+              <Input
+                value={editingApp?.embed_url || ""}
+                onChange={(e) => setEditingApp({ ...editingApp, embed_url: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="https://example.com"
+              />
             </div>
             <Button onClick={handleSave} disabled={saving} className="w-full bg-purple-600 hover:bg-purple-700">
               {saving ? "Saving..." : "Save"}
