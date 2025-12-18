@@ -43,6 +43,7 @@ interface BootScreenProps {
 const BootScreen = ({ onComplete }: BootScreenProps) => {
   const [isComplete, setIsComplete] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [animationDone, setAnimationDone] = useState(false);
 
   // Preload images
   useEffect(() => {
@@ -67,23 +68,21 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     });
   }, []);
 
-  // Wait for animation to complete (20s) then fade out
+  // Wait for animation to complete (20s)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (imagesLoaded) {
-        setIsComplete(true);
-      }
+      setAnimationDone(true);
     }, 20000);
 
     return () => clearTimeout(timer);
-  }, [imagesLoaded]);
+  }, []);
 
-  // If images loaded early but animation not done, wait for animation
+  // Complete when both animation is done AND images are loaded
   useEffect(() => {
-    if (imagesLoaded && !isComplete) {
-      // Animation still running, will complete via the timer above
+    if (animationDone && imagesLoaded) {
+      setIsComplete(true);
     }
-  }, [imagesLoaded, isComplete]);
+  }, [animationDone, imagesLoaded]);
 
   return (
     <motion.div
