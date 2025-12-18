@@ -36,7 +36,8 @@ const AppIcon = ({
       <motion.div
         className={cn(
           iconSize,
-          "flex items-center justify-center relative"
+          "flex items-center justify-center relative rounded-[22%] overflow-hidden",
+          "bg-white/10 backdrop-blur-md border border-white/20 shadow-lg"
         )}
         whileHover={{ scale: 1.1, rotate: 3 }}
         whileTap={{ scale: 0.9 }}
@@ -46,10 +47,9 @@ const AppIcon = ({
           <motion.img 
             src={imageIcon} 
             alt={label} 
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain rounded-[22%]"
             whileHover={{ 
               filter: "brightness(1.1)",
-              boxShadow: "0 8px 25px rgba(0,0,0,0.3)"
             }}
           />
         ) : Icon ? (
