@@ -68,11 +68,11 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     });
   }, []);
 
-  // Wait for animation to complete (20s)
+  // Wait for animation to complete (10s)
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationDone(true);
-    }, 20000);
+    }, 10000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -116,7 +116,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
             transition={{ 
-              duration: 20,
+              duration: 10,
               ease: [0.4, 0.0, 0.2, 1],
               times: [0, 0.1, 0.2, 0.3, 0.5, 0.6, 0.8, 1],
             }}
