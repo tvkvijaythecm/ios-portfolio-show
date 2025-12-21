@@ -399,7 +399,7 @@ const Index = () => {
                         className="w-20 h-20 rounded-full object-cover flex-shrink-0"
                       />
                       <div className="flex-1">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">eMobile OS</h2>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">SNet<sup>OS</sup></h2>
                         <button className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                           Version  1.5
                         </button>
@@ -418,7 +418,7 @@ const Index = () => {
                       </div>
                       <div className="flex items-center py-3">
                         <span className="text-gray-500 dark:text-gray-400 w-32">License</span>
-                        <span className="text-gray-900 dark:text-white font-medium">GNU AGPLv3</span>
+                        <span className="text-gray-900 dark:text-white font-medium">SNet Cloud Nexus</span>
                       </div>
                       <div className="flex items-center py-3">
                         <span className="text-gray-500 dark:text-gray-400 w-32">Origin</span>
