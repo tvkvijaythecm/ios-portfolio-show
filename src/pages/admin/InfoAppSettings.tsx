@@ -6,7 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Loader2, Info, Settings2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Loader2, Info, Settings2, FileText } from "lucide-react";
 
 interface InfoAppSettings {
   id: string;
@@ -18,8 +19,8 @@ interface InfoAppSettings {
   origin: string;
   privacy_label: string;
   license_label: string;
-  logs_label: string;
-  acknowledgements_label: string;
+  privacy_html_content: string;
+  license_html_content: string;
 }
 
 const InfoAppSettingsPage = () => {
@@ -37,12 +38,24 @@ const InfoAppSettingsPage = () => {
         .from("info_app_settings")
         .select("*")
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) throw error;
 
       if (data) {
-        setSettings(data);
+        setSettings({
+          id: data.id,
+          app_name: data.app_name,
+          version: data.version,
+          codebase: data.codebase,
+          established_year: data.established_year,
+          license: data.license,
+          origin: data.origin,
+          privacy_label: data.privacy_label,
+          license_label: data.license_label,
+          privacy_html_content: data.privacy_html_content || "",
+          license_html_content: data.license_html_content || "",
+        });
       } else {
         setSettings({
           id: "",
@@ -54,8 +67,8 @@ const InfoAppSettingsPage = () => {
           origin: "Kuala Lumpur, MY",
           privacy_label: "Privacy Policy",
           license_label: "GNU AGPLv3",
-          logs_label: "System Logs",
-          acknowledgements_label: "Acknowledgements",
+          privacy_html_content: "",
+          license_html_content: "",
         });
       }
     } catch (error) {
@@ -87,8 +100,8 @@ const InfoAppSettingsPage = () => {
             origin: settings.origin,
             privacy_label: settings.privacy_label,
             license_label: settings.license_label,
-            logs_label: settings.logs_label,
-            acknowledgements_label: settings.acknowledgements_label,
+            privacy_html_content: settings.privacy_html_content,
+            license_html_content: settings.license_html_content,
             updated_at: new Date().toISOString(),
           })
           .eq("id", settings.id);
@@ -106,14 +119,28 @@ const InfoAppSettingsPage = () => {
             origin: settings.origin,
             privacy_label: settings.privacy_label,
             license_label: settings.license_label,
-            logs_label: settings.logs_label,
-            acknowledgements_label: settings.acknowledgements_label,
+            privacy_html_content: settings.privacy_html_content,
+            license_html_content: settings.license_html_content,
           })
           .select()
           .single();
 
         if (error) throw error;
-        if (data) setSettings(data);
+        if (data) {
+          setSettings({
+            id: data.id,
+            app_name: data.app_name,
+            version: data.version,
+            codebase: data.codebase,
+            established_year: data.established_year,
+            license: data.license,
+            origin: data.origin,
+            privacy_label: data.privacy_label,
+            license_label: data.license_label,
+            privacy_html_content: data.privacy_html_content || "",
+            license_html_content: data.license_html_content || "",
+          });
+        }
       }
 
       toast({
@@ -141,7 +168,7 @@ const InfoAppSettingsPage = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       <AdminHeader
         title="Info App Settings"
         description="Manage the content displayed in the Info App"
@@ -254,7 +281,7 @@ const InfoAppSettingsPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-white/70">Privacy Label</Label>
+            <Label className="text-white/70">Privacy Policy Label</Label>
             <Input
               value={settings?.privacy_label || ""}
               onChange={(e) =>
@@ -280,34 +307,60 @@ const InfoAppSettingsPage = () => {
               placeholder="Enter license menu label"
             />
           </div>
+        </div>
+      </Card>
 
-          <div className="space-y-2">
-            <Label className="text-white/70">Logs Label</Label>
-            <Input
-              value={settings?.logs_label || ""}
-              onChange={(e) =>
-                setSettings((prev) =>
-                  prev ? { ...prev, logs_label: e.target.value } : null
-                )
-              }
-              className="bg-white/5 border-white/10 text-white"
-              placeholder="Enter logs menu label"
-            />
+      {/* Privacy Policy Content */}
+      <Card className="p-6 bg-white/5 border-white/10">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-gray-500/20">
+            <FileText className="w-5 h-5 text-gray-400" />
           </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">Privacy Policy Content</h3>
+            <p className="text-white/50 text-sm">HTML content for the Privacy Policy inner page</p>
+          </div>
+        </div>
 
-          <div className="space-y-2">
-            <Label className="text-white/70">Acknowledgements Label</Label>
-            <Input
-              value={settings?.acknowledgements_label || ""}
-              onChange={(e) =>
-                setSettings((prev) =>
-                  prev ? { ...prev, acknowledgements_label: e.target.value } : null
-                )
-              }
-              className="bg-white/5 border-white/10 text-white"
-              placeholder="Enter acknowledgements menu label"
-            />
+        <div className="space-y-2">
+          <Label className="text-white/70">HTML Code</Label>
+          <Textarea
+            value={settings?.privacy_html_content || ""}
+            onChange={(e) =>
+              setSettings((prev) =>
+                prev ? { ...prev, privacy_html_content: e.target.value } : null
+              )
+            }
+            className="bg-white/5 border-white/10 text-white font-mono text-sm min-h-[200px]"
+            placeholder="<div>Enter your HTML content here...</div>"
+          />
+        </div>
+      </Card>
+
+      {/* License Content */}
+      <Card className="p-6 bg-white/5 border-white/10">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-blue-500/20">
+            <FileText className="w-5 h-5 text-blue-400" />
           </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">License Content</h3>
+            <p className="text-white/50 text-sm">HTML content for the License inner page</p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-white/70">HTML Code</Label>
+          <Textarea
+            value={settings?.license_html_content || ""}
+            onChange={(e) =>
+              setSettings((prev) =>
+                prev ? { ...prev, license_html_content: e.target.value } : null
+              )
+            }
+            className="bg-white/5 border-white/10 text-white font-mono text-sm min-h-[200px]"
+            placeholder="<div>Enter your HTML content here...</div>"
+          />
         </div>
       </Card>
 

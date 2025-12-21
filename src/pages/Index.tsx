@@ -95,11 +95,11 @@ interface InfoAppSettings {
   origin: string;
   privacy_label: string;
   license_label: string;
-  logs_label: string;
-  acknowledgements_label: string;
+  privacy_html_content: string;
+  license_html_content: string;
 }
 
-type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
+type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "about" | null;
 
 const Index = () => {
   const navigate = useNavigate();
@@ -128,8 +128,8 @@ const Index = () => {
     origin: "Kuala Lumpur, MY",
     privacy_label: "Privacy Policy",
     license_label: "GNU AGPLv3",
-    logs_label: "System Logs",
-    acknowledgements_label: "Acknowledgements",
+    privacy_html_content: "",
+    license_html_content: "",
   });
 
   // Fetch case study apps from Supabase
@@ -182,8 +182,8 @@ const Index = () => {
             origin: infoAppRes.data.origin || "Kuala Lumpur, MY",
             privacy_label: infoAppRes.data.privacy_label || "Privacy Policy",
             license_label: infoAppRes.data.license_label || "GNU AGPLv3",
-            logs_label: infoAppRes.data.logs_label || "System Logs",
-            acknowledgements_label: infoAppRes.data.acknowledgements_label || "Acknowledgements",
+            privacy_html_content: infoAppRes.data.privacy_html_content || "",
+            license_html_content: infoAppRes.data.license_html_content || "",
           });
         }
       } catch (error) {
@@ -491,28 +491,6 @@ const Index = () => {
                       <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">{infoAppSettings.license_label}</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
-
-                    <button 
-                      onClick={() => setOpenApp("schedule")}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-orange-400 flex items-center justify-center flex-shrink-0">
-                        <CalendarIcon className="w-5 h-5 text-white" />
-                      </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">{infoAppSettings.logs_label}</span>
-                      <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
-                    </button>
-
-                    <button 
-                      onClick={() => setOpenApp("linked-accounts")}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-red-400 flex items-center justify-center flex-shrink-0">
-                        <Github className="w-5 h-5 text-white" />
-                      </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">{infoAppSettings.acknowledgements_label}</span>
-                      <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
-                    </button>
                   </div>
 
                   {/* Authorise Login Button */}
@@ -794,229 +772,48 @@ const Index = () => {
 
             {openApp === "privacy" && (
               <AppPage
-                title="Privacy Settings"
+                title={infoAppSettings.privacy_label}
                 icon={Info}
                 onClose={() => setOpenApp("profile")}
               >
-                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
-                  <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Account Privacy</h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">Control who can see your content and interact with you</p>
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6">
+                  {infoAppSettings.privacy_html_content ? (
+                    <div 
+                      className="prose prose-sm dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: infoAppSettings.privacy_html_content }}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <Info className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500 dark:text-gray-400">No content configured. Add HTML content in Admin Panel → Info App.</p>
                     </div>
-
-                    <div className="flex items-center justify-between py-3">
-                      <div>
-                        <p className="text-gray-900 dark:text-white font-medium">Private Account</p>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Only approved followers can see your posts</p>
-                      </div>
-                      <div className="w-12 h-7 bg-blue-500 dark:bg-blue-600 rounded-full"></div>
-                    </div>
-
-                    <div className="flex items-center justify-between py-3 border-t border-gray-100 dark:border-gray-700">
-                      <div>
-                        <p className="text-gray-900 dark:text-white font-medium">Activity Status</p>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Show when you are active</p>
-                      </div>
-                      <div className="w-12 h-7 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                    </div>
-
-                    <div className="flex items-center justify-between py-3 border-t border-gray-100 dark:border-gray-700">
-                      <div>
-                        <p className="text-gray-900 dark:text-white font-medium">Story Sharing</p>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Allow others to share your story</p>
-                      </div>
-                      <div className="w-12 h-7 bg-blue-500 dark:bg-blue-600 rounded-full"></div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Data & History</h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Manage your data and viewing history</p>
-                      
-                      <button className="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-800 text-left">
-                        <p className="text-gray-900 dark:text-white font-medium">Download Your Data</p>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Request a copy of your information</p>
-                      </button>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </AppPage>
             )}
 
             {openApp === "private-info" && (
               <AppPage
-                title="Private Information"
+                title={infoAppSettings.license_label}
                 icon={User}
                 onClose={() => setOpenApp("profile")}
               >
-                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
-                  <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Contact Information</h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">Your personal contact details</p>
+                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6">
+                  {infoAppSettings.license_html_content ? (
+                    <div 
+                      className="prose prose-sm dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: infoAppSettings.license_html_content }}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500 dark:text-gray-400">No content configured. Add HTML content in Admin Panel → Info App.</p>
                     </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-sm text-gray-500 dark:text-gray-400">Email Address</label>
-                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                          <p className="text-gray-900 dark:text-white">jonathan@example.com</p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="text-sm text-gray-500 dark:text-gray-400">Phone Number</label>
-                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                          <p className="text-gray-900 dark:text-white">+31 6 1234 5678</p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="text-sm text-gray-500 dark:text-gray-400">Date of Birth</label>
-                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                          <p className="text-gray-900 dark:text-white">January 15, 1990</p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="text-sm text-gray-500 dark:text-gray-400">Address</label>
-                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                          <p className="text-gray-900 dark:text-white">Rotterdam, Netherlands</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <button className="w-full py-3 bg-blue-500 dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
-                        Edit Information
-                      </button>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </AppPage>
             )}
 
-            {openApp === "schedule" && (
-              <AppPage
-                title="Posting Schedule"
-                icon={CalendarIcon}
-                onClose={() => setOpenApp("profile")}
-              >
-                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
-                  <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Schedule Your Posts</h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">Automatically publish your content at optimal times</p>
-                    </div>
-
-                    <div className="flex items-center justify-between py-3">
-                      <div>
-                        <p className="text-gray-900 dark:text-white font-medium">Auto-Schedule</p>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Post at the best times for engagement</p>
-                      </div>
-                      <div className="w-12 h-7 bg-blue-500 dark:bg-blue-600 rounded-full"></div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-                      <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3">Preferred Posting Times</h3>
-                      
-                      <div className="space-y-3">
-                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                          <div className="flex items-center justify-between">
-                            <p className="text-gray-900 dark:text-white font-medium">Monday - Friday</p>
-                            <p className="text-gray-600 dark:text-gray-300">9:00 AM, 3:00 PM</p>
-                          </div>
-                        </div>
-
-                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                          <div className="flex items-center justify-between">
-                            <p className="text-gray-900 dark:text-white font-medium">Saturday - Sunday</p>
-                            <p className="text-gray-600 dark:text-gray-300">11:00 AM, 6:00 PM</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <button className="w-full py-3 bg-orange-500 dark:bg-orange-600 text-white font-medium rounded-xl hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors">
-                        Customize Schedule
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </AppPage>
-            )}
-
-            {openApp === "linked-accounts" && (
-              <AppPage
-                title="Linked Accounts"
-                icon={Github}
-                onClose={() => setOpenApp("profile")}
-              >
-                <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-3xl p-6 space-y-6">
-                  <div className="space-y-4">
-                    <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Connected Accounts</h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">Manage your social media connections</p>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
-                            <Github className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-gray-900 dark:text-white font-medium">Instagram</p>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm">@thephotomaniak</p>
-                          </div>
-                        </div>
-                        <button className="text-blue-500 dark:text-blue-400 font-medium text-sm">Connected</button>
-                      </div>
-
-                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center">
-                            <Youtube className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-gray-900 dark:text-white font-medium">YouTube</p>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm">Not connected</p>
-                          </div>
-                        </div>
-                        <button className="text-gray-500 dark:text-gray-400 font-medium text-sm">Connect</button>
-                      </div>
-
-                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-black dark:bg-gray-700 flex items-center justify-center">
-                            <Github className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-gray-900 dark:text-white font-medium">GitHub</p>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm">@jonathan_dev</p>
-                          </div>
-                        </div>
-                        <button className="text-blue-500 dark:text-blue-400 font-medium text-sm">Connected</button>
-                      </div>
-
-                      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-blue-400 flex items-center justify-center">
-                            <User className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-gray-900 dark:text-white font-medium">Twitter</p>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm">Not connected</p>
-                          </div>
-                        </div>
-                        <button className="text-gray-500 dark:text-gray-400 font-medium text-sm">Connect</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </AppPage>
-            )}
           </AnimatePresence>
 
           {/* Case Study Grid (Other Apps) */}

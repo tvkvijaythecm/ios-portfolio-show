@@ -313,43 +313,43 @@ export type Database = {
       }
       info_app_settings: {
         Row: {
-          acknowledgements_label: string
           app_name: string
           codebase: string
           established_year: string
           id: string
           license: string
+          license_html_content: string | null
           license_label: string
-          logs_label: string
           origin: string
+          privacy_html_content: string | null
           privacy_label: string
           updated_at: string
           version: string
         }
         Insert: {
-          acknowledgements_label?: string
           app_name?: string
           codebase?: string
           established_year?: string
           id?: string
           license?: string
+          license_html_content?: string | null
           license_label?: string
-          logs_label?: string
           origin?: string
+          privacy_html_content?: string | null
           privacy_label?: string
           updated_at?: string
           version?: string
         }
         Update: {
-          acknowledgements_label?: string
           app_name?: string
           codebase?: string
           established_year?: string
           id?: string
           license?: string
+          license_html_content?: string | null
           license_label?: string
-          logs_label?: string
           origin?: string
+          privacy_html_content?: string | null
           privacy_label?: string
           updated_at?: string
           version?: string
