@@ -120,14 +120,14 @@ const Index = () => {
   const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
   const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "", clock_url: "", suresh_url: "" });
   const [infoAppSettings, setInfoAppSettings] = useState<InfoAppSettings>({
-    app_name: "SNetOS",
-    version: "1.5",
-    codebase: "Javascript",
-    established_year: "2024",
-    license: "SNet Cloud Nexus",
-    origin: "Kuala Lumpur, MY",
-    privacy_label: "Privacy Policy",
-    license_label: "GNU AGPLv3",
+    app_name: "",
+    version: "",
+    codebase: "",
+    established_year: "",
+    license: "",
+    origin: "",
+    privacy_label: "",
+    license_label: "",
     privacy_html_content: "",
     license_html_content: "",
   });
@@ -174,14 +174,14 @@ const Index = () => {
 
         if (infoAppRes.data) {
           setInfoAppSettings({
-            app_name: infoAppRes.data.app_name || "SNetOS",
-            version: infoAppRes.data.version || "1.5",
-            codebase: infoAppRes.data.codebase || "Javascript",
-            established_year: infoAppRes.data.established_year || "2024",
-            license: infoAppRes.data.license || "SNet Cloud Nexus",
-            origin: infoAppRes.data.origin || "Kuala Lumpur, MY",
-            privacy_label: infoAppRes.data.privacy_label || "Privacy Policy",
-            license_label: infoAppRes.data.license_label || "GNU AGPLv3",
+            app_name: infoAppRes.data.app_name || "",
+            version: infoAppRes.data.version || "",
+            codebase: infoAppRes.data.codebase || "",
+            established_year: infoAppRes.data.established_year || "",
+            license: infoAppRes.data.license || "",
+            origin: infoAppRes.data.origin || "",
+            privacy_label: infoAppRes.data.privacy_label || "",
+            license_label: infoAppRes.data.license_label || "",
             privacy_html_content: infoAppRes.data.privacy_html_content || "",
             license_html_content: infoAppRes.data.license_html_content || "",
           });
