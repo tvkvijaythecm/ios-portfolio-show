@@ -86,6 +86,19 @@ interface IframeSettings {
   suresh_url: string;
 }
 
+interface InfoAppSettings {
+  app_name: string;
+  version: string;
+  codebase: string;
+  established_year: string;
+  license: string;
+  origin: string;
+  privacy_label: string;
+  license_label: string;
+  logs_label: string;
+  acknowledgements_label: string;
+}
+
 type AppType = "profile" | "photos" | "youtube" | "github" | "calendar" | "clock" | "weather" | "case-study" | "briefcase" | "notes" | "education" | "privacy" | "private-info" | "schedule" | "linked-accounts" | "about" | null;
 
 const Index = () => {
@@ -106,6 +119,18 @@ const Index = () => {
   const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null }>>([]);
   const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
   const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "", clock_url: "", suresh_url: "" });
+  const [infoAppSettings, setInfoAppSettings] = useState<InfoAppSettings>({
+    app_name: "SNetOS",
+    version: "1.5",
+    codebase: "Javascript",
+    established_year: "2024",
+    license: "SNet Cloud Nexus",
+    origin: "Kuala Lumpur, MY",
+    privacy_label: "Privacy Policy",
+    license_label: "GNU AGPLv3",
+    logs_label: "System Logs",
+    acknowledgements_label: "Acknowledgements",
+  });
 
   // Fetch case study apps from Supabase
   const { apps: dbCaseStudyApps } = useCaseStudyApps();
@@ -114,13 +139,14 @@ const Index = () => {
   useEffect(() => {
     const loadAllContent = async () => {
       try {
-        const [bgRes, photosRes, videosRes, projectsRes, workRes, iframeRes] = await Promise.all([
+        const [bgRes, photosRes, videosRes, projectsRes, workRes, iframeRes, infoAppRes] = await Promise.all([
           supabase.from("app_settings").select("value").eq("key", "background").maybeSingle(),
           supabase.from("photos").select("*").eq("is_visible", true).order("sort_order"),
           supabase.from("videos").select("*").eq("is_visible", true).order("sort_order"),
           supabase.from("github_projects").select("*").eq("is_visible", true).order("sort_order"),
           supabase.from("work_experience").select("*").eq("is_visible", true).order("sort_order"),
-          supabase.from("app_settings").select("value").eq("key", "iframe_apps").maybeSingle()
+          supabase.from("app_settings").select("value").eq("key", "iframe_apps").maybeSingle(),
+          supabase.from("info_app_settings").select("*").limit(1).maybeSingle()
         ]);
 
         if (bgRes.data?.value) {
@@ -143,6 +169,21 @@ const Index = () => {
             goip_url: value.goip_url || "",
             clock_url: value.clock_url || "",
             suresh_url: value.suresh_url || "",
+          });
+        }
+
+        if (infoAppRes.data) {
+          setInfoAppSettings({
+            app_name: infoAppRes.data.app_name || "SNetOS",
+            version: infoAppRes.data.version || "1.5",
+            codebase: infoAppRes.data.codebase || "Javascript",
+            established_year: infoAppRes.data.established_year || "2024",
+            license: infoAppRes.data.license || "SNet Cloud Nexus",
+            origin: infoAppRes.data.origin || "Kuala Lumpur, MY",
+            privacy_label: infoAppRes.data.privacy_label || "Privacy Policy",
+            license_label: infoAppRes.data.license_label || "GNU AGPLv3",
+            logs_label: infoAppRes.data.logs_label || "System Logs",
+            acknowledgements_label: infoAppRes.data.acknowledgements_label || "Acknowledgements",
           });
         }
       } catch (error) {
@@ -399,9 +440,9 @@ const Index = () => {
                         className="w-20 h-20 rounded-full object-cover flex-shrink-0"
                       />
                       <div className="flex-1">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">SNet<sup>OS</sup></h2>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{infoAppSettings.app_name}</h2>
                         <button className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                          Version  1.5
+                          Version {infoAppSettings.version}
                         </button>
                       </div>
                     </div>
@@ -410,19 +451,19 @@ const Index = () => {
                     <div className="space-y-4">
                       <div className="flex items-center py-3">
                         <span className="text-gray-500 dark:text-gray-400 w-32">Codebase</span>
-                        <span className="text-gray-900 dark:text-white font-medium"> Javascript</span>
+                        <span className="text-gray-900 dark:text-white font-medium">{infoAppSettings.codebase}</span>
                       </div>
                       <div className="flex items-center py-3">
                         <span className="text-gray-500 dark:text-gray-400 w-32">Est.</span>
-                        <span className="text-gray-900 dark:text-white font-medium">2024</span>
+                        <span className="text-gray-900 dark:text-white font-medium">{infoAppSettings.established_year}</span>
                       </div>
                       <div className="flex items-center py-3">
                         <span className="text-gray-500 dark:text-gray-400 w-32">License</span>
-                        <span className="text-gray-900 dark:text-white font-medium">SNet Cloud Nexus</span>
+                        <span className="text-gray-900 dark:text-white font-medium">{infoAppSettings.license}</span>
                       </div>
                       <div className="flex items-center py-3">
                         <span className="text-gray-500 dark:text-gray-400 w-32">Origin</span>
-                        <span className="text-red-500 font-medium">Kuala Lumpur, MY</span>
+                        <span className="text-red-500 font-medium">{infoAppSettings.origin}</span>
                       </div>
                     </div>
                   </div>
@@ -436,7 +477,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-gray-600 flex items-center justify-center flex-shrink-0">
                         <Info className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Privacy Policy</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">{infoAppSettings.privacy_label}</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
@@ -447,7 +488,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
                         <User className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">GNU AGPLv3</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">{infoAppSettings.license_label}</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
@@ -458,7 +499,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-orange-400 flex items-center justify-center flex-shrink-0">
                         <CalendarIcon className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">System Logs</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">{infoAppSettings.logs_label}</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
 
@@ -469,7 +510,7 @@ const Index = () => {
                       <div className="w-10 h-10 rounded-xl bg-red-400 flex items-center justify-center flex-shrink-0">
                         <Github className="w-5 h-5 text-white" />
                       </div>
-                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">Acknowledgements</span>
+                      <span className="flex-1 text-left text-gray-700 dark:text-gray-300 font-medium">{infoAppSettings.acknowledgements_label}</span>
                       <ChevronLeft className="w-5 h-5 text-gray-300 dark:text-gray-600 rotate-180" />
                     </button>
                   </div>
