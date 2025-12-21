@@ -29,6 +29,7 @@ import SocialLinksSettings from "./pages/admin/SocialLinksSettings";
 import CustomAppsSettings from "./pages/admin/CustomAppsSettings";
 import IframeAppsSettings from "./pages/admin/IframeAppsSettings";
 import SiteSettings from "./pages/admin/SiteSettings";
+import InfoAppSettings from "./pages/admin/InfoAppSettings";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
                 <Route path="custom-apps" element={<CustomAppsSettings />} />
                 <Route path="iframe-apps" element={<IframeAppsSettings />} />
                 <Route path="site-settings" element={<SiteSettings />} />
+                <Route path="info-app" element={<InfoAppSettings />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

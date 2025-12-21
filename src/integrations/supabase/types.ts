@@ -311,6 +311,51 @@ export type Database = {
         }
         Relationships: []
       }
+      info_app_settings: {
+        Row: {
+          acknowledgements_label: string
+          app_name: string
+          codebase: string
+          established_year: string
+          id: string
+          license: string
+          license_label: string
+          logs_label: string
+          origin: string
+          privacy_label: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          acknowledgements_label?: string
+          app_name?: string
+          codebase?: string
+          established_year?: string
+          id?: string
+          license?: string
+          license_label?: string
+          logs_label?: string
+          origin?: string
+          privacy_label?: string
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          acknowledgements_label?: string
+          app_name?: string
+          codebase?: string
+          established_year?: string
+          id?: string
+          license?: string
+          license_label?: string
+          logs_label?: string
+          origin?: string
+          privacy_label?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           author_name: string | null
