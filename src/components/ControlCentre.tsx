@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, PanInfo } from "framer-motion";
 import { 
   X, 
@@ -15,7 +15,9 @@ import {
   Upload,
   Clock,
   Calendar,
-  RefreshCw
+  RefreshCw,
+  Volume2,
+  Radio
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,6 +57,9 @@ const defaultConfig: ControlCentreConfig = {
   borderColor: "#ffffff",
 };
 
+const RADIO_STREAM_URL = "https://radios.crabdance.com:8002/1";
+const RADIO_STATION_NAME = "CrabDance Radio";
+
 const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCentreProps) => {
   const [ipAddress, setIpAddress] = useState("Detecting...");
   const [isFetchingIp, setIsFetchingIp] = useState(false);
@@ -63,13 +68,60 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   const [currentDate, setCurrentDate] = useState("");
   const [currentDay, setCurrentDay] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
-  const [songTitle, setSongTitle] = useState("No song loaded");
+  const [volume, setVolume] = useState(70);
   const [torchOn, setTorchOn] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [streamUrl, setStreamUrl] = useState("");
-  const [uploadType, setUploadType] = useState<"file" | "stream">("file");
   const [config, setConfig] = useState<ControlCentreConfig>(defaultConfig);
+  const [isLoadingRadio, setIsLoadingRadio] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
+
+  // Initialize audio element
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(RADIO_STREAM_URL);
+      audioRef.current.preload = "none";
+      audioRef.current.volume = volume / 100;
+      
+      audioRef.current.addEventListener("playing", () => {
+        setIsPlaying(true);
+        setIsLoadingRadio(false);
+      });
+      
+      audioRef.current.addEventListener("pause", () => {
+        setIsPlaying(false);
+      });
+      
+      audioRef.current.addEventListener("error", (e) => {
+        console.error("Audio error:", e);
+        setIsLoadingRadio(false);
+        setIsPlaying(false);
+        toast({
+          title: "Radio Error",
+          description: "Unable to connect to radio stream",
+          variant: "destructive",
+        });
+      });
+      
+      audioRef.current.addEventListener("waiting", () => {
+        setIsLoadingRadio(true);
+      });
+    }
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  // Update volume when it changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
 
   // Load config from Supabase
   useEffect(() => {
@@ -120,27 +172,25 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           headers: {
             'Accept': 'application/json',
           },
-          signal: AbortSignal.timeout(3000) // 3 second timeout per request
+          signal: AbortSignal.timeout(3000)
         });
         
         if (!response.ok) continue;
         
         const data = await response.json();
         
-        // Different services return IP in different formats
         const ip = data.ip || data.ip_address || data.query;
         if (ip) {
           setIpAddress(ip);
           setIsFetchingIp(false);
-          return; // Success, exit function
+          return;
         }
       } catch (error) {
         console.log(`Failed to fetch from ${service}:`, error);
-        // Continue to next service
       }
     }
     
-    // If all services fail, try getting IP from WebRTC (fallback method)
+    // WebRTC fallback
     try {
       const rtcPeerConnection = new (window.RTCPeerConnection || window.webkitRTCPeerConnection)({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
@@ -150,7 +200,6 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
       const offer = await rtcPeerConnection.createOffer();
       await rtcPeerConnection.setLocalDescription(offer);
       
-      // Parse IP from SDP
       const localIpRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
       const ipMatch = rtcPeerConnection.localDescription?.sdp?.match(localIpRegex);
       
@@ -196,7 +245,6 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
 
         const { latitude, longitude } = position.coords;
         
-        // Try multiple geocoding services
         const geocodingServices = [
           `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
           `https://geocode.xyz/${latitude},${longitude}?json=1`,
@@ -215,7 +263,6 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             
             const data = await response.json();
             
-            // Parse location based on service
             let locationText = "Location detected";
             if (service.includes('nominatim')) {
               const city = data.address?.city || data.address?.town || data.address?.village || "";
@@ -228,13 +275,12 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             }
             
             setLocation(locationText);
-            return; // Success, exit function
+            return;
           } catch (error) {
             console.log(`Failed to fetch location from ${service}:`, error);
           }
         }
         
-        // If all geocoding services fail, show coordinates
         setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
         
       } catch (error) {
@@ -333,6 +379,31 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     }
   };
 
+  const toggleRadioPlayback = () => {
+    if (!audioRef.current) return;
+    
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      setIsLoadingRadio(true);
+      audioRef.current.play().catch((error) => {
+        console.error("Playback failed:", error);
+        setIsLoadingRadio(false);
+        toast({
+          title: "Playback Error",
+          description: "Unable to play radio stream",
+          variant: "destructive",
+        });
+      });
+    }
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseInt(e.target.value);
+    setVolume(newVolume);
+  };
+
   const handleUploadSong = () => {
     setShowUploadDialog(true);
   };
@@ -340,24 +411,20 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSongTitle(file.name);
-      setShowUploadDialog(false);
       toast({
-        title: "Song uploaded",
-        description: `${file.name} ready to play`,
+        title: "Feature Coming Soon",
+        description: "Local file playback will be available in a future update",
       });
+      setShowUploadDialog(false);
     }
   };
 
   const handleStreamLoad = () => {
-    if (streamUrl) {
-      setSongTitle(streamUrl.split('/').pop() || "Stream loaded");
-      setShowUploadDialog(false);
-      toast({
-        title: "Stream loaded",
-        description: "Ready to play",
-      });
-    }
+    toast({
+      title: "Feature Coming Soon",
+      description: "Custom stream URLs will be available in a future update",
+    });
+    setShowUploadDialog(false);
   };
 
   if (!isOpen) return null;
@@ -449,52 +516,100 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             </div>
           </div>
 
-          {/* Music Player */}
+          {/* Radio Player */}
           <div 
             className="rounded-2xl p-3 md:p-4 mb-3 md:mb-4"
             style={cardStyle}
           >
-            <div className="flex items-center gap-3 md:gap-4 mb-3">
+            <div className="flex items-center gap-3 md:gap-4 mb-4">
               <div 
                 className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: hexToRgba(config.textColor, 10), border: `1px solid ${hexToRgba(config.borderColor, 20)}` }}
+                style={{ 
+                  backgroundColor: hexToRgba(config.accentColor, 20),
+                  border: `1px solid ${hexToRgba(config.accentColor, 40)}`,
+                  boxShadow: `0 0 20px ${hexToRgba(config.accentColor, 20)}`
+                }}
               >
-                <span className="text-2xl md:text-4xl">🎵</span>
+                <Radio className="w-6 h-6 md:w-8 md:h-8" style={{ color: config.accentColor }} />
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-xs md:text-sm mb-1" style={{ color: config.textColor }}>{songTitle}</p>
-                <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: hexToRgba(config.textColor, 20) }}>
-                  <div className="h-full w-1/3 rounded-full" style={{ backgroundColor: config.accentColor }} />
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <p className="text-xs font-medium" style={{ color: hexToRgba(config.textColor, 80) }}>
+                    {isPlaying ? "LIVE NOW" : "RADIO"}
+                  </p>
                 </div>
+                <p className="text-base md:text-lg font-semibold mb-2" style={{ color: config.textColor }}>
+                  {RADIO_STATION_NAME}
+                </p>
+                <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>
+                  {RADIO_STREAM_URL.replace('https://', '')}
+                </p>
               </div>
             </div>
-            <div className="flex items-center justify-center gap-3 md:gap-4 mb-3">
-              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
-                <X className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
-              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
-                <SkipBack className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
+
+            {/* Player Controls */}
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <button 
+                  onClick={toggleRadioPlayback}
+                  disabled={isLoadingRadio}
+                  className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ 
+                    backgroundColor: config.accentColor,
+                    boxShadow: `0 4px 20px ${hexToRgba(config.accentColor, 40)}`
+                  }}
+                >
+                  {isLoadingRadio ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : isPlaying ? (
+                    <Pause className="w-6 h-6 text-white" />
+                  ) : (
+                    <Play className="w-6 h-6 text-white ml-0.5" />
+                  )}
+                </button>
+              </div>
+
+              {/* Volume Control */}
+              <div className="flex items-center gap-3">
+                <Volume2 className="w-4 h-4" style={{ color: hexToRgba(config.textColor, 60) }} />
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="flex-1 h-2 bg-white/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white"
+                  style={{
+                    accentColor: config.accentColor
+                  }}
+                />
+                <span className="text-xs w-8 text-right" style={{ color: hexToRgba(config.textColor, 80) }}>
+                  {volume}%
+                </span>
+              </div>
+            </div>
+
+            {/* Status Indicator */}
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
+                <span style={{ color: hexToRgba(config.textColor, 60) }}>
+                  {isPlaying ? 'Streaming' : 'Paused'}
+                </span>
+              </div>
               <button 
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="p-2 md:p-3 rounded-full transition"
-                style={{ backgroundColor: config.accentColor, color: '#fff' }}
+                onClick={handleUploadSong}
+                className="text-xs px-3 py-1 rounded-full transition hover:opacity-80"
+                style={{ 
+                  backgroundColor: hexToRgba(config.accentColor, 20),
+                  color: config.accentColor,
+                  border: `1px solid ${hexToRgba(config.accentColor, 30)}`
+                }}
               >
-                {isPlaying ? <Pause className="w-5 h-5 md:w-6 md:h-6" /> : <Play className="w-5 h-5 md:w-6 md:h-6" />}
-              </button>
-              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
-                <SkipForward className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
-              <button className="p-1.5 md:p-2 rounded-full transition" style={{ color: config.textColor }}>
-                <span className="text-sm">📺</span>
+                More Stations
               </button>
             </div>
-            <button 
-              onClick={handleUploadSong}
-              className="w-8 h-8 md:w-10 md:h-10 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto hover:bg-red-600 transition shadow-lg"
-            >
-              <Upload className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
           </div>
 
           {/* Time & Date */}
@@ -526,7 +641,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             {config.showTorch && (
               <button 
                 onClick={handleTorchToggle}
-                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition"
+                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95"
                 style={{ 
                   ...cardStyle,
                   boxShadow: torchOn ? `0 0 20px ${config.accentColor}40` : 'none'
@@ -542,7 +657,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                   onOpenWeather();
                   onClose();
                 }}
-                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition"
+                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95"
                 style={cardStyle}
               >
                 <Cloud className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.textColor }} />
@@ -555,7 +670,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                   onOpenInfo();
                   onClose();
                 }}
-                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition"
+                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95"
                 style={cardStyle}
               >
                 <Info className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.textColor }} />
@@ -565,7 +680,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             {config.showReboot && (
               <button 
                 onClick={handleReboot}
-                className="bg-red-500/80 backdrop-blur-xl rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 hover:bg-red-600/80 transition border border-red-400/30"
+                className="bg-red-500/80 backdrop-blur-xl rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 hover:bg-red-600/80 transition border border-red-400/30 hover:scale-105 active:scale-95"
               >
                 <RotateCcw className="w-5 h-5 md:w-6 md:h-6 text-white" />
                 <span className="text-xs text-white">Reboot</span>
@@ -575,7 +690,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
         </div>
       </motion.div>
 
-      {/* Upload Dialog */}
+      {/* Upload/Stations Dialog */}
       {showUploadDialog && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -588,70 +703,78 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             animate={{ scale: 1 }}
             onClick={(e) => e.stopPropagation()}
             className="bg-background/95 backdrop-blur-2xl rounded-2xl p-4 md:p-6 max-w-md w-full shadow-xl border border-white/20"
+            style={{ backgroundColor: hexToRgba(config.panelBgColor, 95) }}
           >
-            <h3 className="text-lg md:text-xl font-semibold mb-4">Load Music</h3>
+            <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: config.textColor }}>
+              Radio Stations
+            </h3>
             
-            {/* Tab Selection */}
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => setUploadType("file")}
-                className={`flex-1 py-2 px-3 md:px-4 rounded-lg transition text-sm md:text-base ${
-                  uploadType === "file"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted hover:bg-muted/80"
-                }`}
+            <div className="space-y-3 mb-4">
+              <div 
+                className="p-3 rounded-lg border transition cursor-pointer hover:scale-[1.02]"
+                style={{ 
+                  backgroundColor: hexToRgba(config.accentColor, 10),
+                  borderColor: hexToRgba(config.accentColor, 30)
+                }}
               >
-                Upload File
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" 
+                    style={{ backgroundColor: hexToRgba(config.accentColor, 20) }}>
+                    <Radio className="w-5 h-5" style={{ color: config.accentColor }} />
+                  </div>
+                  <div>
+                    <p className="font-semibold" style={{ color: config.textColor }}>{RADIO_STATION_NAME}</p>
+                    <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>
+                      Currently Playing
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-3 rounded-lg border transition cursor-not-allowed opacity-50"
+                style={{ 
+                  backgroundColor: hexToRgba(config.cardBgColor, 20),
+                  borderColor: hexToRgba(config.borderColor, 20)
+                }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" 
+                    style={{ backgroundColor: hexToRgba(config.cardBgColor, 30) }}>
+                    <Radio className="w-5 h-5" style={{ color: hexToRgba(config.textColor, 40) }} />
+                  </div>
+                  <div>
+                    <p className="font-semibold" style={{ color: hexToRgba(config.textColor, 40) }}>
+                      More Stations Coming Soon
+                    </p>
+                    <p className="text-xs" style={{ color: hexToRgba(config.textColor, 30) }}>
+                      Stay tuned for updates
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={handleUploadSong}
+                className="flex-1 py-2 px-4 rounded-lg transition text-sm md:text-base hover:opacity-90"
+                style={{ 
+                  backgroundColor: hexToRgba(config.accentColor, 20),
+                  color: config.accentColor
+                }}
+              >
+                Request Station
               </button>
               <button
-                onClick={() => setUploadType("stream")}
-                className={`flex-1 py-2 px-3 md:px-4 rounded-lg transition text-sm md:text-base ${
-                  uploadType === "stream"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted hover:bg-muted/80"
-                }`}
+                onClick={() => setShowUploadDialog(false)}
+                className="flex-1 py-2 px-4 rounded-lg transition text-sm md:text-base hover:opacity-90"
+                style={{ 
+                  backgroundColor: hexToRgba(config.cardBgColor, 30),
+                  color: config.textColor
+                }}
               >
-                Stream URL
+                Close
               </button>
             </div>
-
-            {uploadType === "file" ? (
-              <div className="mb-4">
-                <label className="block w-full p-4 bg-muted/50 rounded-lg border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 transition cursor-pointer text-center">
-                  <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Click to upload audio file</span>
-                  <input
-                    type="file"
-                    accept="audio/*"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            ) : (
-              <>
-                <input
-                  type="text"
-                  placeholder="Paste stream URL..."
-                  value={streamUrl}
-                  onChange={(e) => setStreamUrl(e.target.value)}
-                  className="w-full p-3 bg-muted rounded-lg mb-4 outline-none focus:ring-2 focus:ring-primary text-sm md:text-base"
-                />
-                <button
-                  onClick={handleStreamLoad}
-                  className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 transition mb-2 text-sm md:text-base"
-                >
-                  Load Stream
-                </button>
-              </>
-            )}
-            
-            <button
-              onClick={() => setShowUploadDialog(false)}
-              className="w-full bg-muted py-3 rounded-lg hover:bg-muted/80 transition text-sm md:text-base"
-            >
-              Cancel
-            </button>
           </motion.div>
         </motion.div>
       )}
