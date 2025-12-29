@@ -14,7 +14,8 @@ import {
   SkipForward, 
   Upload,
   Clock,
-  Calendar
+  Calendar,
+  RefreshCw
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,6 +57,7 @@ const defaultConfig: ControlCentreConfig = {
 
 const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCentreProps) => {
   const [ipAddress, setIpAddress] = useState("Detecting...");
+  const [isFetchingIp, setIsFetchingIp] = useState(false);
   const [location, setLocation] = useState("Detecting...");
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
@@ -97,37 +99,165 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
   };
 
-  // Detect IP Address
+  // IP Detection with multiple fallback services
+  const detectIPAddress = async () => {
+    if (isFetchingIp) return;
+    
+    setIsFetchingIp(true);
+    
+    // List of IP detection services with fallback order
+    const ipServices = [
+      'https://api.ipify.org?format=json',
+      'https://api64.ipify.org?format=json',
+      'https://ipapi.co/json/',
+      'https://ipinfo.io/json',
+      'https://api.my-ip.io/v2/ip.json',
+    ];
+
+    for (const service of ipServices) {
+      try {
+        const response = await fetch(service, {
+          headers: {
+            'Accept': 'application/json',
+          },
+          signal: AbortSignal.timeout(3000) // 3 second timeout per request
+        });
+        
+        if (!response.ok) continue;
+        
+        const data = await response.json();
+        
+        // Different services return IP in different formats
+        const ip = data.ip || data.ip_address || data.query;
+        if (ip) {
+          setIpAddress(ip);
+          setIsFetchingIp(false);
+          return; // Success, exit function
+        }
+      } catch (error) {
+        console.log(`Failed to fetch from ${service}:`, error);
+        // Continue to next service
+      }
+    }
+    
+    // If all services fail, try getting IP from WebRTC (fallback method)
+    try {
+      const rtcPeerConnection = new (window.RTCPeerConnection || window.webkitRTCPeerConnection)({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+      });
+      
+      rtcPeerConnection.createDataChannel('');
+      const offer = await rtcPeerConnection.createOffer();
+      await rtcPeerConnection.setLocalDescription(offer);
+      
+      // Parse IP from SDP
+      const localIpRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
+      const ipMatch = rtcPeerConnection.localDescription?.sdp?.match(localIpRegex);
+      
+      if (ipMatch && ipMatch[1]) {
+        setIpAddress(ipMatch[1]);
+      } else {
+        setIpAddress("Unable to detect");
+      }
+    } catch (rtcError) {
+      setIpAddress("Unable to detect");
+    } finally {
+      setIsFetchingIp(false);
+    }
+  };
+
+  // Detect IP Address on mount
   useEffect(() => {
-    fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
-      .then(data => setIpAddress(data.ip))
-      .catch(() => setIpAddress("Unable to detect"));
+    detectIPAddress();
   }, []);
 
-  // Detect Location
+  // Manual IP refresh function
+  const refreshIpAddress = () => {
+    setIpAddress("Detecting...");
+    detectIPAddress();
+  };
+
+  // Detect Location with improved error handling
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
+    const detectLocation = async () => {
+      if (!navigator.geolocation) {
+        setLocation("Geolocation not supported");
+        return;
+      }
+
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            timeout: 5000,
+            maximumAge: 60000,
+            enableHighAccuracy: false
+          });
+        });
+
+        const { latitude, longitude } = position.coords;
+        
+        // Try multiple geocoding services
+        const geocodingServices = [
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+          `https://geocode.xyz/${latitude},${longitude}?json=1`,
+        ];
+
+        for (const service of geocodingServices) {
           try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-            );
+            const response = await fetch(service, {
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'ControlCentreApp/1.0'
+              }
+            });
+            
+            if (!response.ok) continue;
+            
             const data = await response.json();
-            const city = data.address.city || data.address.town || data.address.village || "Unknown";
-            const country = data.address.country || "Unknown";
-            setLocation(`${city}, ${country}`);
-          } catch {
-            setLocation("Location detected");
+            
+            // Parse location based on service
+            let locationText = "Location detected";
+            if (service.includes('nominatim')) {
+              const city = data.address?.city || data.address?.town || data.address?.village || "";
+              const country = data.address?.country || "";
+              locationText = city && country ? `${city}, ${country}` : "Location detected";
+            } else if (service.includes('geocode.xyz')) {
+              const city = data.city || data.region || "";
+              const country = data.country || "";
+              locationText = city && country ? `${city}, ${country}` : "Location detected";
+            }
+            
+            setLocation(locationText);
+            return; // Success, exit function
+          } catch (error) {
+            console.log(`Failed to fetch location from ${service}:`, error);
           }
-        },
-        () => setLocation("Location unavailable")
-      );
-    } else {
-      setLocation("Not supported");
-    }
+        }
+        
+        // If all geocoding services fail, show coordinates
+        setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        
+      } catch (error) {
+        console.error("Geolocation error:", error);
+        
+        // Try IP-based location as fallback
+        try {
+          const response = await fetch('https://ipapi.co/json/');
+          if (response.ok) {
+            const data = await response.json();
+            const city = data.city || "";
+            const country = data.country_name || "";
+            setLocation(city && country ? `${city}, ${country}` : "Location detected");
+          } else {
+            setLocation("Location unavailable");
+          }
+        } catch (ipError) {
+          setLocation("Location unavailable");
+        }
+      }
+    };
+
+    detectLocation();
   }, []);
 
   // Update Time and Date
@@ -275,16 +405,36 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             style={{ backgroundColor: hexToRgba(config.textColor, 40) }}
           />
 
-          {/* IP Address */}
+          {/* IP Address with Refresh */}
           <div 
-            className="rounded-2xl p-3 md:p-4 mb-2 md:mb-3 flex items-center gap-3"
+            className="rounded-2xl p-3 md:p-4 mb-2 md:mb-3 flex items-center justify-between"
             style={cardStyle}
           >
-            <Globe className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
-            <div>
-              <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>IP Address</p>
-              <p className="text-base md:text-lg font-semibold" style={{ color: config.textColor }}>{ipAddress}</p>
+            <div className="flex items-center gap-3 flex-1">
+              <Globe className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>IP Address</p>
+                  {isFetchingIp && (
+                    <div className="animate-spin">
+                      <RefreshCw className="w-3 h-3" style={{ color: hexToRgba(config.textColor, 60) }} />
+                    </div>
+                  )}
+                </div>
+                <p className="text-base md:text-lg font-semibold" style={{ color: config.textColor }}>
+                  {ipAddress}
+                </p>
+              </div>
             </div>
+            <button
+              onClick={refreshIpAddress}
+              disabled={isFetchingIp}
+              className="p-2 rounded-lg hover:bg-white/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ color: config.accentColor }}
+              title="Refresh IP Address"
+            >
+              <RefreshCw className={`w-4 h-4 ${isFetchingIp ? 'animate-spin' : ''}`} />
+            </button>
           </div>
 
           {/* Location */}
