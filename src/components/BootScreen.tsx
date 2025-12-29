@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
-// Import all images to preload
+/* Image preloading (UNCHANGED) */
 import profileImage from "@/assets/profile.jpeg";
 import backgroundImage from "@/assets/background.png";
 import homescreenBg from "@/assets/homescreen-bg.jpg";
@@ -45,7 +45,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
 
-  // Preload images
+  /* Preload images */
   useEffect(() => {
     let loadedCount = 0;
     const totalImages = imagesToPreload.length;
@@ -53,13 +53,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     imagesToPreload.forEach((src) => {
       const img = new Image();
       img.src = src;
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount >= totalImages) {
-          setImagesLoaded(true);
-        }
-      };
-      img.onerror = () => {
+      img.onload = img.onerror = () => {
         loadedCount++;
         if (loadedCount >= totalImages) {
           setImagesLoaded(true);
@@ -68,7 +62,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     });
   }, []);
 
-  // Wait for animation to complete (10s)
+  /* Boot animation duration (10s) */
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationDone(true);
@@ -77,7 +71,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Complete when both animation is done AND images are loaded
+  /* Finish only when both are done */
   useEffect(() => {
     if (animationDone && imagesLoaded) {
       setIsComplete(true);
@@ -94,50 +88,147 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
         if (isComplete) onComplete();
       }}
     >
+      {/* Fonts */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet"
+      />
+
+      {/* GSAP */}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+
       {/* Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundColor: '#242424',
-          backgroundImage: 'url(https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/image2vector.svg)'
+      <div
+        className="absolute inset-0 -z-20"
+        style={{
+          backgroundImage:
+            "url(https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/sn.webp)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       />
 
-      {/* Loader Container */}
-      <div className="absolute top-[65%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[400px] text-center">
-        {/* Progress Bar */}
-        <div className="w-full h-[30px] bg-black rounded-[18px] overflow-hidden shadow-md relative">
-          <motion.div
-            className="h-full rounded-[10px]"
-            style={{ 
-              backgroundColor: '#ffcc00',
-              boxShadow: '10px 0 10px #ffcc00, 0 10px 20px #ffcc00'
-            }}
-            initial={{ width: '0%' }}
-            animate={{ width: '100%' }}
-            transition={{ 
-              duration: 10,
-              ease: [0.4, 0.0, 0.2, 1],
-              times: [0, 0.1, 0.2, 0.3, 0.5, 0.6, 0.8, 1],
-            }}
-          />
-        </div>
+      {/* Overlay */}
+      <div
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(circle at center, rgba(0,0,0,.2), rgba(0,0,0,.85))",
+        }}
+      />
 
-        {/* Loading Text */}
-        <div 
-          className="mt-[13px] text-2xl tracking-[2px] font-semibold opacity-90"
-          style={{ 
-            color: '#ffcc00',
-            textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-            fontFamily: "'GOSTRUS', sans-serif"
+      {/* Content */}
+      <div
+        className="flex flex-col items-center justify-center h-full text-center"
+        style={{
+          fontFamily: "'Share Tech Mono', monospace",
+        }}
+      >
+        {/* Decoder Title */}
+        <h1
+          id="thankYouText"
+          className="mb-6 text-white uppercase select-none"
+          style={{
+            fontSize: "clamp(2.5rem, 10vw, 8rem)",
+            textShadow:
+              "0 0 5px #d5cfc7, 0 0 15px #ede3e6, 0 0 30px #b7b8af",
           }}
-        >
-          <i>Hello World!</i>
+        />
+
+        {/* Neon Loader */}
+        <div className="flex flex-col items-center w-[220px]">
+          <div
+            className="w-full h-[3px] rounded overflow-hidden"
+            style={{
+              background: "rgba(183,184,175,.15)",
+              boxShadow:
+                "inset 0 0 6px rgba(183,184,175,.6), 0 0 10px rgba(183,184,175,.4)",
+            }}
+          >
+            <div
+              id="loaderFill"
+              className="h-full w-0"
+              style={{
+                background:
+                  "linear-gradient(225deg,#f8f4ff,#ede3e6,#d5cfc7,#b7b8af,#989f9d)",
+                boxShadow:
+                  "0 0 6px #f8f4ff, 0 0 14px #ede3e6, 0 0 28px #d5cfc7",
+                transition: "width .2s linear",
+              }}
+            />
+          </div>
+
+          <div
+            id="loaderPercent"
+            className="mt-2 text-[10px] tracking-widest"
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              color: "#f8f4ff",
+              textShadow: "0 0 5px #d5cfc7, 0 0 10px #ede3e6",
+            }}
+          >
+            0%
+          </div>
         </div>
       </div>
 
-      {/* Google Font */}
-      <link href="https://fonts.cdnfonts.com/css/gostrus" rel="stylesheet" />
+      {/* Boot Scripts */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+document.addEventListener('DOMContentLoaded', () => {
+  /* Loader */
+  let progress = 0;
+  const fill = document.getElementById('loaderFill');
+  const percent = document.getElementById('loaderPercent');
+
+  const interval = setInterval(() => {
+    progress += Math.floor(Math.random() * 4) + 1;
+    if (progress >= 100) {
+      progress = 100;
+      fill.style.width = '100%';
+      percent.textContent = '100%';
+      clearInterval(interval);
+      setTimeout(() => {
+        percent.textContent = 'SNET SYSTEM - OK';
+      }, 2000);
+      return;
+    }
+    fill.style.width = progress + '%';
+    percent.textContent = progress + '%';
+  }, 120);
+
+  /* Decoder Animation */
+  const textElement = document.getElementById('thankYouText');
+  const originalText = 'SNET OS';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_-+=[]{}|;:,.<>?';
+
+  originalText.split('').forEach(char => {
+    const span = document.createElement('span');
+    span.innerHTML = char === ' ' ? '&nbsp;' : char;
+    textElement.appendChild(span);
+  });
+
+  const letters = Array.from(textElement.children);
+  const tl = gsap.timeline();
+
+  letters.forEach((letter, i) => {
+    const originalChar = letter.innerHTML;
+    if (originalChar === '&nbsp;') return;
+    tl.to({}, {
+      duration: 5.2,
+      onUpdate: () => {
+        letter.textContent = chars[Math.floor(Math.random() * chars.length)];
+      },
+      onComplete: () => {
+        letter.textContent = originalChar;
+      }
+    }, i * 0.1);
+  });
+});
+          `,
+        }}
+      />
     </motion.div>
   );
 };
