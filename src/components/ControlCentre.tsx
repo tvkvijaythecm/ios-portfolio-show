@@ -70,10 +70,15 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(70);
   const [torchOn, setTorchOn] = useState(false);
+  const [torchSupported, setTorchSupported] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [config, setConfig] = useState<ControlCentreConfig>(defaultConfig);
   const [isLoadingRadio, setIsLoadingRadio] = useState(false);
+  
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const videoTrackRef = useRef<MediaStreamTrack | null>(null);
+  
   const { toast } = useToast();
 
   // Initialize audio element
@@ -116,6 +121,19 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     };
   }, []);
 
+  // Clean up media stream on unmount
+  useEffect(() => {
+    return () => {
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach(track => track.stop());
+        mediaStreamRef.current = null;
+      }
+      if (videoTrackRef.current) {
+        videoTrackRef.current = null;
+      }
+    };
+  }, []);
+
   // Update volume when it changes
   useEffect(() => {
     if (audioRef.current) {
@@ -151,13 +169,44 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
   };
 
+  // Check if torch is supported
+  useEffect(() => {
+    const checkTorchSupport = async () => {
+      try {
+        // Try to get user media to check for torch support
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: { exact: "environment" } 
+          } 
+        });
+        
+        const track = stream.getVideoTracks()[0];
+        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+        
+        // Check if torch is supported
+        if ('torch' in capabilities) {
+          setTorchSupported(true);
+        }
+        
+        // Stop the stream immediately since we're just checking
+        stream.getTracks().forEach(track => track.stop());
+      } catch (error) {
+        console.log("Torch not supported or permission denied:", error);
+        setTorchSupported(false);
+      }
+    };
+
+    if (isOpen && config.showTorch) {
+      checkTorchSupport();
+    }
+  }, [isOpen, config.showTorch]);
+
   // IP Detection with multiple fallback services
   const detectIPAddress = async () => {
     if (isFetchingIp) return;
     
     setIsFetchingIp(true);
     
-    // List of IP detection services with fallback order
     const ipServices = [
       'https://api.ipify.org?format=json',
       'https://api64.ipify.org?format=json',
@@ -356,26 +405,108 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
 
   const handleTorchToggle = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      const track = stream.getVideoTracks()[0];
-      const capabilities = track.getCapabilities() as any;
-      
-      if (capabilities.torch) {
-        await track.applyConstraints({
-          advanced: [{ torch: !torchOn } as any]
+      if (!torchSupported) {
+        toast({
+          title: "Flashlight not supported",
+          description: "Your device doesn't have a torch or it's not accessible",
+          variant: "destructive",
         });
-        setTorchOn(!torchOn);
+        return;
+      }
+
+      // If torch is currently on, turn it off
+      if (torchOn && videoTrackRef.current) {
+        await videoTrackRef.current.applyConstraints({
+          advanced: [{ torch: false }] as any
+        });
+        setTorchOn(false);
+        
+        // Stop the stream if we're turning off
+        if (mediaStreamRef.current) {
+          mediaStreamRef.current.getTracks().forEach(track => track.stop());
+          mediaStreamRef.current = null;
+          videoTrackRef.current = null;
+        }
+        
+        toast({
+          title: "Flashlight Off",
+          description: "Torch has been turned off",
+        });
+        return;
+      }
+
+      // Get camera access for torch
+      const constraints: MediaStreamConstraints = {
+        video: {
+          facingMode: { exact: "environment" },
+          torch: true
+        } as MediaTrackConstraints
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      mediaStreamRef.current = stream;
+      const track = stream.getVideoTracks()[0];
+      videoTrackRef.current = track;
+
+      // Check if torch is available
+      const capabilities = track.getCapabilities();
+      if ('torch' in capabilities) {
+        await track.applyConstraints({
+          advanced: [{ torch: true }] as any
+        });
+        setTorchOn(true);
+        toast({
+          title: "Flashlight On",
+          description: "Torch has been activated",
+        });
       } else {
         toast({
           title: "Flashlight not available",
-          description: "Your device doesn't support flashlight control",
+          description: "Torch feature not found on camera",
+          variant: "destructive",
+        });
+        stream.getTracks().forEach(track => track.stop());
+        mediaStreamRef.current = null;
+        videoTrackRef.current = null;
+      }
+      
+    } catch (error: any) {
+      console.error("Torch error:", error);
+      
+      // Handle specific permission errors
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        toast({
+          title: "Permission Required",
+          description: "Please allow camera access to use the flashlight",
+          variant: "destructive",
+        });
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        toast({
+          title: "Camera Not Found",
+          description: "No rear camera found on this device",
+          variant: "destructive",
+        });
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        toast({
+          title: "Camera in Use",
+          description: "Camera is being used by another application",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Flashlight Error",
+          description: error.message || "Unable to access flashlight",
+          variant: "destructive",
         });
       }
-    } catch {
-      toast({
-        title: "Flashlight error",
-        description: "Unable to access flashlight. Please enable camera permissions.",
-      });
+      
+      // Clean up on error
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach(track => track.stop());
+        mediaStreamRef.current = null;
+        videoTrackRef.current = null;
+      }
+      setTorchOn(false);
     }
   };
 
@@ -641,14 +772,21 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             {config.showTorch && (
               <button 
                 onClick={handleTorchToggle}
-                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95"
+                disabled={!torchSupported}
+                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ 
                   ...cardStyle,
                   boxShadow: torchOn ? `0 0 20px ${config.accentColor}40` : 'none'
                 }}
               >
-                <Flashlight className="w-5 h-5 md:w-6 md:h-6" style={{ color: torchOn ? config.accentColor : config.textColor }} />
-                <span className="text-xs" style={{ color: hexToRgba(config.textColor, 80) }}>Torch</span>
+                <Flashlight className="w-5 h-5 md:w-6 md:h-6" style={{ 
+                  color: torchOn ? config.accentColor : (torchSupported ? config.textColor : hexToRgba(config.textColor, 40))
+                }} />
+                <span className="text-xs" style={{ 
+                  color: torchSupported ? hexToRgba(config.textColor, 80) : hexToRgba(config.textColor, 40)
+                }}>
+                  {torchSupported ? 'Torch' : 'No Torch'}
+                </span>
               </button>
             )}
             {config.showWeather && (
