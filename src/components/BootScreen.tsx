@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
 
 // Import all images to preload
 import profileImage from "@/assets/profile.jpeg";
@@ -44,6 +45,10 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
   const [isComplete, setIsComplete] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const textRef = useRef<HTMLHeadingElement>(null);
+  
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_-+=[]{}|;:,.<>?';
+  const originalText = "SNET OS";
 
   // Preload images
   useEffect(() => {
@@ -87,6 +92,52 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     return () => clearInterval(interval);
   }, []);
 
+  // Text animation with GSAP
+  useEffect(() => {
+    if (!textRef.current) return;
+
+    // Clear existing content
+    textRef.current.innerHTML = '';
+
+    // Create span elements for each character
+    originalText.split('').forEach(char => {
+      const span = document.createElement('span');
+      span.innerHTML = char === ' ' ? '&nbsp;' : char;
+      textRef.current?.appendChild(span);
+    });
+
+    const letters = Array.from(textRef.current.children);
+
+    function createDecoderAnimation() {
+      const tl = gsap.timeline();
+
+      letters.forEach((letter, i) => {
+        const originalChar = letter.innerHTML;
+        if (originalChar === '&nbsp;') return;
+
+        let proxy = { charIndex: 0 };
+
+        tl.to(proxy, {
+          charIndex: chars.length - 1,
+          duration: 5.2,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            const randomIndex = Math.floor(Math.random() * chars.length);
+            letter.textContent = chars[randomIndex];
+          },
+          onComplete: () => {
+            letter.textContent = originalChar === '&nbsp;' ? '\u00A0' : originalChar;
+          }
+        }, i * 0.1);
+      });
+
+      // Pause at the end
+      tl.to({}, { duration: 1 });
+    }
+
+    createDecoderAnimation();
+  }, []);
+
   // Complete when progress is 100% AND images are loaded
   useEffect(() => {
     if (progress === 100 && imagesLoaded) {
@@ -123,13 +174,10 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
       <div className="relative h-screen w-full flex items-center justify-center p-5">
         <div className="text-center w-full max-w-6xl">
           {/* Animated Text */}
-          <h1 className="thank-you-text mb-5">
-            {Array.from("SNET OS").map((char, index) => (
-              <span key={index} className="inline-block min-w-[0.5ch]">
-                {char === ' ' ? '\u00A0' : char}
-              </span>
-            ))}
-          </h1>
+          <h1 
+            ref={textRef}
+            className="thank-you-text mb-5"
+          />
 
           {/* Neon Loader */}
           <div className="neon-loader">
