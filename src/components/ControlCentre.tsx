@@ -241,7 +241,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     
     // WebRTC fallback
     try {
-      const rtcPeerConnection = new (window.RTCPeerConnection || window.webkitRTCPeerConnection)({
+      const rtcPeerConnection = new (window.RTCPeerConnection || (window as any).webkitRTCPeerConnection)({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
       });
       

@@ -149,7 +149,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
       </div>
 
       {/* Styles */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap');
         
         body {
@@ -233,7 +233,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
               width: 170px; 
           }
         }
-      `}</style>
+      ` }} />
     </motion.div>
   );
 };
