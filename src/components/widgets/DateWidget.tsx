@@ -52,14 +52,34 @@ const DateWidget = () => {
 
   return (
     <motion.div
-      className="w-full aspect-square rounded-3xl overflow-hidden shadow-xl border border-white/20"
+      className="w-full aspect-square rounded-3xl overflow-hidden shadow-xl border border-white/30"
       style={{
         backgroundColor: config.backgroundColor,
-        boxShadow: "0 10px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"
+        boxShadow: `
+          0 20px 50px rgba(0,0,0,0.35),
+          0 10px 20px rgba(0,0,0,0.25),
+          0 4px 8px rgba(0,0,0,0.15),
+          inset 0 2px 4px rgba(255,255,255,0.3),
+          inset 0 -2px 4px rgba(0,0,0,0.05)
+        `,
+        transform: "perspective(800px) rotateX(2deg) rotateY(2deg)",
+        transformStyle: "preserve-3d"
       }}
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.3 }}
+      initial={{ scale: 0.9, opacity: 0, rotateX: 10, rotateY: 5 }}
+      animate={{ scale: 1, opacity: 1, rotateX: 2, rotateY: 2 }}
+      whileHover={{ 
+        scale: 1.02, 
+        rotateX: 0, 
+        rotateY: 0,
+        boxShadow: `
+          0 30px 60px rgba(0,0,0,0.4),
+          0 15px 30px rgba(0,0,0,0.3),
+          0 5px 10px rgba(0,0,0,0.2),
+          inset 0 2px 4px rgba(255,255,255,0.35),
+          inset 0 -2px 4px rgba(0,0,0,0.05)
+        `
+      }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {/* Month Header */}
       <div 

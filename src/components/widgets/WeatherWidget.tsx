@@ -206,14 +206,34 @@ const WeatherWidget = () => {
 
   return (
     <motion.div
-      className="w-full aspect-square rounded-3xl overflow-hidden p-3 relative border border-white/20"
+      className="w-full aspect-square rounded-3xl overflow-hidden p-3 relative border border-white/30"
       style={{
-        background: `linear-gradient(135deg, ${config.gradientFrom}, ${config.gradientTo})`,
-        boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)"
+        background: `linear-gradient(145deg, ${config.gradientFrom}, ${config.gradientTo})`,
+        boxShadow: `
+          0 20px 50px rgba(0,0,0,0.4),
+          0 10px 20px rgba(0,0,0,0.3),
+          0 4px 8px rgba(0,0,0,0.2),
+          inset 0 2px 4px rgba(255,255,255,0.2),
+          inset 0 -2px 4px rgba(0,0,0,0.1)
+        `,
+        transform: "perspective(800px) rotateX(2deg) rotateY(-2deg)",
+        transformStyle: "preserve-3d"
       }}
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.3, delay: 0.1 }}
+      initial={{ scale: 0.9, opacity: 0, rotateX: 10, rotateY: -5 }}
+      animate={{ scale: 1, opacity: 1, rotateX: 2, rotateY: -2 }}
+      whileHover={{ 
+        scale: 1.02, 
+        rotateX: 0, 
+        rotateY: 0,
+        boxShadow: `
+          0 30px 60px rgba(0,0,0,0.5),
+          0 15px 30px rgba(0,0,0,0.35),
+          0 5px 10px rgba(0,0,0,0.25),
+          inset 0 2px 4px rgba(255,255,255,0.25),
+          inset 0 -2px 4px rgba(0,0,0,0.1)
+        `
+      }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {/* Weather content */}
       <div className="h-full flex flex-col justify-between" style={{ color: config.textColor }}>
