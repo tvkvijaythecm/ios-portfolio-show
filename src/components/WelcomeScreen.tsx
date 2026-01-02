@@ -57,7 +57,16 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showSlider, setShowSlider] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -190,6 +199,48 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           {config.subtext}
         </motion.div>
       </motion.div>
+
+      {/* iOS-style Lock Screen Clock */}
+      <AnimatePresence>
+        {showSlider && (
+          <motion.div
+            className="absolute top-16 z-20 flex flex-col items-center"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            {/* Time */}
+            <div 
+              className="text-[80px] font-thin leading-none text-white tracking-tight"
+              style={{
+                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
+                textShadow: "0 2px 20px rgba(0,0,0,0.3)"
+              }}
+            >
+              {currentTime.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+              })}
+            </div>
+            {/* Date */}
+            <div 
+              className="text-xl font-light text-white/90 mt-1"
+              style={{
+                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
+                textShadow: "0 1px 10px rgba(0,0,0,0.3)"
+              }}
+            >
+              {currentTime.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Slide to Unlock */}
       <AnimatePresence>
