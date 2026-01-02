@@ -25,6 +25,8 @@ interface WelcomeConfig {
   textShadow: boolean;
   textShadowColor: string;
   textShadowBlur: number;
+  backgroundImage?: string;
+  useBackgroundImage?: boolean;
 }
 
 const FONT_MAP: Record<string, string> = {
@@ -139,13 +141,25 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Dynamic gradient background */}
-      <div 
-        className="absolute inset-0" 
-        style={{
-          background: `linear-gradient(to bottom right, ${config.gradientFrom}, ${config.gradientVia}, ${config.gradientTo})`
-        }}
-      />
+      {/* Background - Image or Gradient */}
+      {config.useBackgroundImage && config.backgroundImage ? (
+        <>
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${config.backgroundImage})`
+            }}
+          />
+          <div className="absolute inset-0 bg-black/20" />
+        </>
+      ) : (
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: `linear-gradient(to bottom right, ${config.gradientFrom}, ${config.gradientVia}, ${config.gradientTo})`
+          }}
+        />
+      )}
 
       {/* Animated Welcome Text */}
       <motion.div
