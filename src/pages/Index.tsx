@@ -362,7 +362,15 @@ const Index = () => {
                   onClick={() => setOpenApp("github")}
                 />
                 
-                {/* Row 2: 2 app icons + Date Widget (2x2) */}
+                {/* Row 2-3: Weather Widget (2x2) + Date Widget (2x2) side by side */}
+                <div className="col-span-2 row-span-2">
+                  <WeatherWidget />
+                </div>
+                <div className="col-span-2 row-span-2">
+                  <DateWidget />
+                </div>
+                
+                {/* Row 4: 4 app icons */}
                 <AppIcon
                   imageIcon="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/appicon/education.png"
                   label="Education"
@@ -375,13 +383,6 @@ const Index = () => {
                   gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
                   onClick={() => setOpenApp("briefcase")}
                 />
-                
-                {/* Date Widget - spans 2 columns and 2 rows */}
-                <div className="col-span-2 row-span-2">
-                  <DateWidget />
-                </div>
-                
-                {/* Row 3: 2 more app icons (Date widget continues) */}
                 <AppIcon
                   imageIcon={notesIcon}
                   label="Notes"
@@ -395,7 +396,7 @@ const Index = () => {
                   onClick={() => setOpenApp("about")}
                 />
                 
-                {/* Row 4: 2 app icons (Weather widget starts) */}
+                {/* Row 5: 4 app icons */}
                 <AppIcon
                   imageIcon={calendarIcon}
                   label="Calendar"
@@ -425,13 +426,10 @@ const Index = () => {
                   }}
                 />
               </div>
-              
-              {/* Weather Widget - Full width */}
-              <div className="mt-2">
-                <WeatherWidget />
-              </div>
             </div>
           </div>
+
+
 
           {/* Fixed elements */}
           <Dock />
