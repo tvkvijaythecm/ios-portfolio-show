@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { LucideIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import LazyImage from "@/components/ui/lazy-image";
 
 interface CaseStudyApp {
   icon: LucideIcon;
@@ -61,10 +62,10 @@ const CaseStudyGrid = ({ apps, onClose }: CaseStudyGridProps) => {
                 onClick={app.onClick}
               >
                 {app.imageIcon ? (
-                  <img 
+                  <LazyImage 
                     src={app.imageIcon} 
                     alt={app.label}
-                    className="w-16 h-16 rounded-[22%] app-shadow object-cover"
+                    className="w-16 h-16 rounded-[22%] app-shadow"
                   />
                 ) : (
                   <div

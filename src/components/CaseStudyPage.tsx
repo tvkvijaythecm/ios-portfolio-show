@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, LucideIcon } from "lucide-react";
+import LazyImage from "@/components/ui/lazy-image";
 
 interface CaseStudyPageProps {
   title: string;
@@ -36,7 +37,7 @@ const CaseStudyPage = ({ title, icon: Icon, iconUrl, htmlContent, onClose }: Cas
         
         <div className="flex items-center gap-3">
           {iconUrl ? (
-            <img src={iconUrl} alt={title} className="w-10 h-10 rounded-xl object-cover" />
+            <LazyImage src={iconUrl} alt={title} className="w-10 h-10 rounded-xl" />
           ) : (
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-md">
               <Icon className="w-6 h-6 text-white" strokeWidth={2} />

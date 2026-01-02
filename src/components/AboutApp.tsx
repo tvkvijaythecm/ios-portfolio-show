@@ -4,6 +4,7 @@ import { User, Award, TrendingUp, Facebook, Instagram, Globe, MessageCircle, Loa
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import profileIcon from "@/assets/about-icon.png";
+import LazyImage from "@/components/ui/lazy-image";
 import photo1 from "@/assets/photo1.jpg";
 import photo2 from "@/assets/photo2.jpg";
 import photo3 from "@/assets/photo3.jpg";
@@ -249,10 +250,10 @@ const AboutApp = () => {
                 whileHover={{ scale: 1.05 }}
                 className="aspect-square bg-background/50 rounded-2xl flex items-center justify-center p-4 shadow-md border border-border/30 hover:border-primary/30 transition-all"
               >
-                <img 
+                <LazyImage 
                   src={tech.logo} 
                   alt={tech.name}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full"
                 />
               </motion.div>
             ))}
