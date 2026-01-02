@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import LazyImage from "@/components/ui/lazy-image";
 
 interface AppIconProps {
   icon?: LucideIcon;
@@ -44,13 +45,10 @@ const AppIcon = ({
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
         {imageIcon ? (
-          <motion.img 
+          <LazyImage 
             src={imageIcon} 
             alt={label} 
-            className="w-full h-full object-contain rounded-[22%]"
-            whileHover={{ 
-              filter: "brightness(1.1)",
-            }}
+            className="w-full h-full rounded-[22%]"
           />
         ) : Icon ? (
           <Icon className={cn(iconScale, iconColor)} strokeWidth={1.8} />

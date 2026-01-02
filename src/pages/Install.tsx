@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Download, Smartphone, Share, Plus, MoreVertical, Check, ArrowLeft, Apple, Chrome } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import LazyImage from "@/components/ui/lazy-image";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -82,7 +83,7 @@ const Install = () => {
           className="flex justify-center mb-8"
         >
           <div className="w-32 h-32 rounded-[28%] overflow-hidden shadow-2xl">
-            <img src="/app-icon.png" alt="App Icon" className="w-full h-full object-cover" />
+            <LazyImage src="/app-icon.png" alt="App Icon" className="w-full h-full" />
           </div>
         </motion.div>
 

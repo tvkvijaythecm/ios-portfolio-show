@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, GraduationCap, X, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import LazyImage from "@/components/ui/lazy-image";
 
 interface EducationAppProps {
   onClose: () => void;
@@ -139,13 +140,10 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
                 <div className="flex items-start gap-6 mb-8">
                   <div className="relative flex-shrink-0">
                     <div className="w-28 h-28 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                      <img 
+                      <LazyImage 
                         src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
                         alt="Profile" 
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
+                        className="w-full h-full rounded-full"
                       />
                     </div>
                     <div className="absolute -top-1 -right-1 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
@@ -254,13 +252,10 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
                     >
                       <div className="aspect-square bg-gradient-to-br from-primary/20 to-primary/5 relative overflow-hidden">
                         {item.image_url && (
-                          <img
+                          <LazyImage
                             src={item.image_url}
                             alt={item.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
+                            className="w-full h-full"
                           />
                         )}
                       </div>
@@ -288,13 +283,10 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
                     >
                       <div className="aspect-square bg-gradient-to-br from-primary/20 to-primary/5 relative overflow-hidden">
                         {item.image_url && (
-                          <img
+                          <LazyImage
                             src={item.image_url}
                             alt={item.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
+                            className="w-full h-full"
                           />
                         )}
                       </div>

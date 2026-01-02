@@ -2,6 +2,7 @@ import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import aboutIcon from "@/assets/about-icon.png";
+import LazyImage from "@/components/ui/lazy-image";
 
 interface WelcomeNotificationProps {
   onDismiss: () => void;
@@ -114,10 +115,10 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
             {/* Avatar/Icon */}
             <div className="flex-shrink-0">
               <div className="w-8 h-8 rounded-full overflow-hidden relative shadow-md">
-                <img 
+                <LazyImage 
                   src={config.profileImage || aboutIcon} 
                   alt="Profile" 
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full rounded-full"
                 />
                 <div 
                   className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2"

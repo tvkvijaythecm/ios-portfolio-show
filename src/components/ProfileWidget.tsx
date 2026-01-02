@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import profileImage from "@/assets/profile.jpeg";
+import LazyImage from "@/components/ui/lazy-image";
 
 const ProfileWidget = () => {
   return (
@@ -10,10 +11,10 @@ const ProfileWidget = () => {
       transition={{ delay: 0.2 }}
     >
       <div className="flex items-center gap-4">
-        <img 
+        <LazyImage 
           src={profileImage} 
           alt="Suresh Kaleyannan"
-          className="w-16 h-16 rounded-full object-cover app-shadow"
+          className="w-16 h-16 rounded-full app-shadow"
         />
         <div className="flex-1">
           <h3 className="text-white dark:text-gray-200 font-semibold text-lg">Suresh Kaleyannan</h3>
