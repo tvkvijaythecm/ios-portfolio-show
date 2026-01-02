@@ -14,6 +14,9 @@ interface NotificationConfig {
   gradientFrom: string;
   gradientVia: string;
   gradientTo: string;
+  profileImage: string;
+  nameColor: string;
+  messageColor: string;
 }
 
 const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
@@ -25,6 +28,9 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
     gradientFrom: "#2563eb",
     gradientVia: "#9333ea",
     gradientTo: "#f97316",
+    profileImage: "",
+    nameColor: "#ffffff",
+    messageColor: "#ffffffb3",
   });
 
   useEffect(() => {
@@ -108,7 +114,11 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
             {/* Avatar/Icon */}
             <div className="flex-shrink-0">
               <div className="w-8 h-8 rounded-full overflow-hidden relative shadow-md">
-                <img src={aboutIcon} alt="About" className="w-full h-full object-cover" />
+                <img 
+                  src={config.profileImage || aboutIcon} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover" 
+                />
                 <div 
                   className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2"
                   style={{ borderColor: config.gradientFrom }}
@@ -118,10 +128,10 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-white text-sm">
+              <div className="font-semibold text-sm" style={{ color: config.nameColor }}>
                 {config.name}
               </div>
-              <div className="text-white/70 text-xs">
+              <div className="text-xs" style={{ color: config.messageColor }}>
                 {config.message}
               </div>
             </div>
