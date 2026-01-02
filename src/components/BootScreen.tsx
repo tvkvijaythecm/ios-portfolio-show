@@ -157,7 +157,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           padding: 0;
           font-family: 'Share Tech Mono', monospace;
           background: #000;
-          color: #ff6a00;
+          color: #00ff41;
           overflow: hidden;
         }
 
@@ -165,8 +165,8 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           font-weight: 400;
           font-size: clamp(2.5rem, 10vw, 8rem);
           position: relative;
-          color: #fff;
-          text-shadow: 0 0 5px #d5cfc7, 0 0 15px #ede3e6, 0 0 30px #b7b8af;
+          color: #00d4ff;
+          text-shadow: 0 0 5px #00d4ff, 0 0 15px #0099cc, 0 0 30px #006699, 0 0 50px #003366;
           cursor: default;
           text-transform: uppercase;
           white-space: nowrap;
@@ -178,6 +178,38 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           position: relative;
           min-width: 0.5ch;
           will-change: contents;
+          animation: glitchText 3s infinite;
+          animation-delay: calc(var(--char-index, 0) * 0.1s);
+        }
+
+        .thank-you-text span:nth-child(1) { --char-index: 0; }
+        .thank-you-text span:nth-child(2) { --char-index: 1; }
+        .thank-you-text span:nth-child(3) { --char-index: 2; }
+        .thank-you-text span:nth-child(4) { --char-index: 3; }
+        .thank-you-text span:nth-child(5) { --char-index: 4; }
+        .thank-you-text span:nth-child(6) { --char-index: 5; }
+        .thank-you-text span:nth-child(7) { --char-index: 6; }
+
+        @keyframes glitchText {
+          0%, 90%, 100% {
+            opacity: 1;
+            text-shadow: 0 0 5px #00d4ff, 0 0 15px #0099cc, 0 0 30px #006699;
+          }
+          92% {
+            opacity: 0.8;
+            text-shadow: -2px 0 #ff0000, 2px 0 #00ff00;
+            transform: translateX(-2px);
+          }
+          94% {
+            opacity: 1;
+            text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+            transform: translateX(2px);
+          }
+          96% {
+            opacity: 0.9;
+            text-shadow: 0 0 10px #00d4ff;
+            transform: translateX(0);
+          }
         }
 
         /* Neon Loader (SHORT) */
@@ -194,21 +226,21 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           height: 3px;
           width: 100%;
           border-radius: 6px;
-          background: rgba(183, 184, 175,.15);
+          background: rgba(0, 153, 204, 0.15);
           box-shadow:
-              inset 0 0 6px rgba(183, 184, 175,.6),
-              0 0 10px rgba(183, 184, 175,.4);
+              inset 0 0 6px rgba(0, 212, 255, 0.6),
+              0 0 10px rgba(0, 153, 204, 0.4);
           overflow: hidden;
         }
 
         .neon-loader-fill {
           height: 100%;
           width: 0%;
-          background: linear-gradient(225deg, #f8f4ff 0.000%, #ede3e6 25.000%, #d5cfc7 50.000%, #b7b8af 75.000%, #989f9d 100.000%);
+          background: linear-gradient(225deg, #00ffff 0%, #00d4ff 25%, #0099cc 50%, #006699 75%, #003366 100%);
           box-shadow:
-              0 0 6px #f8f4ff,
-              0 0 14px #ede3e6,
-              0 0 28px #d5cfc7;
+              0 0 6px #00ffff,
+              0 0 14px #00d4ff,
+              0 0 28px #0099cc;
           transition: width .2s linear;
         }
 
@@ -217,10 +249,10 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           font-family: 'Orbitron', sans-serif;
           font-size: 10px;
           letter-spacing: 1px;
-          color: #f8f4ff;
+          color: #00d4ff;
           text-shadow:
-              0 0 5px #d5cfc7,
-              0 0 10px #ede3e6;
+              0 0 5px #0099cc,
+              0 0 10px #00d4ff;
         }
 
         /* Mobile */
