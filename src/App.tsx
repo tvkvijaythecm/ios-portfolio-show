@@ -31,7 +31,7 @@ import CustomAppsSettings from "./pages/admin/CustomAppsSettings";
 import IframeAppsSettings from "./pages/admin/IframeAppsSettings";
 import SiteSettings from "./pages/admin/SiteSettings";
 import InfoAppSettings from "./pages/admin/InfoAppSettings";
-
+import WidgetSettings from "./pages/admin/WidgetSettings";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -78,6 +78,7 @@ const App = () => (
                 <Route path="iframe-apps" element={<IframeAppsSettings />} />
                 <Route path="site-settings" element={<SiteSettings />} />
                 <Route path="info-app" element={<InfoAppSettings />} />
+                <Route path="widgets" element={<WidgetSettings />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
