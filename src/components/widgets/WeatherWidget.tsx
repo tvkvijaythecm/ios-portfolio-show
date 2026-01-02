@@ -80,7 +80,7 @@ const WeatherWidget = () => {
 
   return (
     <motion.div
-      className="col-span-2 row-span-2 rounded-3xl overflow-hidden p-4 relative"
+      className="w-full aspect-square rounded-3xl overflow-hidden p-3 relative"
       style={{
         background: `linear-gradient(135deg, ${config.gradientFrom}, ${config.gradientTo})`,
         boxShadow: "0 10px 40px rgba(0,0,0,0.3)"
@@ -93,30 +93,26 @@ const WeatherWidget = () => {
       <div className="h-full flex flex-col justify-between" style={{ color: config.textColor }}>
         {/* Header */}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium opacity-90">Today's Weather</span>
-          <div className="flex items-center gap-1">
-            {getWeatherIcon(config.condition, 24)}
-          </div>
+          <span className="text-xs font-medium opacity-90">Today's Weather</span>
+          {getWeatherIcon(config.condition, 20)}
         </div>
         
         {/* Main Temperature */}
-        <div className="flex items-start gap-2">
-          <span className="text-6xl font-light leading-none">{config.temperature}°</span>
-          <div className="mt-2">
-            {getWeatherIcon(config.condition, 40)}
-          </div>
+        <div className="flex items-center gap-1">
+          <span className="text-4xl font-light leading-none">{config.temperature}°</span>
+          {getWeatherIcon(config.condition, 28)}
         </div>
         
         {/* Condition */}
-        <div className="text-sm opacity-80">{config.condition}</div>
+        <div className="text-xs opacity-80">{config.condition}</div>
         
         {/* Forecast */}
         {config.showForecast && (
-          <div className="flex justify-between mt-2 pt-2 border-t border-white/20">
-            {config.forecast.map((day, i) => (
-              <div key={i} className="flex flex-col items-center gap-1">
-                <span className="text-xs opacity-70">{day.day}</span>
-                {getWeatherIcon(day.condition, 18)}
+          <div className="flex justify-between pt-1.5 border-t border-white/20">
+            {config.forecast.slice(0, 4).map((day, i) => (
+              <div key={i} className="flex flex-col items-center gap-0.5">
+                <span className="text-[10px] opacity-70">{day.day}</span>
+                {getWeatherIcon(day.condition, 14)}
               </div>
             ))}
           </div>
