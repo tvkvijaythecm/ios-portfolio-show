@@ -38,13 +38,13 @@ const StatusBar = ({ onControlCentreOpen }: StatusBarProps) => {
         </div>
         <button 
           onClick={onControlCentreOpen}
-          className="ml-2 p-1.5 hover:bg-white/10 rounded-full transition-colors"
+          className="ml-3 p-2 hover:bg-white/10 rounded-full transition-colors"
           aria-label="Open Control Centre"
         >
           <motion.img
             src={controlCenterIcon}
             alt="Control Centre"
-            className="w-5 h-5"
+            className="w-7 h-7"
             animate={{ rotate: 360 }}
             transition={{ 
               duration: 3, 
