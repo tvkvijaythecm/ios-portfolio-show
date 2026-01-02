@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Import all images to preload
 import profileImage from "@/assets/profile.jpeg";
@@ -44,6 +44,28 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
   const [isComplete, setIsComplete] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  // Create typing sound effect
+  const playTypingSound = () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    const ctx = audioContextRef.current;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(800 + Math.random() * 400, ctx.currentTime);
+    gainNode.gain.setValueAtTime(0.03, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+    
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.05);
+  };
 
   // Preload images
   useEffect(() => {
@@ -68,12 +90,17 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
     });
   }, []);
 
-  // Progress animation
+  // Progress animation with typing sounds
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress(prev => {
         const increment = Math.floor(Math.random() * 4) + 1;
         const newProgress = prev + increment;
+        
+        // Play typing sound on progress update
+        if (Math.random() > 0.5) {
+          playTypingSound();
+        }
         
         if (newProgress >= 100) {
           clearInterval(interval);
@@ -118,6 +145,10 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/20 to-black/85" />
+
+      {/* CRT Scanlines Overlay */}
+      <div className="scanlines absolute inset-0 pointer-events-none z-10" />
+      <div className="crt-flicker absolute inset-0 pointer-events-none z-10" />
 
       {/* Main Content */}
       <div className="relative h-screen w-full flex items-center justify-center p-5">
@@ -253,6 +284,46 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           text-shadow:
               0 0 5px #0099cc,
               0 0 10px #00d4ff;
+        }
+
+        /* CRT Scanlines */
+        .scanlines {
+          background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.15) 1px,
+            transparent 1px,
+            transparent 2px
+          );
+        }
+
+        .crt-flicker {
+          animation: flicker 0.15s infinite;
+          background: rgba(0, 212, 255, 0.03);
+        }
+
+        @keyframes flicker {
+          0% { opacity: 0.27861; }
+          5% { opacity: 0.34769; }
+          10% { opacity: 0.23604; }
+          15% { opacity: 0.90626; }
+          20% { opacity: 0.18128; }
+          25% { opacity: 0.83891; }
+          30% { opacity: 0.65583; }
+          35% { opacity: 0.67807; }
+          40% { opacity: 0.26559; }
+          45% { opacity: 0.84693; }
+          50% { opacity: 0.96019; }
+          55% { opacity: 0.08594; }
+          60% { opacity: 0.20313; }
+          65% { opacity: 0.71988; }
+          70% { opacity: 0.53455; }
+          75% { opacity: 0.37288; }
+          80% { opacity: 0.71428; }
+          85% { opacity: 0.70419; }
+          90% { opacity: 0.7003; }
+          95% { opacity: 0.36108; }
+          100% { opacity: 0.24387; }
         }
 
         /* Mobile */

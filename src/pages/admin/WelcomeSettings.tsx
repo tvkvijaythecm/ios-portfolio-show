@@ -62,6 +62,9 @@ interface NotificationConfig {
   gradientFrom: string;
   gradientVia: string;
   gradientTo: string;
+  profileImage: string;
+  nameColor: string;
+  messageColor: string;
 }
 
 const WelcomeSettings = () => {
@@ -91,6 +94,9 @@ const WelcomeSettings = () => {
     gradientFrom: "#2563eb",
     gradientVia: "#9333ea",
     gradientTo: "#f97316",
+    profileImage: "",
+    nameColor: "#ffffff",
+    messageColor: "#ffffffb3",
   });
   
   const [loading, setLoading] = useState(false);
@@ -517,6 +523,57 @@ const WelcomeSettings = () => {
                 />
               </div>
 
+              {/* Profile Image URL */}
+              <div className="space-y-2">
+                <Label className="text-white/80">Profile Image URL</Label>
+                <Input
+                  value={notificationConfig.profileImage}
+                  onChange={(e) => setNotificationConfig({ ...notificationConfig, profileImage: e.target.value })}
+                  placeholder="https://example.com/avatar.jpg (leave empty for default)"
+                  className="bg-white/10 border-white/20 text-white"
+                />
+                <p className="text-white/40 text-xs">Leave empty to use default app icon</p>
+              </div>
+
+              {/* Font Colors */}
+              <div className="space-y-3">
+                <Label className="text-white/80">Text Colors</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-white/60 text-xs">Name Color</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={notificationConfig.nameColor}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, nameColor: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={notificationConfig.nameColor}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, nameColor: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white flex-1 text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white/60 text-xs">Message Color</Label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={notificationConfig.messageColor?.replace(/[a-f0-9]{2}$/i, '') || notificationConfig.messageColor}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, messageColor: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer"
+                      />
+                      <Input
+                        value={notificationConfig.messageColor}
+                        onChange={(e) => setNotificationConfig({ ...notificationConfig, messageColor: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white flex-1 text-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-3">
                 <Label className="text-white/80">Gradient Colors</Label>
                 <div className="grid grid-cols-3 gap-3">
@@ -583,12 +640,16 @@ const WelcomeSettings = () => {
                   <span className="text-xs text-white/70 font-medium pt-0.5">
                     {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex-shrink-0"></div>
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex-shrink-0 overflow-hidden">
+                    {notificationConfig.profileImage && (
+                      <img src={notificationConfig.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                    )}
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-white text-sm">
+                    <div className="font-semibold text-sm" style={{ color: notificationConfig.nameColor }}>
                       {notificationConfig.name || "Name"}
                     </div>
-                    <div className="text-white/70 text-xs">
+                    <div className="text-xs" style={{ color: notificationConfig.messageColor }}>
                       {notificationConfig.message || "Message"}
                     </div>
                   </div>

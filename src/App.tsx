@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
 import SEOHead from "./components/SEOHead";
+import DeviceRestriction from "./components/DeviceRestriction";
 import Index from "./pages/Index";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
@@ -43,8 +44,19 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/install" element={<Install />} />
+              {/* Main app with device restriction */}
+              <Route path="/" element={
+                <DeviceRestriction>
+                  <Index />
+                </DeviceRestriction>
+              } />
+              <Route path="/install" element={
+                <DeviceRestriction>
+                  <Install />
+                </DeviceRestriction>
+              } />
+              
+              {/* Admin routes without device restriction */}
               <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin/reset-password" element={<AdminResetPassword />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />}>
