@@ -53,6 +53,8 @@ interface WelcomeConfig {
   textShadow: boolean;
   textShadowColor: string;
   textShadowBlur: number;
+  backgroundImage: string;
+  useBackgroundImage: boolean;
 }
 
 interface NotificationConfig {
@@ -85,6 +87,8 @@ const WelcomeSettings = () => {
     textShadow: true,
     textShadowColor: "#000000",
     textShadowBlur: 10,
+    backgroundImage: "",
+    useBackgroundImage: false,
   });
   
   const [notificationConfig, setNotificationConfig] = useState<NotificationConfig>({
@@ -438,17 +442,75 @@ const WelcomeSettings = () => {
                 </div>
               </div>
 
+              {/* Background Image Settings */}
+              <Card className="bg-white/5 border-white/10">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-sm flex items-center gap-2">
+                    <Palette className="w-4 h-4" />
+                    Background Image
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label className="text-white/80 text-sm">Use Background Image</Label>
+                      <p className="text-white/40 text-xs">Replace gradient with an image</p>
+                    </div>
+                    <Switch
+                      checked={config.useBackgroundImage}
+                      onCheckedChange={(checked) => setConfig({ ...config, useBackgroundImage: checked })}
+                    />
+                  </div>
+                  
+                  {config.useBackgroundImage && (
+                    <div className="space-y-2">
+                      <Label className="text-white/80 text-sm">Image URL</Label>
+                      <Input
+                        value={config.backgroundImage}
+                        onChange={(e) => setConfig({ ...config, backgroundImage: e.target.value })}
+                        placeholder="https://example.com/image.jpg"
+                        className="bg-white/10 border-white/20 text-white"
+                      />
+                      {config.backgroundImage && (
+                        <div className="mt-2 rounded-lg overflow-hidden border border-white/20 aspect-video">
+                          <img 
+                            src={config.backgroundImage} 
+                            alt="Background preview" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%23333" width="100" height="100"/><text fill="%23999" x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="12">Invalid URL</text></svg>';
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* Welcome Screen Preview */}
               <div className="space-y-2">
                 <Label className="text-white/80">Preview</Label>
                 <div 
-                  className="aspect-[9/16] max-h-48 rounded-xl overflow-hidden border border-white/20 flex flex-col items-center justify-center"
+                  className="aspect-[9/16] max-h-48 rounded-xl overflow-hidden border border-white/20 flex flex-col items-center justify-center relative"
                   style={{
-                    background: `linear-gradient(to bottom right, ${config.gradientFrom}, ${config.gradientVia}, ${config.gradientTo})`
+                    background: config.useBackgroundImage && config.backgroundImage 
+                      ? undefined 
+                      : `linear-gradient(to bottom right, ${config.gradientFrom}, ${config.gradientVia}, ${config.gradientTo})`
                   }}
                 >
-                  {config.enabled ? (
+                  {config.useBackgroundImage && config.backgroundImage && (
                     <>
+                      <img 
+                        src={config.backgroundImage} 
+                        alt="Background" 
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/20" />
+                    </>
+                  )}
+                  {config.enabled ? (
+                    <div className="relative z-10 flex flex-col items-center">
                       <p 
                         className="mb-1" 
                         style={{ 
@@ -471,9 +533,9 @@ const WelcomeSettings = () => {
                       >
                         {config.subtext || "Welcome"}
                       </p>
-                    </>
+                    </div>
                   ) : (
-                    <p className="text-white/40 text-sm">Disabled</p>
+                    <p className="text-white/40 text-sm relative z-10">Disabled</p>
                   )}
                 </div>
               </div>
