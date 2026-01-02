@@ -1,7 +1,8 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import startupSound from "@/assets/startup-sound.wav";
+import SlideToUnlock from "./SlideToUnlock";
 
 interface WelcomeScreenProps {
   onComplete: () => void;
@@ -54,6 +55,8 @@ const FONT_MAP: Record<string, string> = {
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [config, setConfig] = useState<WelcomeConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSlider, setShowSlider] = useState(false);
+  const [isUnlocking, setIsUnlocking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -90,22 +93,26 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     };
   }, [isLoading, config?.enabled]);
 
+  // Show slider after text animation completes
   useEffect(() => {
-    if (isLoading || !config) return;
+    if (isLoading || !config?.enabled) return;
     
-    if (!config.enabled) {
-      onComplete();
-      return;
-    }
-    
-    const durationMs = config.duration > 100 ? config.duration : config.duration * 1000;
+    // Calculate time for text animation (based on text length)
+    const textAnimationTime = (config.text.length * 100) + 1000;
     
     const timer = setTimeout(() => {
-      onComplete();
-    }, durationMs);
+      setShowSlider(true);
+    }, textAnimationTime);
 
     return () => clearTimeout(timer);
-  }, [onComplete, config, isLoading]);
+  }, [config, isLoading]);
+
+  const handleUnlock = () => {
+    setIsUnlocking(true);
+    setTimeout(() => {
+      onComplete();
+    }, 500);
+  };
 
   // Don't render anything until settings are loaded
   if (isLoading || !config || !config.enabled) return null;
@@ -119,8 +126,9 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     <motion.div
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
       initial={{ opacity: 1 }}
+      animate={{ opacity: isUnlocking ? 0 : 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1 }}
+      transition={{ duration: 0.5 }}
     >
       {/* Dynamic gradient background */}
       <div 
@@ -130,7 +138,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         }}
       />
 
-      {/* Animated Welcome Text - no background layer */}
+      {/* Animated Welcome Text */}
       <motion.div
         className="relative z-10 flex flex-col items-center gap-2"
         initial={{ opacity: 0 }}
@@ -182,6 +190,21 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           {config.subtext}
         </motion.div>
       </motion.div>
+
+      {/* Slide to Unlock */}
+      <AnimatePresence>
+        {showSlider && (
+          <motion.div
+            className="absolute bottom-20 z-20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <SlideToUnlock onUnlock={handleUnlock} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

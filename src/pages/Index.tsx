@@ -76,6 +76,8 @@ import EducationApp from "@/components/EducationApp";
 import ControlCentre from "@/components/ControlCentre";
 import NotesApp from "@/components/NotesApp";
 import IframeApp from "@/components/IframeApp";
+import DateWidget from "@/components/widgets/DateWidget";
+import WeatherWidget from "@/components/widgets/WeatherWidget";
 import { useCaseStudyApps, getIconForApp, CaseStudyApp } from "@/hooks/useCaseStudyApps";
 
 interface IframeSettings {
@@ -330,94 +332,106 @@ const Index = () => {
           </AnimatePresence>
           
           {/* Main content area */}
-          <div className="absolute inset-0 pt-14 pb-32 px-6 overflow-auto z-10">
-            <div className="flex flex-col gap-6 h-full">
-                    {/* Profile Widget */}
-                    <ProfileWidget />
-
-                    {/* App Grid */}
-                    <div className="grid grid-cols-4 gap-x-4 gap-y-6 mt-4">
-                      <AppIcon
-                        imageIcon={infoIcon}
-                        label="Info"
-                        gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
-                        onClick={() => setOpenApp("profile")}
-                      />
-                      <AppIcon
-                        imageIcon={photosIcon}
-                        label="Photos"
-                        gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 50%, #FF3B30 100%)"
-                        onClick={() => setOpenApp("photos")}
-                      />
-                      <AppIcon
-                        imageIcon={videoIcon}
-                        label="Video"
-                        gradient="linear-gradient(135deg, #FF0000 0%, #CC0000 100%)"
-                        onClick={() => setOpenApp("youtube")}
-                      />
-                      <AppIcon
-                        imageIcon={githubIcon}
-                        label="GitHub"
-                        bgColor="bg-black"
-                        onClick={() => setOpenApp("github")}
-                      />
-                      <AppIcon
-                        imageIcon="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/appicon/education.png"
-                        label="Education"
-                        gradient="linear-gradient(135deg, #5856D6 0%, #3634A3 100%)"
-                        onClick={() => setOpenApp("education")}
-                      />
-                      <AppIcon
-                        imageIcon={workIcon}
-                        label="Work"
-                        gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
-                        onClick={() => setOpenApp("briefcase")}
-                      />
-                      <AppIcon
-                        imageIcon={notesIcon}
-                        label="Notes"
-                        gradient="linear-gradient(135deg, #FFD60A 0%, #FFC107 100%)"
-                        onClick={() => setOpenApp("notes")}
-                      />
-                      <AppIcon
-                        imageIcon={sureshIcon}
-                        label="Suresh"
-                        gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
-                        onClick={() => setOpenApp("about")}
-                      />
-                      
-                      {/* Basic Apps Row */}
-                      <AppIcon
-                        imageIcon={calendarIcon}
-                        label="Calendar"
-                        bgColor="bg-white"
-                        iconColor="text-red-500"
-                        onClick={() => setOpenApp("calendar")}
-                      />
-                      <AppIcon
-                        imageIcon={clockIcon}
-                        label="Clock"
-                        bgColor="bg-black"
-                        onClick={() => setOpenApp("clock")}
-                      />
-                      <AppIcon
-                        imageIcon={weatherIcon}
-                        label="Weather"
-                        gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
-                        onClick={() => setOpenApp("weather")}
-                      />
-                      <AppIcon
-                        imageIcon={caseStudyIcon}
-                        label="Other Apps"
-                        gradient="linear-gradient(135deg, #667EEA 0%, #764BA2 100%)"
-                        onClick={() => {
-                          setShowCaseStudyGrid(true);
-                          setOpenApp("case-study");
-                        }}
-                      />
-                  </div>
+          <div className="absolute inset-0 pt-14 pb-32 px-4 overflow-auto z-10">
+            <div className="flex flex-col gap-4 h-full">
+              {/* App Grid with Widgets - iOS-style layout */}
+              <div className="grid grid-cols-4 gap-3 mt-2">
+                {/* Row 1: 4 app icons */}
+                <AppIcon
+                  imageIcon={infoIcon}
+                  label="Info"
+                  gradient="linear-gradient(135deg, #8E8E93 0%, #636366 100%)"
+                  onClick={() => setOpenApp("profile")}
+                />
+                <AppIcon
+                  imageIcon={photosIcon}
+                  label="Photos"
+                  gradient="linear-gradient(135deg, #FF9500 0%, #FF6B00 50%, #FF3B30 100%)"
+                  onClick={() => setOpenApp("photos")}
+                />
+                <AppIcon
+                  imageIcon={videoIcon}
+                  label="Video"
+                  gradient="linear-gradient(135deg, #FF0000 0%, #CC0000 100%)"
+                  onClick={() => setOpenApp("youtube")}
+                />
+                <AppIcon
+                  imageIcon={githubIcon}
+                  label="GitHub"
+                  bgColor="bg-black"
+                  onClick={() => setOpenApp("github")}
+                />
+                
+                {/* Row 2: 2 app icons + Date Widget (2x2) */}
+                <AppIcon
+                  imageIcon="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/appicon/education.png"
+                  label="Education"
+                  gradient="linear-gradient(135deg, #5856D6 0%, #3634A3 100%)"
+                  onClick={() => setOpenApp("education")}
+                />
+                <AppIcon
+                  imageIcon={workIcon}
+                  label="Work"
+                  gradient="linear-gradient(135deg, #007AFF 0%, #0051D5 100%)"
+                  onClick={() => setOpenApp("briefcase")}
+                />
+                
+                {/* Date Widget - spans 2 columns and 2 rows */}
+                <div className="col-span-2 row-span-2">
+                  <DateWidget />
                 </div>
+                
+                {/* Row 3: 2 more app icons (Date widget continues) */}
+                <AppIcon
+                  imageIcon={notesIcon}
+                  label="Notes"
+                  gradient="linear-gradient(135deg, #FFD60A 0%, #FFC107 100%)"
+                  onClick={() => setOpenApp("notes")}
+                />
+                <AppIcon
+                  imageIcon={sureshIcon}
+                  label="Suresh"
+                  gradient="linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)"
+                  onClick={() => setOpenApp("about")}
+                />
+                
+                {/* Row 4: 2 app icons (Weather widget starts) */}
+                <AppIcon
+                  imageIcon={calendarIcon}
+                  label="Calendar"
+                  bgColor="bg-white"
+                  iconColor="text-red-500"
+                  onClick={() => setOpenApp("calendar")}
+                />
+                <AppIcon
+                  imageIcon={clockIcon}
+                  label="Clock"
+                  bgColor="bg-black"
+                  onClick={() => setOpenApp("clock")}
+                />
+                <AppIcon
+                  imageIcon={weatherIcon}
+                  label="Weather"
+                  gradient="linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
+                  onClick={() => setOpenApp("weather")}
+                />
+                <AppIcon
+                  imageIcon={caseStudyIcon}
+                  label="Other Apps"
+                  gradient="linear-gradient(135deg, #667EEA 0%, #764BA2 100%)"
+                  onClick={() => {
+                    setShowCaseStudyGrid(true);
+                    setOpenApp("case-study");
+                  }}
+                />
               </div>
+              
+              {/* Weather Widget - Full width */}
+              <div className="mt-2">
+                <WeatherWidget />
+              </div>
+            </div>
+          </div>
 
           {/* Fixed elements */}
           <Dock />
