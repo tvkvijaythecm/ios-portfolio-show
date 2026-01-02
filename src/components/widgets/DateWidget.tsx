@@ -52,10 +52,10 @@ const DateWidget = () => {
 
   return (
     <motion.div
-      className="w-full aspect-square rounded-3xl overflow-hidden shadow-xl"
+      className="w-full aspect-square rounded-3xl overflow-hidden shadow-xl border border-white/20"
       style={{
         backgroundColor: config.backgroundColor,
-        boxShadow: "0 10px 40px rgba(0,0,0,0.2)"
+        boxShadow: "0 10px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"
       }}
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}

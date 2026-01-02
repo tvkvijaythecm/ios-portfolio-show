@@ -206,10 +206,10 @@ const WeatherWidget = () => {
 
   return (
     <motion.div
-      className="w-full aspect-square rounded-3xl overflow-hidden p-3 relative"
+      className="w-full aspect-square rounded-3xl overflow-hidden p-3 relative border border-white/20"
       style={{
         background: `linear-gradient(135deg, ${config.gradientFrom}, ${config.gradientTo})`,
-        boxShadow: "0 10px 40px rgba(0,0,0,0.3)"
+        boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)"
       }}
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
