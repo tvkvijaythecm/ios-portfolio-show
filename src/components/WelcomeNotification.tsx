@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import aboutIcon from "@/assets/about-icon.png";
+
 import LazyImage from "@/components/ui/lazy-image";
 
 interface WelcomeNotificationProps {
