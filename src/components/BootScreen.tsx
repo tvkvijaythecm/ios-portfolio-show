@@ -3,14 +3,7 @@ import { useState, useEffect, useRef } from "react";
 
 // Import all images to preload
 import profileImage from "@/assets/profile.jpeg";
-import backgroundImage from "@/assets/background.png";
-import homescreenBg from "@/assets/homescreen-bg.jpg";
-import photo1 from "@/assets/photo1.jpg";
-import photo2 from "@/assets/photo2.jpg";
-import photo3 from "@/assets/photo3.jpg";
-import photo4 from "@/assets/photo4.jpg";
-import photo5 from "@/assets/photo5.jpg";
-import photo6 from "@/assets/photo6.jpg";
+
 import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
