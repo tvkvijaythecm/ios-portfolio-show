@@ -7,7 +7,7 @@ import profileImage from "@/assets/profile.jpeg";
 import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
-import aboutIcon from "@/assets/about-icon.png";
+
 import sureshIcon from "@/assets/icons/suresh.png";
 import photosIcon from "@/assets/icons/photos.png";
 import videoIcon from "@/assets/icons/video.png";
