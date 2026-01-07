@@ -237,120 +237,51 @@ const WeatherWidget = () => {
 
   return (
     <motion.div
-      className="w-full aspect-[4/3] rounded-3xl overflow-hidden relative"
+      className="w-full h-full rounded-[20px] sm:rounded-3xl overflow-hidden relative"
       style={{
-        background: `linear-gradient(180deg, ${config.gradientFrom} 0%, ${config.gradientTo} 100%)`,
+        background: `linear-gradient(180deg, #3a5a8c 0%, #4a6fa5 100%)`,
         boxShadow: `
-          0 20px 50px rgba(0,0,0,0.4),
-          0 10px 20px rgba(0,0,0,0.3),
-          inset 0 1px 2px rgba(255,255,255,0.2)
+          0 8px 24px rgba(0,0,0,0.3),
+          inset 0 1px 2px rgba(255,255,255,0.15)
         `,
       }}
-      initial={{ scale: 0.9, opacity: 0 }}
+      initial={{ scale: 0.95, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
       {/* Main Content */}
-      <div className="h-full p-4 flex flex-col" style={{ color: config.textColor }}>
+      <div className="h-full p-3 sm:p-4 flex flex-col justify-between text-white">
         
-        {/* Top Section - Sun Icon + Date/Time/Location */}
-        <div className="flex items-start justify-between flex-1">
-          {/* Large Weather Icon */}
+        {/* Top Row - Cloud Icon + Date/Time */}
+        <div className="flex items-start justify-between">
+          {/* Weather Icon */}
           <div className="relative">
             {loading ? (
-              <Loader2 size={80} className="animate-spin opacity-50" />
+              <Loader2 className="w-10 h-10 sm:w-12 sm:h-12 animate-spin opacity-50" />
             ) : (
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  rotate: displayCondition === "sunny" ? [0, 5, 0] : 0
-                }}
-                transition={{ 
-                  duration: 4, 
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                {getWeatherIcon(displayCondition, 80)}
-              </motion.div>
+              <Cloud className="w-10 h-10 sm:w-12 sm:h-12 text-white drop-shadow-lg" />
             )}
           </div>
 
-          {/* Date, Time, Location */}
+          {/* Date + Time */}
           <div className="text-right">
-            <div className="text-sm opacity-90 font-medium">
+            <div className="text-[10px] sm:text-xs opacity-90 font-medium">
               {formatDate(currentTime)}
             </div>
-            <div className="text-4xl font-light tracking-tight">
+            <div className="text-xl sm:text-2xl font-light tracking-tight">
               {formatTime(currentTime)}
             </div>
-            <div className="text-sm opacity-80 mt-1">
-              {loading ? "Loading..." : displayLocation}
-            </div>
           </div>
         </div>
 
-        {/* Bottom Section - Temperature + Forecast */}
-        <div className="flex items-end justify-between">
-          {/* Current Temperature */}
-          <div className="flex flex-col">
-            <div className="text-5xl font-light leading-none">
-              {loading ? "--" : displayTemp}°
-            </div>
-            <div className="text-sm opacity-70 mt-1">
-              {loading ? "--" : `${displayTempMin}~${displayTempMax}°`}
-            </div>
-            <div className="text-sm opacity-80 capitalize">
-              {loading ? "Loading..." : displayCondition === "sunny" ? "Clear" : displayCondition}
-            </div>
+        {/* Bottom - Location */}
+        <div className="mt-auto">
+          <div className="text-xs sm:text-sm opacity-90 leading-tight truncate">
+            {loading ? "Loading..." : displayLocation}
           </div>
-
-          {/* 3-Day Forecast */}
-          {config.showForecast && !loading && (
-            <div className="flex gap-4">
-              {displayForecast.slice(0, 3).map((day, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <span className="text-xs font-medium opacity-90">{day.day}</span>
-                  <div className="my-1.5">
-                    {getWeatherIcon(day.condition, 24)}
-                  </div>
-                  <span className="text-xs opacity-80">
-                    {day.tempMin}/{day.tempMax}°
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
-
-      {/* Decorative underwater effect */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
-        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/30 to-transparent" />
-      </div>
-
-      {/* Rain animation for rainy weather */}
-      {!loading && displayCondition.toLowerCase().includes("rain") && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(12)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-0.5 h-4 bg-blue-200/30 rounded-full"
-              style={{ left: `${5 + i * 8}%` }}
-              animate={{
-                y: ["-10%", "110%"],
-                opacity: [0, 0.7, 0]
-              }}
-              transition={{
-                duration: 1.2 + Math.random() * 0.5,
-                repeat: Infinity,
-                delay: Math.random() * 2
-              }}
-            />
-          ))}
-        </div>
-      )}
     </motion.div>
   );
 };
