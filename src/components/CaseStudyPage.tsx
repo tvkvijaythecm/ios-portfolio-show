@@ -24,29 +24,20 @@ const CaseStudyPage = ({ title, icon: Icon, iconUrl, htmlContent, onClose }: Cas
         mass: 0.8
       }}
     >
-      {/* Header */}
-      <div className="h-20 flex items-end justify-between px-6 pb-3 border-b border-white/20 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500">
+      {/* Header - iOS style */}
+      <div className="h-14 flex items-center justify-between px-4 border-b border-gray-200/30 bg-white/95 backdrop-blur-xl">
         <motion.button
           onClick={onClose}
           className="flex items-center"
           whileTap={{ scale: 0.95 }}
         >
-          <ChevronLeft className="w-8 h-8 text-white" strokeWidth={2.5} />
-          <span className="text-white text-lg ml-1">Back</span>
+          <ChevronLeft className="w-7 h-7 text-blue-500" strokeWidth={2.5} />
+          <span className="text-blue-500 text-lg">Back</span>
         </motion.button>
         
-        <div className="flex items-center gap-3">
-          {iconUrl ? (
-            <LazyImage src={iconUrl} alt={title} className="w-10 h-10 rounded-xl" />
-          ) : (
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-md">
-              <Icon className="w-6 h-6 text-white" strokeWidth={2} />
-            </div>
-          )}
-          <h1 className="text-white text-xl font-bold">{title}</h1>
-        </div>
+        <h1 className="text-gray-800 text-lg font-semibold absolute left-1/2 -translate-x-1/2">{title}</h1>
         
-        <div className="w-20" />
+        <div className="w-16" />
       </div>
 
       {/* Content */}
