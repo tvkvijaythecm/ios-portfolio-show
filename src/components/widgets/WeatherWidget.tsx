@@ -253,32 +253,35 @@ const WeatherWidget = () => {
       {/* Main Content */}
       <div className="h-full p-3 sm:p-4 flex flex-col justify-between text-white">
         
-        {/* Top Row - Cloud Icon + Date/Time */}
+        {/* Top Row - Location + Temperature */}
         <div className="flex items-start justify-between">
-          {/* Weather Icon */}
-          <div className="relative">
-            {loading ? (
-              <Loader2 className="w-10 h-10 sm:w-12 sm:h-12 animate-spin opacity-50" />
-            ) : (
-              <Cloud className="w-10 h-10 sm:w-12 sm:h-12 text-white drop-shadow-lg" />
-            )}
+          {/* Location */}
+          <div className="flex-1 min-w-0">
+            <div className="text-xs sm:text-sm font-medium truncate">
+              {loading ? "Loading..." : displayLocation}
+            </div>
+            <div className="text-2xl sm:text-3xl font-light tracking-tight mt-0.5">
+              {loading ? "--" : `${displayTemp}°`}
+            </div>
           </div>
 
-          {/* Date + Time */}
-          <div className="text-right">
-            <div className="text-[10px] sm:text-xs opacity-90 font-medium">
-              {formatDate(currentTime)}
-            </div>
-            <div className="text-xl sm:text-2xl font-light tracking-tight">
-              {formatTime(currentTime)}
-            </div>
+          {/* Weather Icon */}
+          <div className="relative ml-2">
+            {loading ? (
+              <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 animate-spin opacity-50" />
+            ) : (
+              getWeatherIcon(displayCondition, 36, "w-8 h-8 sm:w-10 sm:h-10")
+            )}
           </div>
         </div>
 
-        {/* Bottom - Location */}
+        {/* Bottom - Condition + Hi/Lo */}
         <div className="mt-auto">
-          <div className="text-xs sm:text-sm opacity-90 leading-tight truncate">
-            {loading ? "Loading..." : displayLocation}
+          <div className="text-[10px] sm:text-xs opacity-80 capitalize">
+            {loading ? "..." : displayCondition}
+          </div>
+          <div className="text-[10px] sm:text-xs opacity-70 mt-0.5">
+            {loading ? "--" : `H:${displayTempMax}° L:${displayTempMin}°`}
           </div>
         </div>
       </div>
