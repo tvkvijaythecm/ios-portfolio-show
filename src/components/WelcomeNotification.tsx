@@ -99,7 +99,7 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={{ top: 0.5, bottom: 0.1 }}
           onDragEnd={handleDragEnd}
-          className="fixed top-2 left-4 right-4 z-[200] mx-auto max-w-md cursor-grab active:cursor-grabbing"
+          className="fixed top-[calc(1%+8px)] left-4 right-4 z-[200] mx-auto max-w-md cursor-grab active:cursor-grabbing"
         >
           <div 
             className="backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-4 flex items-start gap-3"
