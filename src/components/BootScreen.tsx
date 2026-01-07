@@ -3,11 +3,18 @@ import { useState, useEffect, useRef } from "react";
 
 // Import all images to preload
 import profileImage from "@/assets/profile.jpeg";
-
+import backgroundImage from "@/assets/background.png";
+import homescreenBg from "@/assets/homescreen-bg.jpg";
+import photo1 from "@/assets/photo1.jpg";
+import photo2 from "@/assets/photo2.jpg";
+import photo3 from "@/assets/photo3.jpg";
+import photo4 from "@/assets/photo4.jpg";
+import photo5 from "@/assets/photo5.jpg";
+import photo6 from "@/assets/photo6.jpg";
 import project1 from "@/assets/project1.jpg";
 import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
-
+import aboutIcon from "@/assets/about-icon.png";
 import sureshIcon from "@/assets/icons/suresh.png";
 import photosIcon from "@/assets/icons/photos.png";
 import videoIcon from "@/assets/icons/video.png";
@@ -21,7 +28,8 @@ import caseStudyIcon from "@/assets/icons/casestudy.png";
 import goipIcon from "@/assets/icons/goip.png";
 
 const imagesToPreload = [
-  profileImage, backgroundImage,
+  profileImage, backgroundImage, homescreenBg,
+  photo1, photo2, photo3, photo4, photo5, photo6,
   project1, project2, project3, aboutIcon,
   sureshIcon, photosIcon, videoIcon, githubIcon,
   workIcon, notesIcon, infoIcon, clockIcon,

@@ -24,7 +24,7 @@ const StatusBar = ({ onControlCentreOpen }: StatusBarProps) => {
   }, []);
 
   return (
-    <div className="fixed top-[3%] left-0 right-0 h-11 px-6 flex items-center justify-between text-white dark:text-gray-200 z-40">
+    <div className="fixed top-[1%] left-0 right-0 h-11 px-6 flex items-center justify-between text-white dark:text-gray-200 z-40">
       <span className="text-[15px] font-semibold tracking-tight">{currentTime}</span>
       <div className="flex items-center gap-1.5">
         <Signal className="w-4 h-4" strokeWidth={2.5} />
