@@ -23,11 +23,15 @@ interface WeatherWidgetConfig {
 
 interface LiveWeatherData {
   temperature: number;
+  tempMin: number;
+  tempMax: number;
   condition: string;
   location: string;
   forecast: Array<{
     day: string;
     temp: number;
+    tempMin: number;
+    tempMax: number;
     condition: string;
   }>;
 }
@@ -55,29 +59,28 @@ const mapIconToCondition = (iconCode: string): string => {
   }
 };
 
-const getWeatherIcon = (condition: string, size: number = 32) => {
-  const iconProps = { size, className: "text-yellow-300" };
+const getWeatherIcon = (condition: string, size: number = 32, className: string = "") => {
   switch (condition.toLowerCase()) {
     case "sunny":
     case "clear":
-      return <Sun {...iconProps} />;
+      return <Sun size={size} className={`text-yellow-400 drop-shadow-lg ${className}`} />;
     case "cloudy":
     case "partly cloudy":
-      return <Cloud {...iconProps} className="text-white/80" />;
+      return <Cloud size={size} className={`text-white/90 drop-shadow-lg ${className}`} />;
     case "rainy":
     case "rain":
     case "light rainy":
-      return <CloudRain {...iconProps} className="text-blue-200" />;
+      return <CloudRain size={size} className={`text-blue-300 drop-shadow-lg ${className}`} />;
     case "snow":
     case "snowy":
-      return <CloudSnow {...iconProps} className="text-white" />;
+      return <CloudSnow size={size} className={`text-white drop-shadow-lg ${className}`} />;
     case "storm":
     case "thunderstorm":
-      return <CloudLightning {...iconProps} className="text-yellow-200" />;
+      return <CloudLightning size={size} className={`text-yellow-300 drop-shadow-lg ${className}`} />;
     case "windy":
-      return <Wind {...iconProps} className="text-gray-200" />;
+      return <Wind size={size} className={`text-gray-200 drop-shadow-lg ${className}`} />;
     default:
-      return <Sun {...iconProps} />;
+      return <Sun size={size} className={`text-yellow-400 drop-shadow-lg ${className}`} />;
   }
 };
 
@@ -88,20 +91,28 @@ const WeatherWidget = () => {
     temperature: 27,
     condition: "Partly Cloudy",
     showForecast: true,
-    gradientFrom: "#1e3a5f",
-    gradientTo: "#4a6fa5",
+    gradientFrom: "#0a4d6e",
+    gradientTo: "#1a8fb8",
     textColor: "#ffffff",
     forecast: [
       { day: "Sun", temp: 28, condition: "sunny" },
       { day: "Mon", temp: 27, condition: "sunny" },
       { day: "Tue", temp: 25, condition: "rainy" },
-      { day: "Wed", temp: 26, condition: "cloudy" },
     ],
   });
 
   const [liveWeather, setLiveWeather] = useState<LiveWeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -131,7 +142,6 @@ const WeatherWidget = () => {
         },
         async (err) => {
           console.error("Geolocation error:", err);
-          // Fallback to static config data
           setError(true);
           setLoading(false);
         },
@@ -145,7 +155,6 @@ const WeatherWidget = () => {
 
   const fetchWeather = async (lat: number, lon: number) => {
     try {
-      // Fetch current weather
       const currentResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_API_KEY}`
       );
@@ -154,7 +163,6 @@ const WeatherWidget = () => {
       
       const currentData = await currentResponse.json();
 
-      // Fetch forecast
       const forecastResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_API_KEY}`
       );
@@ -163,8 +171,7 @@ const WeatherWidget = () => {
       
       const forecastData = await forecastResponse.json();
 
-      // Process forecast - get next 4 days
-      const dailyForecasts: Array<{ day: string; temp: number; condition: string }> = [];
+      const dailyForecasts: Array<{ day: string; temp: number; tempMin: number; tempMax: number; condition: string }> = [];
       const processedDates = new Set<string>();
       const today = new Date().toDateString();
       
@@ -172,11 +179,13 @@ const WeatherWidget = () => {
         const date = new Date(item.dt * 1000);
         const dateStr = date.toDateString();
         
-        if (dateStr !== today && !processedDates.has(dateStr) && dailyForecasts.length < 4) {
+        if (dateStr !== today && !processedDates.has(dateStr) && dailyForecasts.length < 3) {
           processedDates.add(dateStr);
           dailyForecasts.push({
-            day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+            day: date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(),
             temp: Math.round(item.main.temp),
+            tempMin: Math.round(item.main.temp_min),
+            tempMax: Math.round(item.main.temp_max),
             condition: mapIconToCondition(item.weather[0].icon),
           });
         }
@@ -184,6 +193,8 @@ const WeatherWidget = () => {
 
       setLiveWeather({
         temperature: Math.round(currentData.main.temp),
+        tempMin: Math.round(currentData.main.temp_min),
+        tempMax: Math.round(currentData.main.temp_max),
         condition: mapIconToCondition(currentData.weather[0].icon),
         location: currentData.name,
         forecast: dailyForecasts,
@@ -198,101 +209,141 @@ const WeatherWidget = () => {
     }
   };
 
-  // Use live data if available, otherwise use config
   const displayTemp = liveWeather?.temperature ?? config.temperature;
+  const displayTempMin = liveWeather?.tempMin ?? config.temperature - 3;
+  const displayTempMax = liveWeather?.tempMax ?? config.temperature + 5;
   const displayCondition = liveWeather?.condition ?? config.condition;
   const displayLocation = liveWeather?.location ?? config.location;
-  const displayForecast = liveWeather?.forecast ?? config.forecast;
+  const displayForecast = liveWeather?.forecast ?? config.forecast.slice(0, 3).map(f => ({
+    ...f,
+    tempMin: f.temp - 3,
+    tempMax: f.temp + 5,
+  }));
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const dateNum = date.getDate();
+    const month = date.getMonth() + 1;
+    return `${day} ${month}.${dateNum.toString().padStart(2, '0')}`;
+  };
 
   return (
     <motion.div
-      className="w-full aspect-square rounded-3xl overflow-hidden p-3 relative border border-white/30"
+      className="w-full aspect-[4/3] rounded-3xl overflow-hidden relative"
       style={{
-        background: `linear-gradient(145deg, ${config.gradientFrom}, ${config.gradientTo})`,
+        background: `linear-gradient(180deg, ${config.gradientFrom} 0%, ${config.gradientTo} 100%)`,
         boxShadow: `
           0 20px 50px rgba(0,0,0,0.4),
           0 10px 20px rgba(0,0,0,0.3),
-          0 4px 8px rgba(0,0,0,0.2),
-          inset 0 2px 4px rgba(255,255,255,0.2),
-          inset 0 -2px 4px rgba(0,0,0,0.1)
+          inset 0 1px 2px rgba(255,255,255,0.2)
         `,
-        transform: "perspective(800px) rotateX(2deg) rotateY(-2deg)",
-        transformStyle: "preserve-3d"
       }}
-      initial={{ scale: 0.9, opacity: 0, rotateX: 10, rotateY: -5 }}
-      animate={{ scale: 1, opacity: 1, rotateX: 2, rotateY: -2 }}
-      whileHover={{ 
-        scale: 1.02, 
-        rotateX: 0, 
-        rotateY: 0,
-        boxShadow: `
-          0 30px 60px rgba(0,0,0,0.5),
-          0 15px 30px rgba(0,0,0,0.35),
-          0 5px 10px rgba(0,0,0,0.25),
-          inset 0 2px 4px rgba(255,255,255,0.25),
-          inset 0 -2px 4px rgba(0,0,0,0.1)
-        `
-      }}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      {/* Weather content */}
-      <div className="h-full flex flex-col justify-between" style={{ color: config.textColor }}>
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-medium opacity-90 truncate max-w-[60%]">
-            {loading ? "Loading..." : displayLocation}
-          </span>
-          {loading ? (
-            <Loader2 size={20} className="animate-spin opacity-70" />
-          ) : (
-            getWeatherIcon(displayCondition, 20)
-          )}
-        </div>
+      {/* Main Content */}
+      <div className="h-full p-4 flex flex-col" style={{ color: config.textColor }}>
         
-        {/* Main Temperature */}
-        <div className="flex items-center gap-1">
-          {loading ? (
-            <span className="text-4xl font-light leading-none opacity-50">--°</span>
-          ) : (
-            <>
-              <span className="text-4xl font-light leading-none">{displayTemp}°</span>
-              {getWeatherIcon(displayCondition, 28)}
-            </>
-          )}
-        </div>
-        
-        {/* Condition */}
-        <div className="text-xs opacity-80 capitalize">
-          {loading ? "Fetching weather..." : displayCondition}
-        </div>
-        
-        {/* Forecast */}
-        {config.showForecast && !loading && (
-          <div className="flex justify-between pt-1.5 border-t border-white/20">
-            {displayForecast.slice(0, 4).map((day, i) => (
-              <div key={i} className="flex flex-col items-center gap-0.5">
-                <span className="text-[10px] opacity-70">{day.day}</span>
-                {getWeatherIcon(day.condition, 14)}
-              </div>
-            ))}
+        {/* Top Section - Sun Icon + Date/Time/Location */}
+        <div className="flex items-start justify-between flex-1">
+          {/* Large Weather Icon */}
+          <div className="relative">
+            {loading ? (
+              <Loader2 size={80} className="animate-spin opacity-50" />
+            ) : (
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                  rotate: displayCondition === "sunny" ? [0, 5, 0] : 0
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                {getWeatherIcon(displayCondition, 80)}
+              </motion.div>
+            )}
           </div>
-        )}
+
+          {/* Date, Time, Location */}
+          <div className="text-right">
+            <div className="text-sm opacity-90 font-medium">
+              {formatDate(currentTime)}
+            </div>
+            <div className="text-4xl font-light tracking-tight">
+              {formatTime(currentTime)}
+            </div>
+            <div className="text-sm opacity-80 mt-1">
+              {loading ? "Loading..." : displayLocation}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section - Temperature + Forecast */}
+        <div className="flex items-end justify-between">
+          {/* Current Temperature */}
+          <div className="flex flex-col">
+            <div className="text-5xl font-light leading-none">
+              {loading ? "--" : displayTemp}°
+            </div>
+            <div className="text-sm opacity-70 mt-1">
+              {loading ? "--" : `${displayTempMin}~${displayTempMax}°`}
+            </div>
+            <div className="text-sm opacity-80 capitalize">
+              {loading ? "Loading..." : displayCondition === "sunny" ? "Clear" : displayCondition}
+            </div>
+          </div>
+
+          {/* 3-Day Forecast */}
+          {config.showForecast && !loading && (
+            <div className="flex gap-4">
+              {displayForecast.slice(0, 3).map((day, i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <span className="text-xs font-medium opacity-90">{day.day}</span>
+                  <div className="my-1.5">
+                    {getWeatherIcon(day.condition, 24)}
+                  </div>
+                  <span className="text-xs opacity-80">
+                    {day.tempMin}/{day.tempMax}°
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-      
-      {/* Decorative rain drops for rainy weather */}
+
+      {/* Decorative underwater effect */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
+        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/30 to-transparent" />
+      </div>
+
+      {/* Rain animation for rainy weather */}
       {!loading && displayCondition.toLowerCase().includes("rain") && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-0.5 h-3 bg-blue-200/40 rounded-full"
-              style={{ left: `${10 + i * 12}%` }}
+              className="absolute w-0.5 h-4 bg-blue-200/30 rounded-full"
+              style={{ left: `${5 + i * 8}%` }}
               animate={{
                 y: ["-10%", "110%"],
-                opacity: [0, 1, 0]
+                opacity: [0, 0.7, 0]
               }}
               transition={{
-                duration: 1 + Math.random() * 0.5,
+                duration: 1.2 + Math.random() * 0.5,
                 repeat: Infinity,
                 delay: Math.random() * 2
               }}
