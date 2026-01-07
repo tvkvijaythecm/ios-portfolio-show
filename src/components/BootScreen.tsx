@@ -28,7 +28,7 @@ import caseStudyIcon from "@/assets/icons/casestudy.png";
 import goipIcon from "@/assets/icons/goip.png";
 
 const imagesToPreload = [
-  profileImage, backgroundImage, homescreenBg,
+  profileImage, backgroundImage,
   photo1, photo2, photo3, photo4, photo5, photo6,
   project1, project2, project3, aboutIcon,
   sureshIcon, photosIcon, videoIcon, githubIcon,
