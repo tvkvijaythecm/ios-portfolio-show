@@ -5,11 +5,6 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import profileIcon from "@/assets/about-icon.png";
 import LazyImage from "@/components/ui/lazy-image";
-import photo1 from "@/assets/photo1.jpg";
-import photo2 from "@/assets/photo2.jpg";
-import photo3 from "@/assets/photo3.jpg";
-import photo4 from "@/assets/photo4.jpg";
-import photo5 from "@/assets/photo5.jpg";
 
 interface AboutContent {
   name: string;
