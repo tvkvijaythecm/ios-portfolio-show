@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Calendar, Cloud, Plus, Trash2 } from "lucide-react";
+import { Calendar, Cloud, Plus, Trash2, User } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 
 interface WeatherWidgetConfig {
@@ -33,6 +33,13 @@ interface DateWidgetConfig {
   dateColor: string;
   dayNameColor: string;
   backgroundColor: string;
+}
+
+interface ProfileWidgetConfig {
+  enabled: boolean;
+  name: string;
+  title: string;
+  profileImage: string;
 }
 
 const WEATHER_CONDITIONS = [
@@ -76,6 +83,13 @@ const WidgetSettings = () => {
     backgroundColor: "#ffffff",
   });
 
+  const [profileConfig, setProfileConfig] = useState<ProfileWidgetConfig>({
+    enabled: true,
+    name: "Suresh Kaleyannan",
+    title: "Creative Developer, Malaysia",
+    profileImage: ""
+  });
+
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -86,9 +100,10 @@ const WidgetSettings = () => {
   const loadSettings = async () => {
     setLoading(true);
     try {
-      const [weatherRes, dateRes] = await Promise.all([
+      const [weatherRes, dateRes, profileRes] = await Promise.all([
         supabase.from("app_settings").select("value").eq("key", "widget_weather").maybeSingle(),
         supabase.from("app_settings").select("value").eq("key", "widget_date").maybeSingle(),
+        supabase.from("app_settings").select("value").eq("key", "widget_profile").maybeSingle(),
       ]);
 
       if (weatherRes.data?.value) {
@@ -96,6 +111,9 @@ const WidgetSettings = () => {
       }
       if (dateRes.data?.value) {
         setDateConfig(prev => ({ ...prev, ...(dateRes.data.value as unknown as DateWidgetConfig) }));
+      }
+      if (profileRes.data?.value) {
+        setProfileConfig(prev => ({ ...prev, ...(profileRes.data.value as unknown as ProfileWidgetConfig) }));
       }
     } catch (error) {
       console.error("Error loading settings:", error);
@@ -107,7 +125,7 @@ const WidgetSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const [weatherRes, dateRes] = await Promise.all([
+      const [weatherRes, dateRes, profileRes] = await Promise.all([
         supabase.from("app_settings").upsert({ 
           key: "widget_weather", 
           value: JSON.parse(JSON.stringify(weatherConfig)) 
@@ -116,10 +134,15 @@ const WidgetSettings = () => {
           key: "widget_date", 
           value: JSON.parse(JSON.stringify(dateConfig)) 
         }, { onConflict: "key" }),
+        supabase.from("app_settings").upsert({ 
+          key: "widget_profile", 
+          value: JSON.parse(JSON.stringify(profileConfig)) 
+        }, { onConflict: "key" }),
       ]);
 
       if (weatherRes.error) throw weatherRes.error;
       if (dateRes.error) throw dateRes.error;
+      if (profileRes.error) throw profileRes.error;
 
       toast.success("Widget settings saved successfully!");
     } catch (error: any) {
@@ -494,6 +517,85 @@ const WidgetSettings = () => {
                         {new Date().toLocaleDateString("en-US", { weekday: "long" })}
                       </span>
                     )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Profile Widget Settings */}
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <User className="w-5 h-5" />
+              Profile Widget
+            </CardTitle>
+            <CardDescription className="text-white/60">
+              Configure the profile widget on home screen
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-white/80">Enable Widget</Label>
+                <p className="text-white/40 text-sm">Show profile widget on home screen</p>
+              </div>
+              <Switch
+                checked={profileConfig.enabled}
+                onCheckedChange={(checked) => setProfileConfig({ ...profileConfig, enabled: checked })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-white/80">Name</Label>
+              <Input
+                value={profileConfig.name}
+                onChange={(e) => setProfileConfig({ ...profileConfig, name: e.target.value })}
+                placeholder="Your name"
+                className="bg-white/10 border-white/20 text-white"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-white/80">Title</Label>
+              <Input
+                value={profileConfig.title}
+                onChange={(e) => setProfileConfig({ ...profileConfig, title: e.target.value })}
+                placeholder="Your title/location"
+                className="bg-white/10 border-white/20 text-white"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-white/80">Profile Image URL</Label>
+              <Input
+                value={profileConfig.profileImage}
+                onChange={(e) => setProfileConfig({ ...profileConfig, profileImage: e.target.value })}
+                placeholder="https://example.com/image.jpg"
+                className="bg-white/10 border-white/20 text-white"
+              />
+            </div>
+
+            {/* Preview */}
+            <div className="space-y-2">
+              <Label className="text-white/80">Preview</Label>
+              <div className="flex justify-center p-4 bg-white/5 rounded-lg">
+                <div className="w-full max-w-xs bg-white/90 rounded-2xl p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-orange-400 ring-offset-2 ring-offset-white/50 bg-gray-200">
+                      {profileConfig.profileImage && (
+                        <img 
+                          src={profileConfig.profileImage} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="text-gray-900 font-bold text-sm">{profileConfig.name || "Your Name"}</h3>
+                      <p className="text-gray-600 text-xs">{profileConfig.title || "Your Title"}</p>
+                    </div>
                   </div>
                 </div>
               </div>
