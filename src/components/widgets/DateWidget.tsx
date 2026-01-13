@@ -57,18 +57,18 @@ const DateWidget = () => {
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
       <motion.div
-        className="w-[61px] h-[61px] sm:w-[130px] sm:h-[130px] flex flex-col relative rounded-[22%] overflow-hidden border border-white/30"
+        className="w-[61px] h-[61px] sm:w-[65px] sm:h-[65px] flex flex-col relative rounded-[22%] overflow-hidden border border-white/30"
         style={{
-          backgroundColor: config.backgroundColor,
+          background: "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(240,240,245,0.9) 50%, rgba(230,230,235,0.85) 100%)",
           boxShadow: `
             0 8px 20px rgba(0,0,0,0.3),
             0 4px 8px rgba(0,0,0,0.2),
-            inset 0 1px 2px rgba(255,255,255,0.4),
+            inset 0 1px 2px rgba(255,255,255,0.8),
             inset 0 -1px 2px rgba(0,0,0,0.1)
           `
         }}
-        whileHover={{ scale: 1.1, rotate: 3 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
         {/* Month Header */}
@@ -76,7 +76,7 @@ const DateWidget = () => {
           className="h-[28%] flex items-center justify-center"
           style={{ backgroundColor: config.headerColor }}
         >
-          <span className="text-white font-bold text-[9px] sm:text-xs tracking-wider">
+          <span className="text-white font-bold text-[8px] sm:text-[9px] tracking-wider">
             {monthName}
           </span>
         </div>
@@ -84,14 +84,14 @@ const DateWidget = () => {
         {/* Date Body */}
         <div className="flex-1 flex flex-col items-center justify-center">
           <span 
-            className="text-2xl sm:text-4xl font-light leading-none"
+            className="text-xl sm:text-2xl font-light leading-none"
             style={{ color: config.dateColor }}
           >
             {dayNumber}
           </span>
           {config.showDayName && (
             <span 
-              className="text-[9px] sm:text-sm font-medium mt-0.5"
+              className="text-[7px] sm:text-[8px] font-medium mt-0.5"
               style={{ color: config.dayNameColor }}
             >
               {dayName}
