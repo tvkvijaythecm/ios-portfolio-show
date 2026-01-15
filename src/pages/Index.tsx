@@ -334,9 +334,6 @@ const Index = () => {
           {/* Main content area */}
           <div className="absolute inset-0 pt-14 pb-32 px-4 overflow-auto z-10">
             <div className="flex flex-col gap-4 h-full">
-              {/* Profile Widget */}
-              <ProfileWidget />
-              
               {/* App Grid with Widgets - iOS-style layout */}
               <div className="grid grid-cols-4 gap-3 mt-2">
                 {/* Row 1: 4 app icons */}
@@ -365,9 +362,13 @@ const Index = () => {
                   onClick={() => setOpenApp("github")}
                 />
                 
-                {/* Weather and Date Widgets as app icon style */}
-                <WeatherWidget />
-                <DateWidget />
+                {/* Row 2-3: Weather Widget (2x2) + Date Widget (2x2) side by side */}
+                <div className="col-span-2 row-span-2">
+                  <WeatherWidget />
+                </div>
+                <div className="col-span-2 row-span-2">
+                  <DateWidget />
+                </div>
                 
                 {/* Row 4: 4 app icons */}
                 <AppIcon

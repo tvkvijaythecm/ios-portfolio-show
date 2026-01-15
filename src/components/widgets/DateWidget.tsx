@@ -18,7 +18,7 @@ const DateWidget = () => {
     showDayName: true,
     headerColor: "#ef4444",
     dateColor: "#000000",
-    dayNameColor: "#666666",
+    dayNameColor: "#000000",
     backgroundColor: "#ffffff",
   });
 
@@ -46,62 +46,68 @@ const DateWidget = () => {
     loadConfig();
   }, []);
 
-  const monthName = currentDate.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+  const monthName = currentDate.toLocaleDateString("en-US", { month: "long" }).toUpperCase();
   const dayNumber = currentDate.getDate();
-  const dayName = currentDate.toLocaleDateString("en-US", { weekday: "short" });
+  const dayName = currentDate.toLocaleDateString("en-US", { weekday: "long" });
 
   return (
     <motion.div
-      className="w-full h-full flex flex-col items-center justify-center cursor-pointer"
-      whileTap={{ scale: 0.85 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      className="w-full aspect-square rounded-3xl overflow-hidden shadow-xl border border-white/30"
+      style={{
+        backgroundColor: config.backgroundColor,
+        boxShadow: `
+          0 20px 50px rgba(0,0,0,0.35),
+          0 10px 20px rgba(0,0,0,0.25),
+          0 4px 8px rgba(0,0,0,0.15),
+          inset 0 2px 4px rgba(255,255,255,0.3),
+          inset 0 -2px 4px rgba(0,0,0,0.05)
+        `,
+        transform: "perspective(800px) rotateX(2deg) rotateY(2deg)",
+        transformStyle: "preserve-3d"
+      }}
+      initial={{ scale: 0.9, opacity: 0, rotateX: 10, rotateY: 5 }}
+      animate={{ scale: 1, opacity: 1, rotateX: 2, rotateY: 2 }}
+      whileHover={{ 
+        scale: 1.02, 
+        rotateX: 0, 
+        rotateY: 0,
+        boxShadow: `
+          0 30px 60px rgba(0,0,0,0.4),
+          0 15px 30px rgba(0,0,0,0.3),
+          0 5px 10px rgba(0,0,0,0.2),
+          inset 0 2px 4px rgba(255,255,255,0.35),
+          inset 0 -2px 4px rgba(0,0,0,0.05)
+        `
+      }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <motion.div
-        className="w-[61px] h-[61px] sm:w-[65px] sm:h-[65px] flex flex-col relative rounded-[22%] overflow-hidden border border-white/30"
-        style={{
-          background: "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(240,240,245,0.9) 50%, rgba(230,230,235,0.85) 100%)",
-          boxShadow: `
-            0 8px 20px rgba(0,0,0,0.3),
-            0 4px 8px rgba(0,0,0,0.2),
-            inset 0 1px 2px rgba(255,255,255,0.8),
-            inset 0 -1px 2px rgba(0,0,0,0.1)
-          `
-        }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      {/* Month Header */}
+      <div 
+        className="h-[30%] flex items-center justify-center"
+        style={{ backgroundColor: config.headerColor }}
       >
-        {/* Month Header */}
-        <div 
-          className="h-[28%] flex items-center justify-center"
-          style={{ backgroundColor: config.headerColor }}
+        <span className="text-white font-bold text-sm tracking-wider">
+          {monthName}
+        </span>
+      </div>
+      
+      {/* Date Body */}
+      <div className="h-[70%] flex flex-col items-center justify-center gap-0">
+        <span 
+          className="text-5xl font-light leading-none"
+          style={{ color: config.dateColor }}
         >
-          <span className="text-white font-bold text-[8px] sm:text-[9px] tracking-wider">
-            {monthName}
-          </span>
-        </div>
-        
-        {/* Date Body */}
-        <div className="flex-1 flex flex-col items-center justify-center">
+          {dayNumber}
+        </span>
+        {config.showDayName && (
           <span 
-            className="text-xl sm:text-2xl font-light leading-none"
-            style={{ color: config.dateColor }}
+            className="text-lg font-normal mt-1"
+            style={{ color: config.dayNameColor }}
           >
-            {dayNumber}
+            {dayName}
           </span>
-          {config.showDayName && (
-            <span 
-              className="text-[7px] sm:text-[8px] font-medium mt-0.5"
-              style={{ color: config.dayNameColor }}
-            >
-              {dayName}
-            </span>
-          )}
-        </div>
-      </motion.div>
-      <span className="text-white text-[11px] font-medium tracking-tight text-center leading-tight max-w-[70px] drop-shadow-sm mt-1.5">
-        Calendar
-      </span>
+        )}
+      </div>
     </motion.div>
   );
 };

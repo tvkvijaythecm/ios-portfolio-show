@@ -63,24 +63,24 @@ const getWeatherIcon = (condition: string, size: number = 32, className: string 
   switch (condition.toLowerCase()) {
     case "sunny":
     case "clear":
-      return <Sun size={size} className={`text-yellow-500 drop-shadow-lg ${className}`} />;
+      return <Sun size={size} className={`text-yellow-400 drop-shadow-lg ${className}`} />;
     case "cloudy":
     case "partly cloudy":
-      return <Cloud size={size} className={`text-gray-500 drop-shadow-lg ${className}`} />;
+      return <Cloud size={size} className={`text-white/90 drop-shadow-lg ${className}`} />;
     case "rainy":
     case "rain":
     case "light rainy":
-      return <CloudRain size={size} className={`text-blue-500 drop-shadow-lg ${className}`} />;
+      return <CloudRain size={size} className={`text-blue-300 drop-shadow-lg ${className}`} />;
     case "snow":
     case "snowy":
-      return <CloudSnow size={size} className={`text-blue-300 drop-shadow-lg ${className}`} />;
+      return <CloudSnow size={size} className={`text-white drop-shadow-lg ${className}`} />;
     case "storm":
     case "thunderstorm":
-      return <CloudLightning size={size} className={`text-purple-500 drop-shadow-lg ${className}`} />;
+      return <CloudLightning size={size} className={`text-yellow-300 drop-shadow-lg ${className}`} />;
     case "windy":
-      return <Wind size={size} className={`text-gray-500 drop-shadow-lg ${className}`} />;
+      return <Wind size={size} className={`text-gray-200 drop-shadow-lg ${className}`} />;
     default:
-      return <Sun size={size} className={`text-yellow-500 drop-shadow-lg ${className}`} />;
+      return <Sun size={size} className={`text-yellow-400 drop-shadow-lg ${className}`} />;
   }
 };
 
@@ -104,6 +104,15 @@ const WeatherWidget = () => {
   const [liveWeather, setLiveWeather] = useState<LiveWeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -205,49 +214,93 @@ const WeatherWidget = () => {
   const displayTempMax = liveWeather?.tempMax ?? config.temperature + 5;
   const displayCondition = liveWeather?.condition ?? config.condition;
   const displayLocation = liveWeather?.location ?? config.location;
+  const displayForecast = liveWeather?.forecast ?? config.forecast.slice(0, 3).map(f => ({
+    ...f,
+    tempMin: f.temp - 3,
+    tempMax: f.temp + 5,
+  }));
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const dateNum = date.getDate();
+    const month = date.getMonth() + 1;
+    return `${day} ${month}.${dateNum.toString().padStart(2, '0')}`;
+  };
 
   return (
     <motion.div
-      className="w-full h-full flex flex-col items-center justify-center cursor-pointer"
-      whileTap={{ scale: 0.85 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      className="w-full h-full rounded-[20px] sm:rounded-3xl overflow-hidden relative border border-white/30"
+      style={{
+        background: `linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(240,245,250,0.9) 100%)`,
+        boxShadow: `
+          0 20px 50px rgba(0,0,0,0.35),
+          0 10px 20px rgba(0,0,0,0.25),
+          0 4px 8px rgba(0,0,0,0.15),
+          inset 0 2px 4px rgba(255,255,255,0.3),
+          inset 0 -2px 4px rgba(0,0,0,0.05)
+        `,
+        transform: "perspective(800px) rotateX(2deg) rotateY(2deg)",
+        transformStyle: "preserve-3d"
+      }}
+      initial={{ scale: 0.9, opacity: 0, rotateX: 10, rotateY: 5 }}
+      animate={{ scale: 1, opacity: 1, rotateX: 2, rotateY: 2 }}
+      whileHover={{ 
+        scale: 1.02, 
+        rotateX: 0, 
+        rotateY: 0,
+        boxShadow: `
+          0 30px 60px rgba(0,0,0,0.4),
+          0 15px 30px rgba(0,0,0,0.3),
+          0 5px 10px rgba(0,0,0,0.2),
+          inset 0 2px 4px rgba(255,255,255,0.35),
+          inset 0 -2px 4px rgba(0,0,0,0.05)
+        `
+      }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <motion.div
-        className="w-[61px] h-[61px] sm:w-[130px] sm:h-[130px] flex flex-col items-center justify-center relative rounded-[22%] overflow-hidden bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 border border-white/30"
-        style={{
-          boxShadow: `
-            0 8px 20px rgba(0,0,0,0.3),
-            0 4px 8px rgba(0,0,0,0.2),
-            inset 0 1px 2px rgba(255,255,255,0.4),
-            inset 0 -1px 2px rgba(0,0,0,0.1)
-          `
-        }}
-        whileHover={{ scale: 1.1, rotate: 3 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
-      >
-        {/* Weather Icon */}
-        <div className="mb-0.5 sm:mb-1">
-          {loading ? (
-            <Loader2 className="w-5 h-5 sm:w-8 sm:h-8 animate-spin text-white" />
-          ) : (
-            getWeatherIcon(displayCondition, 24, "w-5 h-5 sm:w-8 sm:h-8 text-white")
-          )}
-        </div>
+      {/* Main Content */}
+      <div className="h-full p-3 sm:p-4 flex flex-col justify-between text-gray-800">
         
-        {/* Temperature */}
-        <div className="text-white font-bold text-sm sm:text-2xl leading-none drop-shadow-md">
-          {loading ? "--" : `${displayTemp}°`}
+        {/* Top Row - Location + Temperature */}
+        <div className="flex items-start justify-between">
+          {/* Location */}
+          <div className="flex-1 min-w-0">
+            <div className="text-xs sm:text-sm font-medium truncate text-gray-600">
+              {loading ? "Loading..." : displayLocation}
+            </div>
+            <div className="text-2xl sm:text-3xl font-light tracking-tight mt-0.5 text-gray-900">
+              {loading ? "--" : `${displayTemp}°`}
+            </div>
+          </div>
+
+          {/* Weather Icon */}
+          <div className="relative ml-2">
+            {loading ? (
+              <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 animate-spin text-gray-400" />
+            ) : (
+              getWeatherIcon(displayCondition, 36, "w-8 h-8 sm:w-10 sm:h-10")
+            )}
+          </div>
         </div>
-        
-        {/* Location - only show on larger size */}
-        <div className="hidden sm:block text-white/90 text-[9px] mt-0.5 font-medium truncate max-w-[90%] text-center">
-          {loading ? "..." : displayLocation}
+
+        {/* Bottom - Condition + Hi/Lo */}
+        <div className="mt-auto">
+          <div className="text-[10px] sm:text-xs text-gray-600 capitalize">
+            {loading ? "..." : displayCondition}
+          </div>
+          <div className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
+            {loading ? "--" : `H:${displayTempMax}° L:${displayTempMin}°`}
+          </div>
         </div>
-      </motion.div>
-      <span className="text-white text-[11px] font-medium tracking-tight text-center leading-tight max-w-[70px] drop-shadow-sm mt-1.5">
-        Weather
-      </span>
+      </div>
     </motion.div>
   );
 };
