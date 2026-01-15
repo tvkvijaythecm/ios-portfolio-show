@@ -35,7 +35,6 @@ import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import profileImage from "@/assets/profile.jpeg";
 import aboutIcon from "@/assets/about-icon.png";
-import backgroundImage from "@/assets/background.png";
 import homescreenBg from "@/assets/homescreen-bg.jpg";
 import photo1 from "@/assets/photo1.jpg";
 import photo2 from "@/assets/photo2.jpg";

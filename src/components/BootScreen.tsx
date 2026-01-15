@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 
 // Import all images to preload
 import profileImage from "@/assets/profile.jpeg";
-import backgroundImage from "@/assets/background.png";
 import homescreenBg from "@/assets/homescreen-bg.jpg";
 import photo1 from "@/assets/photo1.jpg";
 import photo2 from "@/assets/photo2.jpg";
@@ -28,7 +27,7 @@ import caseStudyIcon from "@/assets/icons/casestudy.png";
 import goipIcon from "@/assets/icons/goip.png";
 
 const imagesToPreload = [
-  profileImage, backgroundImage, homescreenBg,
+  profileImage, homescreenBg,
   photo1, photo2, photo3, photo4, photo5, photo6,
   project1, project2, project3, aboutIcon,
   sureshIcon, photosIcon, videoIcon, githubIcon,
