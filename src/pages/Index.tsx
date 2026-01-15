@@ -334,6 +334,9 @@ const Index = () => {
           {/* Main content area */}
           <div className="absolute inset-0 pt-14 pb-32 px-4 overflow-auto z-10">
             <div className="flex flex-col gap-4 h-full">
+              {/* Profile Widget - Top of page */}
+              <ProfileWidget />
+              
               {/* App Grid with Widgets - iOS-style layout */}
               <div className="grid grid-cols-4 gap-3 mt-2">
                 {/* Row 1: 4 app icons */}
@@ -426,9 +429,6 @@ const Index = () => {
                   }}
                 />
               </div>
-              
-              {/* Profile Widget */}
-              <ProfileWidget />
             </div>
           </div>
 
