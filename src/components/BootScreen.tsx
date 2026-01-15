@@ -138,7 +138,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ 
-          backgroundImage: "url('https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/sn.webp')"
+          backgroundImage: "url('https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/lscreen.webp')"
         }}
       />
 
