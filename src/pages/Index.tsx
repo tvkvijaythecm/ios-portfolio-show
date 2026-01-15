@@ -426,10 +426,11 @@ const Index = () => {
                   }}
                 />
               </div>
+              
+              {/* Profile Widget */}
+              <ProfileWidget />
             </div>
           </div>
-
-
 
           {/* Fixed elements */}
           <Dock />
