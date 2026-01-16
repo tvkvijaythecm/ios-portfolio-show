@@ -331,7 +331,7 @@ const Index = () => {
           </AnimatePresence>
           
           {/* Main content area */}
-          <div className="absolute inset-0 pt-14 pb-32 px-4 overflow-auto z-10">
+          <div className="absolute inset-0 pt-[calc(3.5rem+0.5cm)] pb-32 px-4 overflow-auto z-10">
             <div className="flex flex-col gap-4 h-full">
               {/* Profile Widget - Top of page */}
               <ProfileWidget />
