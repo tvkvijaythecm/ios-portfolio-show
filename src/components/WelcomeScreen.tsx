@@ -229,12 +229,15 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <div
             className="
               text-[180px]
-              sm:text-[220px]
-              md:text-[260px]
-              font-light
-              leading-[0.85]
-              tracking-[-0.02em]
-              text-white
+sm:text-[220px]
+md:text-[260px]
+font-light
+leading-[0.85]
+tracking-[-0.02em]
+md:tracking-[-0.04em]
+[word-spacing:0.25em]
+md:[word-spacing:0.4em]
+text-white
             "
             style={{
               fontFamily: "'Alien League', sans-serif",
