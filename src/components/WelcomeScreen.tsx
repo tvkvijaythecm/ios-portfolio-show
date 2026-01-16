@@ -227,13 +227,15 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             {/* Time */}
  
           <div
-  className="
-    text-[170px]
-    font-extralight
-    leading-[0.9]
-    text-white
-    tracking-[-0.04em]
-  "
+className="
+  text-[140px]
+  sm:text-[160px]
+  md:text-[180px]
+  font-extralight
+  leading-[0.9]
+  tracking-[-0.04em]
+  text-white
+"
   style={{
     fontFamily:
       "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
