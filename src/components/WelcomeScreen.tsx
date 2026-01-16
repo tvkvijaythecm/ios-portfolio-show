@@ -235,8 +235,8 @@ font-light
 leading-[0.85]
 tracking-[-0.02em]
 md:tracking-[-0.04em]
-[word-spacing:0.25em]
-md:[word-spacing:0.4em]
+[word-spacing:1.25em]
+md:[word-spacing:1.4em]
 text-white
             "
             style={{
