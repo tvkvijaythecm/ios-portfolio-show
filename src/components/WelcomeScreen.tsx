@@ -227,27 +227,26 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             {/* Time */}
  
           <div
-className="
-  text-[140px]
-  sm:text-[160px]
-  md:text-[180px]
-  font-extralight
-  leading-[0.9]
-  tracking-[-0.04em]
-  text-white
-"
-  style={{
-    fontFamily:
-      "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
-    textShadow: "0 6px 30px rgba(0,0,0,0.35)"
-  }}
->  
+            className="
+              text-[180px]
+              sm:text-[220px]
+              md:text-[260px]
+              font-light
+              leading-[0.85]
+              tracking-[-0.02em]
+              text-white
+            "
+            style={{
+              fontFamily: "'Mohave', sans-serif",
+              textShadow: "0 8px 40px rgba(0,0,0,0.4)"
+            }}
+          >  
             {currentTime.toLocaleTimeString('en-US', { 
                 hour: '2-digit', 
                 minute: '2-digit',
                 hour12: false 
               })}
-            </div>
+          </div>
             {/* Date */}
             <div 
               className="text-xl font-light text-white/90 mt-1"
