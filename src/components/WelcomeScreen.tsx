@@ -225,14 +225,22 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             {/* Time */}
-            <div 
-              className="text-[80px] font-thin leading-none text-white tracking-tight"
-              style={{
-                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
-                textShadow: "0 2px 20px rgba(0,0,0,0.3)"
-              }}
-            >
-              {currentTime.toLocaleTimeString('en-US', { 
+ 
+          <div
+  className="
+    text-[170px]
+    font-extralight
+    leading-[0.9]
+    text-white
+    tracking-[-0.04em]
+  "
+  style={{
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
+    textShadow: "0 6px 30px rgba(0,0,0,0.35)"
+  }}
+>  
+            {currentTime.toLocaleTimeString('en-US', { 
                 hour: '2-digit', 
                 minute: '2-digit',
                 hour12: false 
