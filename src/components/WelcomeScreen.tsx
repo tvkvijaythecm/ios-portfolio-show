@@ -218,7 +218,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       <AnimatePresence>
         {showSlider && (
           <motion.div
-            className="absolute top-[calc(4rem+1cm)] z-20 flex flex-col items-center"
+            className="absolute top-16 z-20 flex flex-col items-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -237,7 +237,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             "
             style={{
               fontFamily: "'Alien League', sans-serif",
-              letterSpacing: '-12px',
+              letterSpacing: '-8px',
               textShadow: "0 8px 40px rgba(0,0,0,0.4)"
             }}
           >  
