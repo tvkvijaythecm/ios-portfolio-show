@@ -237,7 +237,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             "
             style={{
               fontFamily: "'Alien League', sans-serif",
-              letterSpacing: '-8px',
+              letterSpacing: '1px',
               textShadow: "0 8px 40px rgba(0,0,0,0.4)"
             }}
           >  
