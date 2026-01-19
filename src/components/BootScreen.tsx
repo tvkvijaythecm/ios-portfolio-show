@@ -195,8 +195,8 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           font-weight: 400;
           font-size: clamp(2.5rem, 10vw, 8rem);
           position: relative;
-          color: #00d4ff;
-          text-shadow: 0 0 5px #00d4ff, 0 0 15px #0099cc, 0 0 30px #006699, 0 0 50px #003366;
+          color: #ffffff;
+          text-shadow: 0 0 5px #ffffff, 0 0 15px #cccccc, 0 0 30px #999999, 0 0 50px #666666;
           cursor: default;
           text-transform: uppercase;
           white-space: nowrap;
@@ -223,7 +223,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
         @keyframes glitchText {
           0%, 90%, 100% {
             opacity: 1;
-            text-shadow: 0 0 5px #00d4ff, 0 0 15px #0099cc, 0 0 30px #006699;
+            text-shadow: 0 0 5px #ffffff, 0 0 15px #cccccc, 0 0 30px #999999;
           }
           92% {
             opacity: 0.8;
@@ -237,7 +237,7 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           }
           96% {
             opacity: 0.9;
-            text-shadow: 0 0 10px #00d4ff;
+            text-shadow: 0 0 10px #ffffff;
             transform: translateX(0);
           }
         }
@@ -256,21 +256,21 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           height: 3px;
           width: 100%;
           border-radius: 6px;
-          background: rgba(0, 153, 204, 0.15);
+          background: rgba(255, 255, 255, 0.15);
           box-shadow:
-              inset 0 0 6px rgba(0, 212, 255, 0.6),
-              0 0 10px rgba(0, 153, 204, 0.4);
+              inset 0 0 6px rgba(255, 255, 255, 0.6),
+              0 0 10px rgba(255, 255, 255, 0.4);
           overflow: hidden;
         }
 
         .neon-loader-fill {
           height: 100%;
           width: 0%;
-          background: linear-gradient(225deg, #00ffff 0%, #00d4ff 25%, #0099cc 50%, #006699 75%, #003366 100%);
+          background: linear-gradient(225deg, #ffffff 0%, #e0e0e0 25%, #cccccc 50%, #b0b0b0 75%, #999999 100%);
           box-shadow:
-              0 0 6px #00ffff,
-              0 0 14px #00d4ff,
-              0 0 28px #0099cc;
+              0 0 6px #ffffff,
+              0 0 14px #e0e0e0,
+              0 0 28px #cccccc;
           transition: width .2s linear;
         }
 
@@ -279,10 +279,10 @@ const BootScreen = ({ onComplete }: BootScreenProps) => {
           font-family: 'Orbitron', sans-serif;
           font-size: 10px;
           letter-spacing: 1px;
-          color: #00d4ff;
+          color: #ffffff;
           text-shadow:
-              0 0 5px #0099cc,
-              0 0 10px #00d4ff;
+              0 0 5px #cccccc,
+              0 0 10px #ffffff;
         }
 
         /* CRT Scanlines */
