@@ -49,36 +49,71 @@ const SlideToUnlock = ({ onUnlock }: SlideToUnlockProps) => {
         <ChevronRight className="w-5 h-5 text-white/60" strokeWidth={1.5} />
       </motion.div>
 
-      {/* iOS 7 style shimmer text */}
+      {/* Chrome metallic text with shimmer */}
       <div className="relative overflow-hidden">
-        <span className="text-white/40 text-xl font-light tracking-wide">
+        {/* Base chrome text layer */}
+        <span 
+          className="text-xl font-medium tracking-wider"
+          style={{
+            background: "linear-gradient(180deg, #ffffff 0%, #a8a8a8 25%, #ffffff 50%, #8c8c8c 75%, #d4d4d4 100%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+            textShadow: "0 1px 1px rgba(255,255,255,0.3), 0 -1px 1px rgba(0,0,0,0.2)",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))"
+          }}
+        >
           slide to unlock
         </span>
         
-        {/* Shimmer overlay */}
+        {/* Chrome shimmer overlay */}
         <motion.div
-          className="absolute inset-0 flex items-center"
-          animate={{ x: ["-100%", "200%"] }}
+          className="absolute inset-0 flex items-center pointer-events-none"
+          animate={{ x: ["-100%", "250%"] }}
           transition={{
-            duration: 2,
+            duration: 2.5,
             repeat: Infinity,
-            ease: "linear",
-            repeatDelay: 0.5
+            ease: "easeInOut",
+            repeatDelay: 0.8
           }}
         >
           <div 
-            className="h-full w-[60%] flex items-center"
-            style={{
-              background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-            }}
+            className="h-full w-[40%] flex items-center"
           >
-            <span className="text-xl font-light tracking-wide whitespace-nowrap text-transparent bg-clip-text"
+            <span 
+              className="text-xl font-medium tracking-wider whitespace-nowrap"
               style={{
-                background: "linear-gradient(90deg, transparent 0%, white 50%, transparent 100%)",
+                background: "linear-gradient(90deg, transparent 0%, #ffffff 30%, #f0f8ff 50%, #ffffff 70%, transparent 100%)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
+                color: "transparent",
+                filter: "blur(0.3px) brightness(1.5)"
+              }}
+            >
+              slide to unlock
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Secondary chrome reflection */}
+        <motion.div
+          className="absolute inset-0 flex items-center pointer-events-none opacity-60"
+          animate={{ x: ["-150%", "300%"] }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "linear",
+            repeatDelay: 1.2
+          }}
+        >
+          <div className="h-full w-[20%]">
+            <span 
+              className="text-xl font-medium tracking-wider whitespace-nowrap"
+              style={{
+                background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
               }}
             >
               slide to unlock
