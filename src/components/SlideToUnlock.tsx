@@ -51,7 +51,7 @@ const SlideToUnlock = ({ onUnlock }: SlideToUnlockProps) => {
 
       {/* iOS 7 style shimmer text */}
       <div className="relative overflow-hidden">
-        <span className="text-white/40 text-lg font-light tracking-wide">
+        <span className="text-white/40 text-xl font-light tracking-wide">
           slide to unlock
         </span>
         
@@ -74,7 +74,7 @@ const SlideToUnlock = ({ onUnlock }: SlideToUnlockProps) => {
               backgroundClip: "text",
             }}
           >
-            <span className="text-lg font-light tracking-wide whitespace-nowrap text-transparent bg-clip-text"
+            <span className="text-xl font-light tracking-wide whitespace-nowrap text-transparent bg-clip-text"
               style={{
                 background: "linear-gradient(90deg, transparent 0%, white 50%, transparent 100%)",
                 WebkitBackgroundClip: "text",

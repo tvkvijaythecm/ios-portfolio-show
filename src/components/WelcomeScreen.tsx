@@ -224,32 +224,9 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            {/* Time */}
- 
-          <div
-            className="
-              text-[180px]
-              sm:text-[220px]
-              md:text-[260px]
-              font-light
-              leading-[0.85]
-              text-white
-            "
-            style={{
-              fontFamily: "'Alien League', sans-serif",
-              letterSpacing: '1px',
-              textShadow: "0 8px 40px rgba(0,0,0,0.4)"
-            }}
-          >  
-            {currentTime.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: false 
-              })}
-          </div>
             {/* Date */}
             <div 
-              className="text-xl font-light text-white/90 mt-1"
+              className="text-xl font-light text-white/90 mb-2"
               style={{
                 fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
                 textShadow: "0 1px 10px rgba(0,0,0,0.3)"
@@ -259,6 +236,28 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 weekday: 'long', 
                 month: 'long', 
                 day: 'numeric' 
+              })}
+            </div>
+            {/* Time */}
+            <div
+              className="
+                text-[180px]
+                sm:text-[220px]
+                md:text-[260px]
+                font-light
+                leading-[0.85]
+                text-white
+              "
+              style={{
+                fontFamily: "'Alien League', sans-serif",
+                letterSpacing: '1px',
+                textShadow: "0 8px 40px rgba(0,0,0,0.4)"
+              }}
+            >  
+              {currentTime.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
               })}
             </div>
           </motion.div>
