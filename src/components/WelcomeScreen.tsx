@@ -224,20 +224,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            {/* Date */}
-            <div 
-              className="text-xl font-light text-white/90 mb-2"
-              style={{
-                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
-                textShadow: "0 1px 10px rgba(0,0,0,0.3)"
-              }}
-            >
-              {currentTime.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </div>
             {/* Time */}
             <div
               className="
@@ -249,7 +235,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 text-white
               "
               style={{
-                fontFamily: "'Alien League', sans-serif",
+                fontFamily: "'iPhone Lite', sans-serif",
                 letterSpacing: '1px',
                 textShadow: "0 8px 40px rgba(0,0,0,0.4)"
               }}
@@ -258,6 +244,20 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 hour: '2-digit', 
                 minute: '2-digit',
                 hour12: false 
+              })}
+            </div>
+            {/* Date */}
+            <div 
+              className="text-xl font-light text-white/90 mt-2"
+              style={{
+                fontFamily: "'iPhone', sans-serif",
+                textShadow: "0 1px 10px rgba(0,0,0,0.3)"
+              }}
+            >
+              {currentTime.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric' 
               })}
             </div>
           </motion.div>
