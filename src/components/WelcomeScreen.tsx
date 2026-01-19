@@ -227,11 +227,11 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             {/* Time */}
             <div
               className="
-                text-[180px]
-                sm:text-[220px]
-                md:text-[260px]
+                text-[100px]
+                sm:text-[120px]
+                md:text-[140px]
                 font-light
-                leading-[0.85]
+                leading-[0.9]
                 text-white
               "
               style={{
