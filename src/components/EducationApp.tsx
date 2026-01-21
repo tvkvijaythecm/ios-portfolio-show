@@ -57,7 +57,7 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col overflow-y-auto"
       style={{ background: "#121212" }}
       initial={{ scale: 0.5, opacity: 0, borderRadius: "22%" }}
       animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
