@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { S3Client, PutObjectCommand } from "https://esm.sh/@aws-sdk/client-s3@3.577.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -115,117 +116,25 @@ serve(async (req) => {
     const fileBuffer = await file.arrayBuffer();
     const fileBytes = new Uint8Array(fileBuffer);
 
-    // Create the R2 endpoint URL
-    const r2Endpoint = `https://${accountId}.r2.cloudflarestorage.com`;
-    const objectUrl = `${r2Endpoint}/${bucketName}/${filename}`;
-
-    // Create AWS Signature V4 for R2
-    const date = new Date();
-    const amzDate = date.toISOString().replace(/[:-]|\.\d{3}/g, '');
-    const dateStamp = amzDate.substring(0, 8);
-    const region = 'auto';
-    const service = 's3';
-
-    // Create canonical request
-    const method = 'PUT';
-    const canonicalUri = `/${bucketName}/${filename}`;
-    const canonicalQueryString = '';
-    
-    // Calculate content hash
-    const contentHash = await crypto.subtle.digest('SHA-256', fileBytes);
-    const contentHashHex = Array.from(new Uint8Array(contentHash))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    const headers: Record<string, string> = {
-      'host': `${accountId}.r2.cloudflarestorage.com`,
-      'x-amz-date': amzDate,
-      'x-amz-content-sha256': contentHashHex,
-      'content-type': file.type,
-      'content-length': file.size.toString(),
-    };
-
-    const signedHeaders = Object.keys(headers).sort().join(';');
-    const canonicalHeaders = Object.keys(headers)
-      .sort()
-      .map(key => `${key}:${headers[key]}\n`)
-      .join('');
-
-    const canonicalRequest = [
-      method,
-      canonicalUri,
-      canonicalQueryString,
-      canonicalHeaders,
-      signedHeaders,
-      contentHashHex
-    ].join('\n');
-
-    // Create string to sign
-    const algorithm = 'AWS4-HMAC-SHA256';
-    const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`;
-    
-    const canonicalRequestHash = await crypto.subtle.digest(
-      'SHA-256',
-      new TextEncoder().encode(canonicalRequest)
-    );
-    const canonicalRequestHashHex = Array.from(new Uint8Array(canonicalRequestHash))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    const stringToSign = [
-      algorithm,
-      amzDate,
-      credentialScope,
-      canonicalRequestHashHex
-    ].join('\n');
-
-    // Calculate signing key
-    const getSignatureKey = async (key: string, dateStamp: string, region: string, service: string) => {
-      const kDate = await hmacSha256(`AWS4${key}`, dateStamp);
-      const kRegion = await hmacSha256(kDate, region);
-      const kService = await hmacSha256(kRegion, service);
-      const kSigning = await hmacSha256(kService, 'aws4_request');
-      return kSigning;
-    };
-
-    const hmacSha256 = async (key: string | ArrayBuffer, message: string): Promise<ArrayBuffer> => {
-      const keyBuffer = typeof key === 'string' ? new TextEncoder().encode(key) : key;
-      const cryptoKey = await crypto.subtle.importKey(
-        'raw',
-        keyBuffer,
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['sign']
-      );
-      return crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(message));
-    };
-
-    const signingKey = await getSignatureKey(secretAccessKey, dateStamp, region, service);
-    const signatureBuffer = await hmacSha256(signingKey, stringToSign);
-    const signature = Array.from(new Uint8Array(signatureBuffer))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    const authorizationHeader = `${algorithm} Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
-
-    // Upload to R2
-    const uploadResponse = await fetch(objectUrl, {
-      method: 'PUT',
-      headers: {
-        ...headers,
-        'Authorization': authorizationHeader,
+    // Create S3 client configured for Cloudflare R2
+    const s3Client = new S3Client({
+      region: 'auto',
+      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey,
       },
-      body: fileBytes,
     });
 
-    if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text();
-      console.error('R2 upload failed:', uploadResponse.status, errorText);
-      return new Response(
-        JSON.stringify({ error: 'Failed to upload to Cloudflare R2', details: errorText }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Upload to R2 using PutObjectCommand
+    const putCommand = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: filename,
+      Body: fileBytes,
+      ContentType: file.type,
+    });
+
+    await s3Client.send(putCommand);
 
     // Construct the public URL
     const imageUrl = `${publicUrl.replace(/\/$/, '')}/${filename}`;
