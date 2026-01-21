@@ -118,8 +118,8 @@ const Index = () => {
   const [customBackground, setCustomBackground] = useState<string | null>(null);
   const [dbPhotos, setDbPhotos] = useState<Array<{ id: string; title: string | null; image_url: string; link_url: string | null }>>([]);
   const [dbVideos, setDbVideos] = useState<Array<{ id: string; title: string | null; video_url: string; thumbnail_url: string | null }>>([]);
-  const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null; detail_content: string | null }>>([]);
-  const [selectedProject, setSelectedProject] = useState<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null; detail_content: string | null } | null>(null);
+  const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null; detail_content: string | null; technologies: string[] | null }>>([]);
+  const [selectedProject, setSelectedProject] = useState<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null; detail_content: string | null; technologies: string[] | null } | null>(null);
   const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
   const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "", clock_url: "", suresh_url: "" });
   const [infoAppSettings, setInfoAppSettings] = useState<InfoAppSettings>({
@@ -650,15 +650,32 @@ const Index = () => {
                           <h3 className="text-gray-900 dark:text-white text-xl font-bold">{project.name}</h3>
                           <ChevronRight className="w-5 h-5 text-gray-400" />
                         </div>
-                        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">{project.description}</p>
-                        <div className="flex gap-3">
+                        <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">{project.description}</p>
+                        {'technologies' in project && project.technologies && project.technologies.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {project.technologies.slice(0, 4).map((tech: string, idx: number) => (
+                              <span
+                                key={idx}
+                                className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                            {project.technologies.length > 4 && (
+                              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-500">
+                                +{project.technologies.length - 4}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div className="flex gap-2">
                           {'sourceUrl' in project && project.sourceUrl && (
-                            <div className="inline-block px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <div className="inline-block px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700">
                               <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">GitHub</span>
                             </div>
                           )}
                           {'demoUrl' in project && project.demoUrl && (
-                            <div className="inline-block px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                            <div className="inline-block px-2 py-1 rounded-md bg-blue-100 dark:bg-blue-900/30">
                               <span className="text-xs text-blue-600 dark:text-blue-300 font-medium">Demo</span>
                             </div>
                           )}
@@ -680,6 +697,7 @@ const Index = () => {
                   sourceUrl: selectedProject.source_url || undefined,
                   demoUrl: selectedProject.demo_url || undefined,
                   detailContent: selectedProject.detail_content || undefined,
+                  technologies: selectedProject.technologies || undefined,
                 }}
                 onClose={() => setSelectedProject(null)}
               />

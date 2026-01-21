@@ -19,6 +19,7 @@ interface GithubProject {
   sort_order: number;
   is_visible: boolean;
   detail_content: string | null;
+  technologies: string[] | null;
 }
 
 const defaultProject: Partial<GithubProject> = {
@@ -30,6 +31,7 @@ const defaultProject: Partial<GithubProject> = {
   sort_order: 0,
   is_visible: true,
   detail_content: "",
+  technologies: [],
 };
 
 const GithubSettings = () => {
@@ -79,6 +81,7 @@ const GithubSettings = () => {
             sort_order: editingProject.sort_order,
             is_visible: editingProject.is_visible,
             detail_content: editingProject.detail_content,
+            technologies: editingProject.technologies,
           })
           .eq("id", editingProject.id);
 
@@ -94,6 +97,7 @@ const GithubSettings = () => {
           sort_order: editingProject.sort_order,
           is_visible: editingProject.is_visible,
           detail_content: editingProject.detail_content,
+          technologies: editingProject.technologies,
         });
 
         if (error) throw error;
@@ -245,6 +249,19 @@ const GithubSettings = () => {
                 className="bg-white/10 border-white/20 text-white"
                 placeholder="https://example.com"
               />
+            </div>
+            <div>
+              <Label className="text-white">Technologies (comma-separated)</Label>
+              <Input
+                value={(editingProject?.technologies || []).join(", ")}
+                onChange={(e) => setEditingProject({ 
+                  ...editingProject, 
+                  technologies: e.target.value.split(",").map(t => t.trim()).filter(t => t) 
+                })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="React, TypeScript, Tailwind, Supabase"
+              />
+              <p className="text-white/40 text-xs mt-1">Enter technologies separated by commas</p>
             </div>
             <div>
               <Label className="text-white">Detail Page Content (HTML)</Label>

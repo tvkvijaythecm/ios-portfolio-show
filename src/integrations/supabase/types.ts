@@ -286,6 +286,7 @@ export type Database = {
           is_visible: boolean | null
           sort_order: number | null
           source_url: string | null
+          technologies: string[] | null
           title: string
         }
         Insert: {
@@ -298,6 +299,7 @@ export type Database = {
           is_visible?: boolean | null
           sort_order?: number | null
           source_url?: string | null
+          technologies?: string[] | null
           title: string
         }
         Update: {
@@ -310,6 +312,7 @@ export type Database = {
           is_visible?: boolean | null
           sort_order?: number | null
           source_url?: string | null
+          technologies?: string[] | null
           title?: string
         }
         Relationships: []
