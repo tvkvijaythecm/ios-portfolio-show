@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, GraduationCap, X, Loader2 } from "lucide-react";
+import { ChevronLeft, X, Loader2, Award, University } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import LazyImage from "@/components/ui/lazy-image";
@@ -18,46 +18,23 @@ interface EducationItem {
   sort_order: number;
 }
 
-interface ThemeColors {
-  gradientFrom: string;
-  gradientVia: string;
-  gradientTo: string;
-}
-
 const EducationApp = ({ onClose }: EducationAppProps) => {
   const [activeTab, setActiveTab] = useState<"online" | "institute">("online");
   const [popupImage, setPopupImage] = useState<string | null>(null);
   const [popupCaption, setPopupCaption] = useState<string>("");
   const [items, setItems] = useState<EducationItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [themeColors, setThemeColors] = useState<ThemeColors | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
-      const [itemsRes, themeRes] = await Promise.all([
-        supabase
-          .from('education_items')
-          .select('*')
-          .eq('is_visible', true)
-          .order('sort_order', { ascending: true }),
-        supabase
-          .from('app_settings')
-          .select('value')
-          .eq('key', 'welcome')
-          .maybeSingle()
-      ]);
+      const { data, error } = await supabase
+        .from('education_items')
+        .select('*')
+        .eq('is_visible', true)
+        .order('sort_order', { ascending: true });
       
-      if (itemsRes.data && !itemsRes.error) {
-        setItems(itemsRes.data);
-      }
-      
-      if (themeRes.data?.value) {
-        const value = themeRes.data.value as any;
-        setThemeColors({
-          gradientFrom: value.gradientFrom,
-          gradientVia: value.gradientVia,
-          gradientTo: value.gradientTo
-        });
+      if (data && !error) {
+        setItems(data);
       }
       setLoading(false);
     };
@@ -66,6 +43,7 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
 
   const instituteItems = items.filter(item => item.category === 'institute');
   const onlineItems = items.filter(item => item.category === 'online');
+  const displayItems = activeTab === "online" ? onlineItems : instituteItems;
 
   const openPopup = (image: string, caption: string) => {
     setPopupImage(image);
@@ -77,267 +55,210 @@ const EducationApp = ({ onClose }: EducationAppProps) => {
     setPopupCaption("");
   };
 
-  // Don't render until theme is loaded
-  if (!themeColors) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-foreground" />
-      </div>
-    );
-  }
-
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col"
-      style={{
-        background: `linear-gradient(to bottom right, ${themeColors.gradientFrom}, ${themeColors.gradientVia}, ${themeColors.gradientTo})`
-      }}
+      className="fixed inset-0 z-50 flex flex-col overflow-hidden"
+      style={{ background: "#121212" }}
       initial={{ scale: 0.5, opacity: 0, borderRadius: "22%" }}
       animate={{ scale: 1, opacity: 1, borderRadius: "0%" }}
       exit={{ scale: 0.5, opacity: 0, borderRadius: "22%" }}
-      transition={{ 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 15,
-        mass: 0.8
-      }}
+      transition={{ type: "spring", stiffness: 400, damping: 15, mass: 0.8 }}
     >
-      <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="h-20 flex items-end justify-between px-6 pb-3 relative flex-shrink-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
-          <motion.button
-            onClick={onClose}
-            className="relative z-10 flex items-center"
-            whileTap={{ scale: 0.95 }}
+      {/* Header */}
+      <header 
+        className="flex items-center justify-between px-4 py-3 relative z-10"
+        style={{ 
+          background: "linear-gradient(315deg, #FFAA00 40%, #FF5800 20%, #ff0000 100%)",
+          boxShadow: "0 15px 15px rgba(0, 0, 0, 0.5)"
+        }}
+      >
+        <motion.button
+          onClick={onClose}
+          className="flex items-center text-white"
+          whileTap={{ scale: 0.95 }}
+        >
+          <ChevronLeft className="w-8 h-8" strokeWidth={2.5} />
+        </motion.button>
+        <h1 
+          className="text-2xl font-extrabold text-white tracking-tight"
+          style={{ fontFamily: "'Bruno Ace', sans-serif", letterSpacing: "-0.5px" }}
+        >
+          myCERTS
+        </h1>
+        <div className="w-8" />
+      </header>
+
+      {/* Info Section */}
+      <section 
+        className="flex gap-5 p-6 flex-wrap"
+        style={{
+          background: "#1a2a1a",
+          backgroundImage: `url("data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 2000 1400%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3Cfilter id=%22b%22 x=%22-200%25%22 y=%22-200%25%22 width=%22500%25%22 height=%22500%25%22%3E%3CfeGaussianBlur in=%22SourceGraphic%22 stdDeviation=%2220%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Cpath fill=%22%23121212%22 d=%22M0 0h2000v1400H0z%22%2F%3E%3C/svg%3E")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
+        <div className="w-24 h-52 rounded-xl overflow-hidden border border-gray-600 bg-gray-800 p-2 shadow-lg flex-shrink-0">
+          <LazyImage 
+            src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
+            alt="Profile" 
+            className="w-full h-full object-cover rounded-lg"
+          />
+        </div>
+        <div className="flex-1 min-w-[220px]">
+          <h2 
+            className="text-3xl font-bold mb-2 tracking-widest"
+            style={{ 
+              fontFamily: "'Callahan', sans-serif", 
+              color: "#ff4d4d",
+              textShadow: "0 4px 18px rgba(0,0,0,0.3)"
+            }}
           >
-            <ChevronLeft className="w-9 h-9 text-white drop-shadow-lg" strokeWidth={3} />
-          </motion.button>
-          <div className="flex items-center gap-3 relative z-10">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-sm">
-              <GraduationCap className="w-6 h-6 text-white" strokeWidth={2} />
-            </div>
-            <h1 className="text-white text-2xl font-bold drop-shadow-lg">Education</h1>
+            Suresh Kaleyannan
+          </h2>
+          <div className="flex gap-4 mb-3 text-sm" style={{ color: "#ff6b35" }}>
+            <div><span className="font-semibold">10k+</span> Design</div>
+            <div><span className="font-semibold">500+</span> Development</div>
+            <div><span className="font-semibold">15+</span> Years</div>
           </div>
-          <div className="w-9" />
+          <div className="text-xs leading-relaxed" style={{ color: "#e0e0e0" }}>
+            <strong>ACHIEVEMENTS & CREDENTIALS</strong><br /><br />
+            Explore my professional achievements and certifications, showcasing my dedication to continuous learning and skill development. This page highlights my qualifications across various fields, providing verified credentials that reflect my expertise and commitment to growth.
+          </div>
         </div>
+      </section>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 pb-6">
-          {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <Loader2 className="w-8 h-8 animate-spin text-white" />
-            </div>
-          ) : (
-            <div className="max-w-4xl mx-auto space-y-4">
-              {/* Combined Profile & Description Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl p-8 shadow-lg"
-              >
-                {/* Profile Section */}
-                <div className="flex items-start gap-6 mb-8">
-                  <div className="relative flex-shrink-0">
-                    <div className="w-28 h-28 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                      <LazyImage 
-                        src="https://pub-b7063e985df64ddcba4ecd5e89b94954.r2.dev/cert/images/me2.png" 
-                        alt="Profile" 
-                        className="w-full h-full rounded-full"
-                      />
-                    </div>
-                    <div className="absolute -top-1 -right-1 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-tight">
-                      Suresh Kaleyannan
-                    </h2>
-                    <p className="text-xl text-gray-500 dark:text-gray-400 mb-1">Creative Developer</p>
-                    <p className="text-lg text-gray-500 dark:text-gray-400">Kuala Lumpur, Malaysia</p>
-                  </div>
-                </div>
-
-                {/* Stats Pills */}
-                <div className="flex gap-3 flex-wrap justify-center mb-8">
-                  <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-3 rounded-full shadow-lg">
-                    <span className="text-lg font-bold text-white">10,000+ DESIGNS.</span>
-                  </div>
-                  <div className="bg-gradient-to-r from-green-500 to-green-600 px-8 py-3 rounded-full shadow-lg">
-                    <span className="text-lg font-bold text-white">500+ DEVELOPMENT.</span>
-                  </div>
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-3 rounded-full shadow-lg">
-                    <span className="text-lg font-bold text-white">15+ YEARS.</span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-gray-200 dark:border-gray-700 my-6" />
-
-                {/* Description Section */}
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tight mb-4">
-                    Achievements & Credentials
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-                    Explore my professional achievements and certifications, showcasing my dedication to continuous learning and skill development across design, development, and technology.
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* Tab Navigation */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl p-2 shadow-lg flex gap-2"
-              >
-                <button
-                  onClick={() => setActiveTab("online")}
-                  className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all relative ${
-                    activeTab === "online"
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  }`}
-                >
-                  {activeTab === "online" && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-primary rounded-xl"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <span className="relative z-10">Online Certifications ({onlineItems.length})</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("institute")}
-                  className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all relative ${
-                    activeTab === "institute"
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  }`}
-                >
-                  {activeTab === "institute" && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-primary rounded-xl"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <span className="relative z-10">Institute Credentials ({instituteItems.length})</span>
-                </button>
-              </motion.div>
-
-              {/* Credentials Grid */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-6"
-              >
-                {activeTab === "institute" &&
-                  instituteItems.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 + index * 0.05 }}
-                      whileHover={{ scale: 1.05, y: -5 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => item.image_url && openPopup(item.image_url, item.title)}
-                      className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-2xl transition-all"
-                    >
-                      <div className="aspect-square bg-gradient-to-br from-primary/20 to-primary/5 relative overflow-hidden">
-                        {item.image_url && (
-                          <LazyImage
-                            src={item.image_url}
-                            alt={item.title}
-                            className="w-full h-full"
-                          />
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-xs text-gray-700 dark:text-gray-300 font-medium line-clamp-2">
-                          {item.title}
-                        </p>
-                        {item.year && (
-                          <p className="text-xs text-gray-500 mt-1">{item.year}</p>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                {activeTab === "online" &&
-                  onlineItems.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 + index * 0.05 }}
-                      whileHover={{ scale: 1.05, y: -5 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => item.image_url && openPopup(item.image_url, item.title)}
-                      className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-2xl transition-all"
-                    >
-                      <div className="aspect-square bg-gradient-to-br from-primary/20 to-primary/5 relative overflow-hidden">
-                        {item.image_url && (
-                          <LazyImage
-                            src={item.image_url}
-                            alt={item.title}
-                            className="w-full h-full"
-                          />
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-xs text-gray-700 dark:text-gray-300 font-medium line-clamp-2">
-                          {item.title}
-                        </p>
-                        {item.year && (
-                          <p className="text-xs text-gray-500 mt-1">{item.year}</p>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-              </motion.div>
-            </div>
-          )}
-        </div>
+      {/* Tabs */}
+      <div 
+        className="flex w-full cursor-pointer"
+        style={{
+          background: "linear-gradient(135deg, rgba(30,30,30,0.25) 100%, rgba(30,30,30,0.05) 0%)",
+          backdropFilter: "blur(5px)",
+          borderTop: "1px solid #333333",
+          boxShadow: "7px 7px 20px 0px rgba(0,0,0,0.5), 4px 4px 5px 0px rgba(0,0,0,0.3)"
+        }}
+      >
+        <button
+          onClick={() => setActiveTab("online")}
+          className={`flex-1 py-4 text-lg font-semibold uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
+            activeTab === "online" 
+              ? "text-red-400" 
+              : "text-gray-500 hover:text-gray-400"
+          }`}
+          style={{
+            transform: activeTab === "online" ? "translateZ(-8px) scaleY(0.94)" : undefined,
+            boxShadow: activeTab === "online" ? "inset 0 0 40px rgba(30,30,30,0.3), inset 0 -5px 15px rgba(0,0,0,0.3)" : undefined
+          }}
+        >
+          <Award className="w-5 h-5" />
+          <span className="hidden sm:inline">Online ({onlineItems.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("institute")}
+          className={`flex-1 py-4 text-lg font-semibold uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
+            activeTab === "institute" 
+              ? "text-red-400" 
+              : "text-gray-500 hover:text-gray-400"
+          }`}
+          style={{
+            transform: activeTab === "institute" ? "translateZ(-8px) scaleY(0.94)" : undefined,
+            boxShadow: activeTab === "institute" ? "inset 0 0 40px rgba(30,30,30,0.3), inset 0 -5px 15px rgba(0,0,0,0.3)" : undefined
+          }}
+        >
+          <University className="w-5 h-5" />
+          <span className="hidden sm:inline">Institute ({instituteItems.length})</span>
+        </button>
       </div>
 
-      {/* Certificate Popup Modal */}
+      {/* Grid */}
+      <div className="flex-1 overflow-y-auto px-5 py-4" style={{ background: "#121212" }}>
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="w-8 h-8 animate-spin text-white" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4">
+            {displayItems.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.03 }}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => item.image_url && openPopup(item.image_url, `${item.title} – ${item.year || ''}`)}
+                className="relative aspect-square rounded-xl overflow-hidden cursor-pointer transition-all"
+                style={{
+                  border: "4px solid transparent",
+                  background: `linear-gradient(#000000, #000000) padding-box, linear-gradient(315deg, #FFAA00 40%, #FF5800 20%, #ff0000 100%) border-box`,
+                  boxShadow: "0 2px 6px rgba(0,0,0,.2)"
+                }}
+              >
+                {item.image_url ? (
+                  <LazyImage
+                    src={item.image_url}
+                    alt={item.title}
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-orange-500/30 to-red-500/30 flex items-center justify-center">
+                    <Award className="w-8 h-8 text-white/50" />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <footer 
+        className="text-center py-4 text-sm"
+        style={{ color: "#aaaaaa", borderTop: "1px solid #333333" }}
+      >
+        © 2024 Suresh. All rights reserved.
+      </footer>
+
+      {/* Popup Modal */}
       <AnimatePresence>
         {popupImage && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-5"
+            style={{ background: "rgba(0,0,0,.95)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closePopup}
           >
+            <motion.button
+              onClick={closePopup}
+              className="absolute top-5 right-6 text-white text-4xl leading-none hover:text-red-400 transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              ×
+            </motion.button>
             <motion.div
-              className="relative max-w-4xl w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl"
+              className="relative max-w-[90vw] max-h-[90vh]"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={closePopup}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-red-500/80 transition-colors z-10"
-              >
-                <X className="w-6 h-6" />
-              </button>
               <img
                 src={popupImage}
                 alt="Certificate"
-                className="w-full h-auto max-h-[70vh] object-contain"
+                className="max-w-full max-h-[85vh] object-contain rounded-2xl"
+                style={{ boxShadow: "0 10px 30px rgba(0,0,0,0.7)" }}
               />
-              <div className="p-6 bg-gradient-to-t from-gray-100 to-white dark:from-gray-900 dark:to-gray-800">
-                <p className="text-center text-gray-900 dark:text-white font-semibold text-lg">
-                  {popupCaption}
-                </p>
+              <div 
+                className="absolute bottom-8 left-8 px-4 py-2 rounded-full text-white text-sm"
+                style={{ 
+                  background: "rgba(0,0,0,.75)", 
+                  backdropFilter: "blur(4px)" 
+                }}
+              >
+                {popupCaption}
               </div>
             </motion.div>
           </motion.div>

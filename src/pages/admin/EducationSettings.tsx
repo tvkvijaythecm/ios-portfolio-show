@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, GraduationCap } from "lucide-react";
+import { Plus, Pencil, Trash2, GraduationCap, Upload, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import AdminHeader from "@/components/admin/AdminHeader";
 
@@ -39,6 +39,7 @@ const EducationSettings = () => {
   const [editingItem, setEditingItem] = useState<Partial<EducationItem> | null>(null);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState<string>("all");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     loadItems();
@@ -58,6 +59,63 @@ const EducationSettings = () => {
       console.error("Error loading items:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please upload a valid image file (JPEG, PNG, GIF, or WebP)");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Get the session for auth
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("You must be logged in to upload files");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(
+        `https://itdvkrkcglzzmahjcbrb.supabase.co/functions/v1/upload-to-cloudflare`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Upload failed');
+      }
+
+      // Update the editing item with the new URL
+      setEditingItem(prev => ({ ...prev, image_url: result.url }));
+      toast.success("Certificate uploaded successfully!");
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast.error(error.message || "Failed to upload certificate");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -162,144 +220,180 @@ const EducationSettings = () => {
         </div>
       </div>
 
-        {filteredItems.length === 0 ? (
-          <Card className="bg-white/5 border-white/10">
-            <CardContent className="py-12 text-center">
-              <GraduationCap className="w-12 h-12 text-white/20 mx-auto mb-4" />
-              <p className="text-white/60">No education items yet</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredItems.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Card className="bg-white/5 border-white/10 overflow-hidden">
-                  {item.image_url && (
-                    <div className="aspect-video bg-slate-700">
-                      <img
-                        src={item.image_url}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
+      {filteredItems.length === 0 ? (
+        <Card className="bg-white/5 border-white/10">
+          <CardContent className="py-12 text-center">
+            <GraduationCap className="w-12 h-12 text-white/20 mx-auto mb-4" />
+            <p className="text-white/60">No education items yet</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredItems.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <Card className="bg-white/5 border-white/10 overflow-hidden">
+                {item.image_url && (
+                  <div className="aspect-video bg-slate-700">
+                    <img
+                      src={item.image_url}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs text-purple-400 uppercase tracking-wide">
+                        {item.category}
+                      </span>
+                      <h3 className="text-white font-medium truncate">{item.title}</h3>
+                      <p className="text-white/60 text-sm truncate">{item.issuer}</p>
+                      {item.year && (
+                        <p className="text-white/40 text-xs mt-1">{item.year}</p>
+                      )}
                     </div>
-                  )}
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <span className="text-xs text-purple-400 uppercase tracking-wide">
-                          {item.category}
-                        </span>
-                        <h3 className="text-white font-medium truncate">{item.title}</h3>
-                        <p className="text-white/60 text-sm truncate">{item.issuer}</p>
-                        {item.year && (
-                          <p className="text-white/40 text-xs mt-1">{item.year}</p>
-                        )}
-                      </div>
-                      <div className="flex gap-1 ml-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEditDialog(item)}
-                          className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10"
-                        >
-                          <Pencil className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(item.id)}
-                          className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
+                    <div className="flex gap-1 ml-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEditDialog(item)}
+                        className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10"
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(item.id)}
+                        className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
-        {/* Edit Dialog */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="bg-slate-800 border-white/10 text-white max-w-md">
-            <DialogHeader>
-              <DialogTitle>{editingItem?.id ? "Edit Item" : "Add New Item"}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
+      {/* Edit Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="bg-slate-800 border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingItem?.id ? "Edit Item" : "Add New Item"}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-white/80">Title</Label>
+              <Input
+                value={editingItem?.title || ""}
+                onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                placeholder="Certificate/Degree name"
+                className="bg-white/10 border-white/20 text-white"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-white/80">Issuer</Label>
+              <Input
+                value={editingItem?.issuer || ""}
+                onChange={(e) => setEditingItem({ ...editingItem, issuer: e.target.value })}
+                placeholder="Institution name"
+                className="bg-white/10 border-white/20 text-white"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-white/80">Title</Label>
+                <Label className="text-white/80">Year</Label>
                 <Input
-                  value={editingItem?.title || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                  placeholder="Certificate/Degree name"
+                  value={editingItem?.year || ""}
+                  onChange={(e) => setEditingItem({ ...editingItem, year: e.target.value })}
+                  placeholder="2024"
                   className="bg-white/10 border-white/20 text-white"
                 />
               </div>
-
               <div className="space-y-2">
-                <Label className="text-white/80">Issuer</Label>
-                <Input
-                  value={editingItem?.issuer || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, issuer: e.target.value })}
-                  placeholder="Institution name"
-                  className="bg-white/10 border-white/20 text-white"
-                />
+                <Label className="text-white/80">Category</Label>
+                <Select
+                  value={editingItem?.category || "institute"}
+                  onValueChange={(value) => setEditingItem({ ...editingItem, category: value })}
+                >
+                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="institute">Institute</SelectItem>
+                    <SelectItem value="online">Online</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-white/80">Year</Label>
-                  <Input
-                    value={editingItem?.year || ""}
-                    onChange={(e) => setEditingItem({ ...editingItem, year: e.target.value })}
-                    placeholder="2024"
-                    className="bg-white/10 border-white/20 text-white"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-white/80">Category</Label>
-                  <Select
-                    value={editingItem?.category || "institute"}
-                    onValueChange={(value) => setEditingItem({ ...editingItem, category: value })}
-                  >
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="institute">Institute</SelectItem>
-                      <SelectItem value="online">Online</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-white/80">Image URL</Label>
+            {/* Certificate Image Upload */}
+            <div className="space-y-2">
+              <Label className="text-white/80">Certificate Image</Label>
+              <div className="flex gap-2">
                 <Input
                   value={editingItem?.image_url || ""}
                   onChange={(e) => setEditingItem({ ...editingItem, image_url: e.target.value })}
-                  placeholder="https://..."
-                  className="bg-white/10 border-white/20 text-white"
+                  placeholder="https://... or upload below"
+                  className="bg-white/10 border-white/20 text-white flex-1"
                 />
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="border-white/20 text-white hover:bg-white/10"
+                    disabled={uploading}
+                    asChild
+                  >
+                    <span>
+                      {uploading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                    </span>
+                  </Button>
+                </label>
               </div>
-
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-              >
-                {saving ? "Saving..." : "Save Item"}
-              </Button>
+              {editingItem?.image_url && (
+                <div className="mt-2 rounded-lg overflow-hidden border border-white/10">
+                  <img 
+                    src={editingItem.image_url} 
+                    alt="Preview" 
+                    className="w-full h-32 object-cover"
+                  />
+                </div>
+              )}
             </div>
-          </DialogContent>
-        </Dialog>
+
+            <Button
+              onClick={handleSave}
+              disabled={saving || uploading}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              {saving ? "Saving..." : "Save Item"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
