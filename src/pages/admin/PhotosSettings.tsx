@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit2, Eye, EyeOff, Image } from "lucide-react";
+import { Plus, Trash2, Edit2, EyeOff, Upload, Loader2 } from "lucide-react";
 
 interface Photo {
   id: string;
@@ -31,6 +31,8 @@ const PhotosSettings = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<Partial<Photo> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadPhotos();
@@ -49,6 +51,69 @@ const PhotosSettings = () => {
       toast.error("Failed to load photos");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error('File too large. Maximum size is 10MB.');
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      // Get the current session for auth
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Please login to upload photos');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-to-cloudflare`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Upload failed');
+      }
+
+      // Set the uploaded URL to the form
+      setEditingPhoto(prev => ({ ...prev, image_url: result.url }));
+      toast.success('Photo uploaded successfully!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to upload photo');
+    } finally {
+      setUploading(false);
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -186,13 +251,52 @@ const PhotosSettings = () => {
               />
             </div>
             <div>
-              <Label className="text-white">Image URL *</Label>
-              <Input
-                value={editingPhoto?.image_url || ""}
-                onChange={(e) => setEditingPhoto({ ...editingPhoto, image_url: e.target.value })}
-                className="bg-white/10 border-white/20 text-white"
-                placeholder="https://example.com/image.jpg"
-              />
+              <Label className="text-white">Image *</Label>
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input
+                    value={editingPhoto?.image_url || ""}
+                    onChange={(e) => setEditingPhoto({ ...editingPhoto, image_url: e.target.value })}
+                    className="bg-white/10 border-white/20 text-white flex-1"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    {uploading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+                <p className="text-white/40 text-xs">
+                  Enter URL or upload an image (JPEG, PNG, GIF, WebP - max 10MB)
+                </p>
+                {editingPhoto?.image_url && (
+                  <div className="mt-2 rounded-lg overflow-hidden border border-white/10">
+                    <img
+                      src={editingPhoto.image_url}
+                      alt="Preview"
+                      className="w-full h-32 object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <Label className="text-white">Link URL (optional)</Label>

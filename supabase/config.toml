@@ -1,1 +1,4 @@
 project_id = "itdvkrkcglzzmahjcbrb"
+
+[functions.upload-to-cloudflare]
+verify_jwt = false
