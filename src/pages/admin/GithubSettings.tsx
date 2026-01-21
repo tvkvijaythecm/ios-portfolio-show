@@ -18,6 +18,7 @@ interface GithubProject {
   demo_url: string | null;
   sort_order: number;
   is_visible: boolean;
+  detail_content: string | null;
 }
 
 const defaultProject: Partial<GithubProject> = {
@@ -28,6 +29,7 @@ const defaultProject: Partial<GithubProject> = {
   demo_url: "",
   sort_order: 0,
   is_visible: true,
+  detail_content: "",
 };
 
 const GithubSettings = () => {
@@ -76,6 +78,7 @@ const GithubSettings = () => {
             demo_url: editingProject.demo_url,
             sort_order: editingProject.sort_order,
             is_visible: editingProject.is_visible,
+            detail_content: editingProject.detail_content,
           })
           .eq("id", editingProject.id);
 
@@ -90,6 +93,7 @@ const GithubSettings = () => {
           demo_url: editingProject.demo_url,
           sort_order: editingProject.sort_order,
           is_visible: editingProject.is_visible,
+          detail_content: editingProject.detail_content,
         });
 
         if (error) throw error;
@@ -241,6 +245,16 @@ const GithubSettings = () => {
                 className="bg-white/10 border-white/20 text-white"
                 placeholder="https://example.com"
               />
+            </div>
+            <div>
+              <Label className="text-white">Detail Page Content (HTML)</Label>
+              <Textarea
+                value={editingProject?.detail_content || ""}
+                onChange={(e) => setEditingProject({ ...editingProject, detail_content: e.target.value })}
+                className="bg-white/10 border-white/20 text-white min-h-[200px] font-mono text-sm"
+                placeholder="<h2>Features</h2><ul><li>Feature 1</li><li>Feature 2</li></ul>"
+              />
+              <p className="text-white/40 text-xs mt-1">This content will be displayed on the project detail page. HTML is supported.</p>
             </div>
             <div>
               <Label className="text-white">Sort Order</Label>

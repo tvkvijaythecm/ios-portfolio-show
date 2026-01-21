@@ -77,6 +77,7 @@ import NotesApp from "@/components/NotesApp";
 import IframeApp from "@/components/IframeApp";
 import DateWidget from "@/components/widgets/DateWidget";
 import WeatherWidget from "@/components/widgets/WeatherWidget";
+import ProjectDetailPage from "@/components/ProjectDetailPage";
 import { useCaseStudyApps, getIconForApp, CaseStudyApp } from "@/hooks/useCaseStudyApps";
 
 interface IframeSettings {
@@ -117,7 +118,8 @@ const Index = () => {
   const [customBackground, setCustomBackground] = useState<string | null>(null);
   const [dbPhotos, setDbPhotos] = useState<Array<{ id: string; title: string | null; image_url: string; link_url: string | null }>>([]);
   const [dbVideos, setDbVideos] = useState<Array<{ id: string; title: string | null; video_url: string; thumbnail_url: string | null }>>([]);
-  const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null }>>([]);
+  const [dbProjects, setDbProjects] = useState<Array<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null; detail_content: string | null }>>([]);
+  const [selectedProject, setSelectedProject] = useState<{ id: string; title: string; description: string | null; cover_image_url: string | null; source_url: string | null; demo_url: string | null; detail_content: string | null } | null>(null);
   const [dbWork, setDbWork] = useState<Array<{ id: string; company_name: string; job_title: string; job_description: string | null; year_start: string; year_end: string | null }>>([]);
   const [iframeSettings, setIframeSettings] = useState<IframeSettings>({ calendar_url: "", weather_url: "", goip_url: "", clock_url: "", suresh_url: "" });
   const [infoAppSettings, setInfoAppSettings] = useState<InfoAppSettings>({
@@ -615,7 +617,7 @@ const Index = () => {
               </AppPage>
             )}
 
-            {openApp === "github" && (
+            {openApp === "github" && !selectedProject && (
               <AppPage
                 title="Projects"
                 icon={Github}
@@ -625,9 +627,16 @@ const Index = () => {
                   {projects.map((project, i) => (
                     <motion.div 
                       key={i} 
-                      className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg rounded-2xl overflow-hidden"
+                      className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg rounded-2xl overflow-hidden cursor-pointer"
                       whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       transition={{ duration: 0.2 }}
+                      onClick={() => {
+                        if ('id' in project) {
+                          const dbProject = dbProjects.find(p => p.title === project.name);
+                          if (dbProject) setSelectedProject(dbProject);
+                        }
+                      }}
                     >
                       {project.thumbnail && (
                         <img 
@@ -639,30 +648,18 @@ const Index = () => {
                       <div className="p-6">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="text-gray-900 dark:text-white text-xl font-bold">{project.name}</h3>
+                          <ChevronRight className="w-5 h-5 text-gray-400" />
                         </div>
-                        <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">{project.description}</p>
                         <div className="flex gap-3">
                           {'sourceUrl' in project && project.sourceUrl && (
-                            <button 
-                              onClick={() => window.open(project.sourceUrl, "_blank")}
-                              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 dark:bg-gray-700 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
-                            >
-                              <Github className="w-4 h-4" />
-                              Source
-                            </button>
+                            <div className="inline-block px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">
+                              <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">GitHub</span>
+                            </div>
                           )}
                           {'demoUrl' in project && project.demoUrl && (
-                            <button 
-                              onClick={() => window.open(project.demoUrl, "_blank")}
-                              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 transition-colors"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                              Demo
-                            </button>
-                          )}
-                          {'tech' in project && project.tech && (
-                            <div className="inline-block px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-700">
-                              <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">{project.tech}</p>
+                            <div className="inline-block px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                              <span className="text-xs text-blue-600 dark:text-blue-300 font-medium">Demo</span>
                             </div>
                           )}
                         </div>
@@ -671,6 +668,21 @@ const Index = () => {
                   ))}
                 </div>
               </AppPage>
+            )}
+
+            {openApp === "github" && selectedProject && (
+              <ProjectDetailPage
+                project={{
+                  id: selectedProject.id,
+                  name: selectedProject.title,
+                  description: selectedProject.description || "",
+                  thumbnail: selectedProject.cover_image_url || undefined,
+                  sourceUrl: selectedProject.source_url || undefined,
+                  demoUrl: selectedProject.demo_url || undefined,
+                  detailContent: selectedProject.detail_content || undefined,
+                }}
+                onClose={() => setSelectedProject(null)}
+              />
             )}
 
             {openApp === "education" && (
