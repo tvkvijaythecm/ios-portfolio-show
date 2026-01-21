@@ -281,6 +281,7 @@ export type Database = {
           created_at: string | null
           demo_url: string | null
           description: string | null
+          detail_content: string | null
           id: string
           is_visible: boolean | null
           sort_order: number | null
@@ -292,6 +293,7 @@ export type Database = {
           created_at?: string | null
           demo_url?: string | null
           description?: string | null
+          detail_content?: string | null
           id?: string
           is_visible?: boolean | null
           sort_order?: number | null
@@ -303,6 +305,7 @@ export type Database = {
           created_at?: string | null
           demo_url?: string | null
           description?: string | null
+          detail_content?: string | null
           id?: string
           is_visible?: boolean | null
           sort_order?: number | null
