@@ -10,14 +10,17 @@ import {
   MapPin, 
   Play, 
   Pause, 
-  SkipBack, 
-  SkipForward, 
-  Upload,
-  Clock,
-  Calendar,
-  RefreshCw,
   Volume2,
-  Radio
+  Radio,
+  Phone,
+  Settings,
+  MessageCircle,
+  Camera,
+  Search,
+  Mail,
+  Bell,
+  Sun,
+  CloudRain
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,13 +37,18 @@ interface ControlCentreConfig {
   showWeather: boolean;
   showInfo: boolean;
   showReboot: boolean;
-  panelBgColor: string;
-  panelBgOpacity: number;
-  cardBgColor: string;
-  cardBgOpacity: number;
+  showMusicPlayer: boolean;
+  showQuickActions: boolean;
+  showProfileCard: boolean;
+  bgColor: string;
+  shadowLight: string;
+  shadowDark: string;
   accentColor: string;
   textColor: string;
-  borderColor: string;
+  secondaryTextColor: string;
+  profileName: string;
+  profileSubtitle: string;
+  profileImageUrl: string;
 }
 
 const defaultConfig: ControlCentreConfig = {
@@ -48,13 +56,18 @@ const defaultConfig: ControlCentreConfig = {
   showWeather: true,
   showInfo: true,
   showReboot: true,
-  panelBgColor: "#1f2937",
-  panelBgOpacity: 40,
-  cardBgColor: "#ffffff",
-  cardBgOpacity: 30,
-  accentColor: "#8b5cf6",
+  showMusicPlayer: true,
+  showQuickActions: true,
+  showProfileCard: true,
+  bgColor: "#1e1e1e",
+  shadowLight: "rgba(255, 255, 255, 0.03)",
+  shadowDark: "rgba(0, 0, 0, 0.6)",
+  accentColor: "#00ff4c",
   textColor: "#ffffff",
-  borderColor: "#ffffff",
+  secondaryTextColor: "#888888",
+  profileName: "User",
+  profileSubtitle: "Welcome back",
+  profileImageUrl: "",
 };
 
 const RADIO_STREAM_URL = "https://radios.crabdance.com:8002/1";
@@ -67,19 +80,45 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
   const [currentDay, setCurrentDay] = useState("");
+  const [dayNumber, setDayNumber] = useState("");
+  const [monthName, setMonthName] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(70);
   const [torchOn, setTorchOn] = useState(false);
   const [torchSupported, setTorchSupported] = useState(false);
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [config, setConfig] = useState<ControlCentreConfig>(defaultConfig);
   const [isLoadingRadio, setIsLoadingRadio] = useState(false);
+  const [weatherTemp, setWeatherTemp] = useState("--");
+  const [weatherCondition, setWeatherCondition] = useState("--");
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const videoTrackRef = useRef<MediaStreamTrack | null>(null);
   
   const { toast } = useToast();
+
+  // Neumorphic styles
+  const neuOutset = {
+    background: config.bgColor,
+    boxShadow: `8px 8px 16px ${config.shadowDark}, -4px -4px 12px ${config.shadowLight}`,
+    borderRadius: "24px",
+  };
+
+  const neuInset = {
+    background: config.bgColor,
+    boxShadow: `inset 6px 6px 12px ${config.shadowDark}, inset -3px -3px 8px ${config.shadowLight}`,
+    borderRadius: "24px",
+  };
+
+  const neuBtn = {
+    background: config.bgColor,
+    boxShadow: `4px 4px 8px ${config.shadowDark}, -2px -2px 6px ${config.shadowLight}`,
+    borderRadius: "50%",
+  };
+
+  const neuBtnActive = {
+    boxShadow: `inset 3px 3px 6px ${config.shadowDark}, inset -1px -1px 4px ${config.shadowLight}`,
+  };
 
   // Initialize audio element
   useEffect(() => {
@@ -161,34 +200,21 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     loadConfig();
   }, []);
 
-  // Helper to convert hex + opacity to rgba
-  const hexToRgba = (hex: string, opacity: number) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
-  };
-
   // Check if torch is supported
   useEffect(() => {
     const checkTorchSupport = async () => {
       try {
-        // Try to get user media to check for torch support
         const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { 
-            facingMode: { exact: "environment" } 
-          } 
+          video: { facingMode: { exact: "environment" } } 
         });
         
         const track = stream.getVideoTracks()[0];
         const capabilities = track.getCapabilities ? track.getCapabilities() : {};
         
-        // Check if torch is supported
         if ('torch' in capabilities) {
           setTorchSupported(true);
         }
         
-        // Stop the stream immediately since we're just checking
         stream.getTracks().forEach(track => track.stop());
       } catch (error) {
         console.log("Torch not supported or permission denied:", error);
@@ -201,33 +227,27 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     }
   }, [isOpen, config.showTorch]);
 
-  // IP Detection with multiple fallback services
+  // IP Detection
   const detectIPAddress = async () => {
     if (isFetchingIp) return;
-    
     setIsFetchingIp(true);
     
     const ipServices = [
       'https://api.ipify.org?format=json',
       'https://api64.ipify.org?format=json',
       'https://ipapi.co/json/',
-      'https://ipinfo.io/json',
-      'https://api.my-ip.io/v2/ip.json',
     ];
 
     for (const service of ipServices) {
       try {
         const response = await fetch(service, {
-          headers: {
-            'Accept': 'application/json',
-          },
+          headers: { 'Accept': 'application/json' },
           signal: AbortSignal.timeout(3000)
         });
         
         if (!response.ok) continue;
         
         const data = await response.json();
-        
         const ip = data.ip || data.ip_address || data.query;
         if (ip) {
           setIpAddress(ip);
@@ -239,47 +259,19 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
       }
     }
     
-    // WebRTC fallback
-    try {
-      const rtcPeerConnection = new (window.RTCPeerConnection || (window as any).webkitRTCPeerConnection)({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
-      });
-      
-      rtcPeerConnection.createDataChannel('');
-      const offer = await rtcPeerConnection.createOffer();
-      await rtcPeerConnection.setLocalDescription(offer);
-      
-      const localIpRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
-      const ipMatch = rtcPeerConnection.localDescription?.sdp?.match(localIpRegex);
-      
-      if (ipMatch && ipMatch[1]) {
-        setIpAddress(ipMatch[1]);
-      } else {
-        setIpAddress("Unable to detect");
-      }
-    } catch (rtcError) {
-      setIpAddress("Unable to detect");
-    } finally {
-      setIsFetchingIp(false);
-    }
+    setIpAddress("Unable to detect");
+    setIsFetchingIp(false);
   };
 
-  // Detect IP Address on mount
   useEffect(() => {
     detectIPAddress();
   }, []);
 
-  // Manual IP refresh function
-  const refreshIpAddress = () => {
-    setIpAddress("Detecting...");
-    detectIPAddress();
-  };
-
-  // Detect Location with improved error handling
+  // Detect Location
   useEffect(() => {
     const detectLocation = async () => {
       if (!navigator.geolocation) {
-        setLocation("Geolocation not supported");
+        setLocation("Not supported");
         return;
       }
 
@@ -294,60 +286,32 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
 
         const { latitude, longitude } = position.coords;
         
-        const geocodingServices = [
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
-          `https://geocode.xyz/${latitude},${longitude}?json=1`,
-        ];
-
-        for (const service of geocodingServices) {
-          try {
-            const response = await fetch(service, {
-              headers: {
-                'Accept': 'application/json',
-                'User-Agent': 'ControlCentreApp/1.0'
-              }
-            });
-            
-            if (!response.ok) continue;
-            
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+            { headers: { 'Accept': 'application/json', 'User-Agent': 'ControlCentreApp/1.0' } }
+          );
+          
+          if (response.ok) {
             const data = await response.json();
-            
-            let locationText = "Location detected";
-            if (service.includes('nominatim')) {
-              const city = data.address?.city || data.address?.town || data.address?.village || "";
-              const country = data.address?.country || "";
-              locationText = city && country ? `${city}, ${country}` : "Location detected";
-            } else if (service.includes('geocode.xyz')) {
-              const city = data.city || data.region || "";
-              const country = data.country || "";
-              locationText = city && country ? `${city}, ${country}` : "Location detected";
-            }
-            
-            setLocation(locationText);
-            return;
-          } catch (error) {
-            console.log(`Failed to fetch location from ${service}:`, error);
+            const city = data.address?.city || data.address?.town || data.address?.village || "";
+            const country = data.address?.country || "";
+            setLocation(city && country ? `${city}, ${country}` : "Location detected");
           }
+        } catch (error) {
+          setLocation(`${latitude.toFixed(2)}, ${longitude.toFixed(2)}`);
         }
-        
-        setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
-        
       } catch (error) {
-        console.error("Geolocation error:", error);
-        
-        // Try IP-based location as fallback
         try {
           const response = await fetch('https://ipapi.co/json/');
           if (response.ok) {
             const data = await response.json();
-            const city = data.city || "";
-            const country = data.country_name || "";
-            setLocation(city && country ? `${city}, ${country}` : "Location detected");
+            setLocation(data.city && data.country_name ? `${data.city}, ${data.country_name}` : "Location detected");
           } else {
-            setLocation("Location unavailable");
+            setLocation("Unavailable");
           }
         } catch (ipError) {
-          setLocation("Location unavailable");
+          setLocation("Unavailable");
         }
       }
     };
@@ -355,22 +319,48 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     detectLocation();
   }, []);
 
+  // Fetch weather
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+        });
+
+        const { latitude, longitude } = position.coords;
+        const apiKey = "bd5e378503939ddaee76f12ad7a97608";
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          setWeatherTemp(`${Math.round(data.main.temp)}°C`);
+          setWeatherCondition(data.weather[0]?.description || "Clear");
+        }
+      } catch (error) {
+        console.log("Weather fetch error:", error);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
   // Update Time and Date
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
-      const hours = now.getHours();
+      const hours = now.getHours().toString().padStart(2, "0");
       const minutes = now.getMinutes().toString().padStart(2, "0");
-      const seconds = now.getSeconds().toString().padStart(2, "0");
-      const ampm = hours >= 12 ? "PM" : "AM";
-      const displayHours = hours % 12 || 12;
       
-      setCurrentTime(`${displayHours}:${minutes}:${seconds} ${ampm}`);
+      setCurrentTime(`${hours}:${minutes}`);
       
       const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       
       setCurrentDay(days[now.getDay()]);
+      setDayNumber(String(now.getDate()).padStart(2, "0"));
+      setMonthName(months[now.getMonth()]);
       setCurrentDate(`${String(now.getDate()).padStart(2, "0")} ${months[now.getMonth()]} ${now.getFullYear()}`);
     };
 
@@ -395,7 +385,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
     
     toast({
       title: "Rebooting...",
-      description: "All data, cookies, and cache cleared. Reloading page...",
+      description: "All data cleared. Reloading...",
     });
     
     setTimeout(() => {
@@ -408,34 +398,26 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
       if (!torchSupported) {
         toast({
           title: "Flashlight not supported",
-          description: "Your device doesn't have a torch or it's not accessible",
+          description: "Your device doesn't have a torch",
           variant: "destructive",
         });
         return;
       }
 
-      // If torch is currently on, turn it off
       if (torchOn && videoTrackRef.current) {
         await videoTrackRef.current.applyConstraints({
           advanced: [{ torch: false }] as any
         });
         setTorchOn(false);
         
-        // Stop the stream if we're turning off
         if (mediaStreamRef.current) {
           mediaStreamRef.current.getTracks().forEach(track => track.stop());
           mediaStreamRef.current = null;
           videoTrackRef.current = null;
         }
-        
-        toast({
-          title: "Flashlight Off",
-          description: "Torch has been turned off",
-        });
         return;
       }
 
-      // Get camera access for torch
       const constraints: MediaStreamConstraints = {
         video: {
           facingMode: { exact: "environment" },
@@ -448,59 +430,19 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
       const track = stream.getVideoTracks()[0];
       videoTrackRef.current = track;
 
-      // Check if torch is available
       const capabilities = track.getCapabilities();
       if ('torch' in capabilities) {
         await track.applyConstraints({
           advanced: [{ torch: true }] as any
         });
         setTorchOn(true);
-        toast({
-          title: "Flashlight On",
-          description: "Torch has been activated",
-        });
       } else {
-        toast({
-          title: "Flashlight not available",
-          description: "Torch feature not found on camera",
-          variant: "destructive",
-        });
         stream.getTracks().forEach(track => track.stop());
         mediaStreamRef.current = null;
         videoTrackRef.current = null;
       }
-      
     } catch (error: any) {
       console.error("Torch error:", error);
-      
-      // Handle specific permission errors
-      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        toast({
-          title: "Permission Required",
-          description: "Please allow camera access to use the flashlight",
-          variant: "destructive",
-        });
-      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-        toast({
-          title: "Camera Not Found",
-          description: "No rear camera found on this device",
-          variant: "destructive",
-        });
-      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-        toast({
-          title: "Camera in Use",
-          description: "Camera is being used by another application",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Flashlight Error",
-          description: error.message || "Unable to access flashlight",
-          variant: "destructive",
-        });
-      }
-      
-      // Clean up on error
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach(track => track.stop());
         mediaStreamRef.current = null;
@@ -531,40 +473,10 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseInt(e.target.value);
-    setVolume(newVolume);
-  };
-
-  const handleUploadSong = () => {
-    setShowUploadDialog(true);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      toast({
-        title: "Feature Coming Soon",
-        description: "Local file playback will be available in a future update",
-      });
-      setShowUploadDialog(false);
-    }
-  };
-
-  const handleStreamLoad = () => {
-    toast({
-      title: "Feature Coming Soon",
-      description: "Custom stream URLs will be available in a future update",
-    });
-    setShowUploadDialog(false);
+    setVolume(parseInt(e.target.value));
   };
 
   if (!isOpen) return null;
-
-  const cardStyle = {
-    backgroundColor: hexToRgba(config.cardBgColor, config.cardBgOpacity),
-    borderWidth: 1,
-    borderColor: hexToRgba(config.borderColor, 20),
-  };
 
   return (
     <>
@@ -574,7 +486,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
       />
 
       {/* Control Centre Panel */}
@@ -587,335 +499,212 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
         dragConstraints={{ top: 0, bottom: 0 }}
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
-        className="fixed inset-x-0 bottom-0 z-[101] max-w-2xl mx-auto"
+        className="fixed inset-x-0 bottom-0 z-[101] max-w-[400px] mx-auto px-4 pb-6"
       >
-        <div 
-          className="rounded-t-3xl shadow-2xl p-4 md:p-6 pb-6 md:pb-8"
-          style={{ 
-            backgroundColor: hexToRgba(config.panelBgColor, config.panelBgOpacity),
-            backdropFilter: 'blur(24px)',
-            borderTop: `1px solid ${hexToRgba(config.borderColor, 20)}`
-          }}
-        >
+        <div className="space-y-4">
           {/* Drag Handle */}
-          <div 
-            className="w-12 h-1.5 rounded-full mx-auto mb-4 md:mb-6" 
-            style={{ backgroundColor: hexToRgba(config.textColor, 40) }}
-          />
+          <div className="w-12 h-1.5 rounded-full mx-auto mb-2" style={{ backgroundColor: config.secondaryTextColor }} />
 
-          {/* IP Address with Refresh */}
-          <div 
-            className="rounded-2xl p-3 md:p-4 mb-2 md:mb-3 flex items-center justify-between"
-            style={cardStyle}
-          >
-            <div className="flex items-center gap-3 flex-1">
-              <Globe className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>IP Address</p>
-                  {isFetchingIp && (
-                    <div className="animate-spin">
-                      <RefreshCw className="w-3 h-3" style={{ color: hexToRgba(config.textColor, 60) }} />
-                    </div>
-                  )}
-                </div>
-                <p className="text-base md:text-lg font-semibold" style={{ color: config.textColor }}>
-                  {ipAddress}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={refreshIpAddress}
-              disabled={isFetchingIp}
-              className="p-2 rounded-lg hover:bg-white/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ color: config.accentColor }}
-              title="Refresh IP Address"
+          {/* Header Clock Widget */}
+          <div style={neuInset} className="p-5 flex items-center justify-between">
+            <div 
+              className="px-6 py-2 flex items-center"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(4px)',
+                borderRadius: '50px',
+              }}
             >
-              <RefreshCw className={`w-4 h-4 ${isFetchingIp ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
-
-          {/* Location */}
-          <div 
-            className="rounded-2xl p-3 md:p-4 mb-3 md:mb-4 flex items-center gap-3"
-            style={cardStyle}
-          >
-            <MapPin className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
-            <div>
-              <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>Location</p>
-              <p className="text-base md:text-lg font-semibold" style={{ color: config.textColor }}>{location}</p>
+              <span className="text-4xl font-bold" style={{ color: config.textColor }}>{currentTime}</span>
+            </div>
+            <div className="flex items-center space-x-3 text-right">
+              <span className="text-4xl font-medium" style={{ color: config.textColor }}>{dayNumber}</span>
+              <div className="text-xs leading-tight" style={{ color: config.secondaryTextColor }}>
+                {currentDay}<br/>{monthName}
+              </div>
             </div>
           </div>
 
-          {/* Radio Player */}
-          <div 
-            className="rounded-2xl p-3 md:p-4 mb-3 md:mb-4"
-            style={cardStyle}
-          >
-            <div className="flex items-center gap-3 md:gap-4 mb-4">
-              <div 
-                className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center"
-                style={{ 
-                  backgroundColor: hexToRgba(config.accentColor, 20),
-                  border: `1px solid ${hexToRgba(config.accentColor, 40)}`,
-                  boxShadow: `0 0 20px ${hexToRgba(config.accentColor, 20)}`
-                }}
-              >
-                <Radio className="w-6 h-6 md:w-8 md:h-8" style={{ color: config.accentColor }} />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  <p className="text-xs font-medium" style={{ color: hexToRgba(config.textColor, 80) }}>
-                    {isPlaying ? "LIVE NOW" : "RADIO"}
-                  </p>
+          {/* Search & Quick Actions */}
+          {config.showQuickActions && (
+            <div className="flex space-x-4">
+              <div style={neuOutset} className="flex-grow p-4 flex items-center justify-between px-6">
+                <div className="flex items-center space-x-1">
+                  <span className="text-[#4285F4] font-bold">G</span>
+                  <span className="text-[#EA4335] font-bold">o</span>
+                  <span className="text-[#FBBC05] font-bold">o</span>
+                  <span className="text-[#4285F4] font-bold">g</span>
+                  <span className="text-[#34A853] font-bold">l</span>
+                  <span className="text-[#EA4335] font-bold">e</span>
                 </div>
-                <p className="text-base md:text-lg font-semibold mb-2" style={{ color: config.textColor }}>
-                  {RADIO_STATION_NAME}
-                </p>
-                <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>
-                  {RADIO_STREAM_URL.replace('https://', '')}
-                </p>
+                <div className="h-6 w-[1px] bg-white/10 mx-2" />
+                <Search className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
               </div>
-            </div>
-
-            {/* Player Controls */}
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <button 
-                  onClick={toggleRadioPlayback}
-                  disabled={isLoadingRadio}
-                  className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ 
-                    backgroundColor: config.accentColor,
-                    boxShadow: `0 4px 20px ${hexToRgba(config.accentColor, 40)}`
-                  }}
-                >
-                  {isLoadingRadio ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : isPlaying ? (
-                    <Pause className="w-6 h-6 text-white" />
-                  ) : (
-                    <Play className="w-6 h-6 text-white ml-0.5" />
-                  )}
+              <div className="flex space-x-3">
+                <button style={neuBtn} className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform">
+                  <Phone className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
+                </button>
+                <button style={neuBtn} className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform">
+                  <Mail className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
                 </button>
               </div>
+            </div>
+          )}
 
-              {/* Volume Control */}
-              <div className="flex items-center gap-3">
-                <Volume2 className="w-4 h-4" style={{ color: hexToRgba(config.textColor, 60) }} />
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                  className="flex-1 h-2 bg-white/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white"
-                  style={{
-                    accentColor: config.accentColor
-                  }}
-                />
-                <span className="text-xs w-8 text-right" style={{ color: hexToRgba(config.textColor, 80) }}>
-                  {volume}%
-                </span>
+          {/* User Profile Card */}
+          {config.showProfileCard && (
+            <div style={neuOutset} className="p-4 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden p-1" style={neuInset}>
+                  {config.profileImageUrl ? (
+                    <img src={config.profileImageUrl} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+                  ) : (
+                    <img 
+                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
+                      alt="Avatar" 
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold" style={{ color: config.textColor }}>{config.profileName}</h3>
+                  <p className="text-[10px]" style={{ color: config.secondaryTextColor }}>{config.profileSubtitle}</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <div className="h-8 w-[1px] bg-white/10 mx-4" />
+                <div className="relative">
+                  <Bell className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2" style={{ borderColor: config.bgColor }} />
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Status Indicator */}
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
-                <span style={{ color: hexToRgba(config.textColor, 60) }}>
-                  {isPlaying ? 'Streaming' : 'Paused'}
-                </span>
+          {/* Media & Weather Row */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Music Player */}
+            {config.showMusicPlayer && (
+              <div style={neuOutset} className="p-5 flex flex-col justify-between aspect-square">
+                <div>
+                  <h4 className="text-xs font-bold truncate" style={{ color: config.textColor }}>{RADIO_STATION_NAME}</h4>
+                  <p className="text-[10px] mt-1" style={{ color: config.secondaryTextColor }}>Live Radio Stream</p>
+                </div>
+                
+                <div className="w-full">
+                  {/* Progress bar */}
+                  <div style={neuInset} className="w-full h-[3px] mb-4 overflow-hidden rounded-full">
+                    <div 
+                      className="h-full transition-all duration-300" 
+                      style={{ 
+                        width: isPlaying ? '60%' : '0%',
+                        backgroundColor: config.accentColor 
+                      }} 
+                    />
+                  </div>
+                  {/* Controls */}
+                  <div className="flex justify-between items-center px-1">
+                    <button className="active:scale-90 transition-transform">
+                      <Volume2 className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                    </button>
+                    <button 
+                      onClick={toggleRadioPlayback}
+                      disabled={isLoadingRadio}
+                      className="active:scale-90 transition-transform disabled:opacity-50"
+                    >
+                      {isLoadingRadio ? (
+                        <div className="w-4 h-4 border-2 rounded-full animate-spin" style={{ borderColor: config.accentColor, borderTopColor: 'transparent' }} />
+                      ) : isPlaying ? (
+                        <Pause className="w-4 h-4" style={{ color: config.accentColor }} />
+                      ) : (
+                        <Play className="w-4 h-4" style={{ color: config.accentColor }} />
+                      )}
+                    </button>
+                    <button className="active:scale-90 transition-transform">
+                      <Radio className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button 
-                onClick={handleUploadSong}
-                className="text-xs px-3 py-1 rounded-full transition hover:opacity-80"
-                style={{ 
-                  backgroundColor: hexToRgba(config.accentColor, 20),
-                  color: config.accentColor,
-                  border: `1px solid ${hexToRgba(config.accentColor, 30)}`
-                }}
-              >
-                More Stations
-              </button>
-            </div>
-          </div>
-
-          {/* Time & Date */}
-          <div className="grid grid-cols-2 gap-2 md:gap-3 mb-3 md:mb-4">
-            <div 
-              className="rounded-2xl p-3 md:p-4 flex items-center gap-2 md:gap-3"
-              style={cardStyle}
-            >
-              <Clock className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
-              <div>
-                <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>Time</p>
-                <p className="text-sm md:text-base font-semibold" style={{ color: config.textColor }}>{currentTime}</p>
-              </div>
-            </div>
-            <div 
-              className="rounded-2xl p-3 md:p-4 flex items-center gap-2 md:gap-3"
-              style={cardStyle}
-            >
-              <Calendar className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.accentColor }} />
-              <div>
-                <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>{currentDay}</p>
-                <p className="text-sm md:text-base font-semibold" style={{ color: config.textColor }}>{currentDate}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-4 gap-2 md:gap-3">
-            {config.showTorch && (
-              <button 
-                onClick={handleTorchToggle}
-                disabled={!torchSupported}
-                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ 
-                  ...cardStyle,
-                  boxShadow: torchOn ? `0 0 20px ${config.accentColor}40` : 'none'
-                }}
-              >
-                <Flashlight className="w-5 h-5 md:w-6 md:h-6" style={{ 
-                  color: torchOn ? config.accentColor : (torchSupported ? config.textColor : hexToRgba(config.textColor, 40))
-                }} />
-                <span className="text-xs" style={{ 
-                  color: torchSupported ? hexToRgba(config.textColor, 80) : hexToRgba(config.textColor, 40)
-                }}>
-                  {torchSupported ? 'Torch' : 'No Torch'}
-                </span>
-              </button>
             )}
+
+            {/* Weather Widget */}
             {config.showWeather && (
               <button 
                 onClick={() => {
                   onOpenWeather();
                   onClose();
                 }}
-                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95"
-                style={cardStyle}
+                style={neuOutset} 
+                className="p-5 flex flex-col justify-between aspect-square text-left active:scale-95 transition-transform"
               >
-                <Cloud className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.textColor }} />
-                <span className="text-xs" style={{ color: hexToRgba(config.textColor, 80) }}>Weather</span>
-              </button>
-            )}
-            {config.showInfo && (
-              <button 
-                onClick={() => {
-                  onOpenInfo();
-                  onClose();
-                }}
-                className="rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition hover:scale-105 active:scale-95"
-                style={cardStyle}
-              >
-                <Info className="w-5 h-5 md:w-6 md:h-6" style={{ color: config.textColor }} />
-                <span className="text-xs" style={{ color: hexToRgba(config.textColor, 80) }}>Info</span>
-              </button>
-            )}
-            {config.showReboot && (
-              <button 
-                onClick={handleReboot}
-                className="bg-red-500/80 backdrop-blur-xl rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 hover:bg-red-600/80 transition border border-red-400/30 hover:scale-105 active:scale-95"
-              >
-                <RotateCcw className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                <span className="text-xs text-white">Reboot</span>
+                <div className="flex items-start justify-between">
+                  <div className="relative">
+                    <Cloud className="text-blue-400 text-2xl w-8 h-8" />
+                    <Sun className="text-yellow-400 text-xs w-3 h-3 absolute -top-1 -right-1" />
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold" style={{ color: config.textColor }}>{weatherTemp}</div>
+                    <div className="text-[8px] capitalize" style={{ color: config.secondaryTextColor }}>{weatherCondition}</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <MapPin className="w-3 h-3" style={{ color: config.textColor }} />
+                  <span className="text-[10px] font-medium truncate" style={{ color: config.textColor }}>{location}</span>
+                </div>
               </button>
             )}
           </div>
+
+          {/* Controls Grid */}
+          <div style={neuOutset} className="p-6">
+            <div className="grid grid-cols-4 gap-4">
+              {config.showTorch && (
+                <button 
+                  onClick={handleTorchToggle}
+                  style={torchOn ? { ...neuBtn, ...neuBtnActive } : neuBtn}
+                  className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
+                >
+                  <Flashlight 
+                    className="w-4 h-4" 
+                    style={{ color: torchOn ? config.accentColor : config.secondaryTextColor }} 
+                  />
+                </button>
+              )}
+              
+              {config.showInfo && (
+                <button 
+                  onClick={() => {
+                    onOpenInfo();
+                    onClose();
+                  }}
+                  style={neuBtn}
+                  className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
+                >
+                  <Settings className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
+                </button>
+              )}
+
+              <button 
+                style={neuBtn}
+                className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
+              >
+                <MessageCircle className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
+              </button>
+              
+              {config.showReboot && (
+                <button 
+                  onClick={handleReboot}
+                  style={neuBtn}
+                  className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
+                >
+                  <RotateCcw className="w-4 h-4" style={{ color: "#ef4444" }} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </motion.div>
-
-      {/* Upload/Stations Dialog */}
-      {showUploadDialog && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[102] flex items-center justify-center p-4"
-          onClick={() => setShowUploadDialog(false)}
-        >
-          <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-background/95 backdrop-blur-2xl rounded-2xl p-4 md:p-6 max-w-md w-full shadow-xl border border-white/20"
-            style={{ backgroundColor: hexToRgba(config.panelBgColor, 95) }}
-          >
-            <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: config.textColor }}>
-              Radio Stations
-            </h3>
-            
-            <div className="space-y-3 mb-4">
-              <div 
-                className="p-3 rounded-lg border transition cursor-pointer hover:scale-[1.02]"
-                style={{ 
-                  backgroundColor: hexToRgba(config.accentColor, 10),
-                  borderColor: hexToRgba(config.accentColor, 30)
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" 
-                    style={{ backgroundColor: hexToRgba(config.accentColor, 20) }}>
-                    <Radio className="w-5 h-5" style={{ color: config.accentColor }} />
-                  </div>
-                  <div>
-                    <p className="font-semibold" style={{ color: config.textColor }}>{RADIO_STATION_NAME}</p>
-                    <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>
-                      Currently Playing
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-3 rounded-lg border transition cursor-not-allowed opacity-50"
-                style={{ 
-                  backgroundColor: hexToRgba(config.cardBgColor, 20),
-                  borderColor: hexToRgba(config.borderColor, 20)
-                }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" 
-                    style={{ backgroundColor: hexToRgba(config.cardBgColor, 30) }}>
-                    <Radio className="w-5 h-5" style={{ color: hexToRgba(config.textColor, 40) }} />
-                  </div>
-                  <div>
-                    <p className="font-semibold" style={{ color: hexToRgba(config.textColor, 40) }}>
-                      More Stations Coming Soon
-                    </p>
-                    <p className="text-xs" style={{ color: hexToRgba(config.textColor, 30) }}>
-                      Stay tuned for updates
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-3">
-              <button
-                onClick={handleUploadSong}
-                className="flex-1 py-2 px-4 rounded-lg transition text-sm md:text-base hover:opacity-90"
-                style={{ 
-                  backgroundColor: hexToRgba(config.accentColor, 20),
-                  color: config.accentColor
-                }}
-              >
-                Request Station
-              </button>
-              <button
-                onClick={() => setShowUploadDialog(false)}
-                className="flex-1 py-2 px-4 rounded-lg transition text-sm md:text-base hover:opacity-90"
-                style={{ 
-                  backgroundColor: hexToRgba(config.cardBgColor, 30),
-                  color: config.textColor
-                }}
-              >
-                Close
-              </button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
     </>
   );
 };

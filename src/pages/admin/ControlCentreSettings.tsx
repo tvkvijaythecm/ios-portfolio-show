@@ -6,7 +6,28 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Settings, Check, Flashlight, Cloud, Info, RotateCcw, Palette, Globe, MapPin, Clock, Calendar as CalendarIcon } from "lucide-react";
+import { 
+  Settings, 
+  Check, 
+  Flashlight, 
+  Cloud, 
+  Info, 
+  RotateCcw, 
+  Palette,
+  User,
+  Music,
+  Zap,
+  Eye,
+  Phone,
+  Mail,
+  Search,
+  Bell,
+  MessageCircle,
+  Play,
+  Pause,
+  MapPin,
+  Sun
+} from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 
 interface ControlCentreConfig {
@@ -14,14 +35,18 @@ interface ControlCentreConfig {
   showWeather: boolean;
   showInfo: boolean;
   showReboot: boolean;
-  // Color scheme
-  panelBgColor: string;
-  panelBgOpacity: number;
-  cardBgColor: string;
-  cardBgOpacity: number;
+  showMusicPlayer: boolean;
+  showQuickActions: boolean;
+  showProfileCard: boolean;
+  bgColor: string;
+  shadowLight: string;
+  shadowDark: string;
   accentColor: string;
   textColor: string;
-  borderColor: string;
+  secondaryTextColor: string;
+  profileName: string;
+  profileSubtitle: string;
+  profileImageUrl: string;
 }
 
 const defaultConfig: ControlCentreConfig = {
@@ -29,13 +54,18 @@ const defaultConfig: ControlCentreConfig = {
   showWeather: true,
   showInfo: true,
   showReboot: true,
-  panelBgColor: "#1f2937",
-  panelBgOpacity: 40,
-  cardBgColor: "#ffffff",
-  cardBgOpacity: 30,
-  accentColor: "#8b5cf6",
+  showMusicPlayer: true,
+  showQuickActions: true,
+  showProfileCard: true,
+  bgColor: "#1e1e1e",
+  shadowLight: "rgba(255, 255, 255, 0.03)",
+  shadowDark: "rgba(0, 0, 0, 0.6)",
+  accentColor: "#00ff4c",
   textColor: "#ffffff",
-  borderColor: "#ffffff",
+  secondaryTextColor: "#888888",
+  profileName: "User",
+  profileSubtitle: "Welcome back",
+  profileImageUrl: "",
 };
 
 const ControlCentreSettings = () => {
@@ -102,9 +132,12 @@ const ControlCentreSettings = () => {
 
   const toggleItems = [
     { key: "showTorch", label: "Flashlight", icon: Flashlight, description: "Toggle device flashlight" },
-    { key: "showWeather", label: "Weather", icon: Cloud, description: "Open weather app" },
-    { key: "showInfo", label: "Info", icon: Info, description: "Open info/settings app" },
-    { key: "showReboot", label: "Reboot", icon: RotateCcw, description: "Reset app state" },
+    { key: "showWeather", label: "Weather Widget", icon: Cloud, description: "Show weather card" },
+    { key: "showInfo", label: "Settings Button", icon: Info, description: "Open info/settings app" },
+    { key: "showReboot", label: "Reboot Button", icon: RotateCcw, description: "Reset app state" },
+    { key: "showMusicPlayer", label: "Music Player", icon: Music, description: "Radio/music player widget" },
+    { key: "showQuickActions", label: "Quick Actions", icon: Zap, description: "Search bar & quick buttons" },
+    { key: "showProfileCard", label: "Profile Card", icon: User, description: "User profile widget" },
   ];
 
   if (loading) {
@@ -115,18 +148,28 @@ const ControlCentreSettings = () => {
     );
   }
 
-  // Helper to convert hex + opacity to rgba for preview
-  const hexToRgba = (hex: string, opacity: number) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
+  // Neumorphic style helpers for preview
+  const neuOutset = {
+    background: config.bgColor,
+    boxShadow: `8px 8px 16px ${config.shadowDark}, -4px -4px 12px ${config.shadowLight}`,
+    borderRadius: "24px",
+  };
+
+  const neuInset = {
+    background: config.bgColor,
+    boxShadow: `inset 6px 6px 12px ${config.shadowDark}, inset -3px -3px 8px ${config.shadowLight}`,
+    borderRadius: "24px",
+  };
+
+  const neuBtn = {
+    background: config.bgColor,
+    boxShadow: `4px 4px 8px ${config.shadowDark}, -2px -2px 6px ${config.shadowLight}`,
   };
 
   return (
     <div className="p-4 md:p-8">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-        <AdminHeader title="Control Centre" description="Configure buttons and color scheme" />
+        <AdminHeader title="Control Centre" description="Configure neumorphic dashboard design" />
         <Button
           onClick={handleSave}
           disabled={saving}
@@ -137,279 +180,334 @@ const ControlCentreSettings = () => {
         </Button>
       </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          {/* Button Visibility */}
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-white flex items-center gap-2 text-base md:text-lg">
-                <Settings className="w-5 h-5" />
-                Button Visibility
-              </CardTitle>
-              <CardDescription className="text-white/60 text-sm">
-                Enable or disable control centre buttons
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {toggleItems.map((item) => (
-                <div
-                  key={item.key}
-                  className="flex items-center justify-between p-3 rounded-xl bg-white/5"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                      <item.icon className="w-4 h-4 md:w-5 md:h-5 text-white/80" />
-                    </div>
-                    <div>
-                      <Label className="text-white text-sm">{item.label}</Label>
-                      <p className="text-white/40 text-xs hidden sm:block">{item.description}</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={config[item.key as keyof ControlCentreConfig] as boolean}
-                    onCheckedChange={(checked) =>
-                      setConfig({ ...config, [item.key]: checked })
-                    }
-                  />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Color Scheme */}
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-white flex items-center gap-2 text-base md:text-lg">
-                <Palette className="w-5 h-5" />
-                Color Scheme
-              </CardTitle>
-              <CardDescription className="text-white/60 text-sm">
-                Customize the control centre appearance
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Panel Background */}
-              <div className="space-y-2">
-                <Label className="text-white/80 text-sm">Panel Background</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={config.panelBgColor}
-                    onChange={(e) => setConfig({ ...config, panelBgColor: e.target.value })}
-                    className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
-                  />
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={config.panelBgOpacity}
-                    onChange={(e) => setConfig({ ...config, panelBgOpacity: parseInt(e.target.value) || 0 })}
-                    className="flex-1 bg-white/10 border-white/20 text-white"
-                    placeholder="Opacity %"
-                  />
-                </div>
-              </div>
-
-              {/* Card Background */}
-              <div className="space-y-2">
-                <Label className="text-white/80 text-sm">Card Background</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={config.cardBgColor}
-                    onChange={(e) => setConfig({ ...config, cardBgColor: e.target.value })}
-                    className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
-                  />
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={config.cardBgOpacity}
-                    onChange={(e) => setConfig({ ...config, cardBgOpacity: parseInt(e.target.value) || 0 })}
-                    className="flex-1 bg-white/10 border-white/20 text-white"
-                    placeholder="Opacity %"
-                  />
-                </div>
-              </div>
-
-              {/* Accent Color */}
-              <div className="space-y-2">
-                <Label className="text-white/80 text-sm">Accent Color</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={config.accentColor}
-                    onChange={(e) => setConfig({ ...config, accentColor: e.target.value })}
-                    className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
-                  />
-                  <Input
-                    value={config.accentColor}
-                    onChange={(e) => setConfig({ ...config, accentColor: e.target.value })}
-                    className="flex-1 bg-white/10 border-white/20 text-white"
-                    placeholder="#8b5cf6"
-                  />
-                </div>
-              </div>
-
-              {/* Text Color */}
-              <div className="space-y-2">
-                <Label className="text-white/80 text-sm">Text Color</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={config.textColor}
-                    onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
-                    className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
-                  />
-                  <Input
-                    value={config.textColor}
-                    onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
-                    className="flex-1 bg-white/10 border-white/20 text-white"
-                    placeholder="#ffffff"
-                  />
-                </div>
-              </div>
-
-              {/* Border Color */}
-              <div className="space-y-2">
-                <Label className="text-white/80 text-sm">Border Color</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={config.borderColor}
-                    onChange={(e) => setConfig({ ...config, borderColor: e.target.value })}
-                    className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
-                  />
-                  <Input
-                    value={config.borderColor}
-                    onChange={(e) => setConfig({ ...config, borderColor: e.target.value })}
-                    className="flex-1 bg-white/10 border-white/20 text-white"
-                    placeholder="#ffffff"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Preview */}
-          <Card className="bg-white/5 border-white/10 lg:col-span-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-white text-base md:text-lg">Live Preview</CardTitle>
-              <CardDescription className="text-white/60 text-sm">
-                Preview of your control centre design
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div 
-                className="rounded-2xl p-4 md:p-6"
-                style={{ 
-                  backgroundColor: hexToRgba(config.panelBgColor, config.panelBgOpacity),
-                  backdropFilter: 'blur(24px)'
-                }}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        {/* Widget Visibility */}
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white flex items-center gap-2 text-base md:text-lg">
+              <Eye className="w-5 h-5" />
+              Widget Visibility
+            </CardTitle>
+            <CardDescription className="text-white/60 text-sm">
+              Show or hide control centre widgets
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {toggleItems.map((item) => (
+              <div
+                key={item.key}
+                className="flex items-center justify-between p-3 rounded-xl bg-white/5"
               >
-                {/* Drag Handle */}
-                <div 
-                  className="w-12 h-1.5 rounded-full mx-auto mb-4"
-                  style={{ backgroundColor: hexToRgba(config.textColor, 40) }}
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                    <item.icon className="w-4 h-4 md:w-5 md:h-5 text-white/80" />
+                  </div>
+                  <div>
+                    <Label className="text-white text-sm">{item.label}</Label>
+                    <p className="text-white/40 text-xs hidden sm:block">{item.description}</p>
+                  </div>
+                </div>
+                <Switch
+                  checked={config[item.key as keyof ControlCentreConfig] as boolean}
+                  onCheckedChange={(checked) =>
+                    setConfig({ ...config, [item.key]: checked })
+                  }
                 />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
-                {/* Sample Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                  <div 
-                    className="rounded-2xl p-3 flex items-center gap-3"
-                    style={{ 
-                      backgroundColor: hexToRgba(config.cardBgColor, config.cardBgOpacity),
-                      borderWidth: 1,
-                      borderColor: hexToRgba(config.borderColor, 20)
-                    }}
-                  >
-                    <Globe className="w-5 h-5" style={{ color: config.accentColor }} />
-                    <div>
-                      <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>IP Address</p>
-                      <p className="text-sm font-semibold" style={{ color: config.textColor }}>192.168.1.1</p>
-                    </div>
-                  </div>
-                  <div 
-                    className="rounded-2xl p-3 flex items-center gap-3"
-                    style={{ 
-                      backgroundColor: hexToRgba(config.cardBgColor, config.cardBgOpacity),
-                      borderWidth: 1,
-                      borderColor: hexToRgba(config.borderColor, 20)
-                    }}
-                  >
-                    <MapPin className="w-5 h-5" style={{ color: config.accentColor }} />
-                    <div>
-                      <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>Location</p>
-                      <p className="text-sm font-semibold" style={{ color: config.textColor }}>Kuala Lumpur</p>
-                    </div>
-                  </div>
+        {/* Profile Settings */}
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white flex items-center gap-2 text-base md:text-lg">
+              <User className="w-5 h-5" />
+              Profile Card Settings
+            </CardTitle>
+            <CardDescription className="text-white/60 text-sm">
+              Customize the profile widget
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Profile Name</Label>
+              <Input
+                value={config.profileName}
+                onChange={(e) => setConfig({ ...config, profileName: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="Your name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Subtitle</Label>
+              <Input
+                value={config.profileSubtitle}
+                onChange={(e) => setConfig({ ...config, profileSubtitle: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="e.g., Phone customization"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Profile Image URL</Label>
+              <Input
+                value={config.profileImageUrl}
+                onChange={(e) => setConfig({ ...config, profileImageUrl: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="https://example.com/avatar.png"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Neumorphic Colors */}
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white flex items-center gap-2 text-base md:text-lg">
+              <Palette className="w-5 h-5" />
+              Neumorphic Colors
+            </CardTitle>
+            <CardDescription className="text-white/60 text-sm">
+              Customize the dark neumorphic theme
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Background Color */}
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Background Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="color"
+                  value={config.bgColor}
+                  onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
+                  className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
+                />
+                <Input
+                  value={config.bgColor}
+                  onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
+                  className="flex-1 bg-white/10 border-white/20 text-white"
+                />
+              </div>
+            </div>
+
+            {/* Accent Color */}
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Accent Color (Active state)</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="color"
+                  value={config.accentColor}
+                  onChange={(e) => setConfig({ ...config, accentColor: e.target.value })}
+                  className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
+                />
+                <Input
+                  value={config.accentColor}
+                  onChange={(e) => setConfig({ ...config, accentColor: e.target.value })}
+                  className="flex-1 bg-white/10 border-white/20 text-white"
+                />
+              </div>
+            </div>
+
+            {/* Text Color */}
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Primary Text Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="color"
+                  value={config.textColor}
+                  onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
+                  className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
+                />
+                <Input
+                  value={config.textColor}
+                  onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
+                  className="flex-1 bg-white/10 border-white/20 text-white"
+                />
+              </div>
+            </div>
+
+            {/* Secondary Text Color */}
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Secondary Text Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="color"
+                  value={config.secondaryTextColor}
+                  onChange={(e) => setConfig({ ...config, secondaryTextColor: e.target.value })}
+                  className="w-12 h-10 p-1 bg-white/10 border-white/20 rounded-md cursor-pointer"
+                />
+                <Input
+                  value={config.secondaryTextColor}
+                  onChange={(e) => setConfig({ ...config, secondaryTextColor: e.target.value })}
+                  className="flex-1 bg-white/10 border-white/20 text-white"
+                />
+              </div>
+            </div>
+
+            {/* Shadow Light */}
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Light Shadow</Label>
+              <Input
+                value={config.shadowLight}
+                onChange={(e) => setConfig({ ...config, shadowLight: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="rgba(255, 255, 255, 0.03)"
+              />
+            </div>
+
+            {/* Shadow Dark */}
+            <div className="space-y-2">
+              <Label className="text-white/80 text-sm">Dark Shadow</Label>
+              <Input
+                value={config.shadowDark}
+                onChange={(e) => setConfig({ ...config, shadowDark: e.target.value })}
+                className="bg-white/10 border-white/20 text-white"
+                placeholder="rgba(0, 0, 0, 0.6)"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Live Preview */}
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white text-base md:text-lg">Live Preview</CardTitle>
+            <CardDescription className="text-white/60 text-sm">
+              Neumorphic dashboard preview
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 p-4 rounded-2xl" style={{ backgroundColor: config.bgColor }}>
+              
+              {/* Clock Widget Preview */}
+              <div style={neuInset} className="p-4 flex items-center justify-between">
+                <div 
+                  className="px-4 py-2 flex items-center"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(4px)',
+                    borderRadius: '50px',
+                  }}
+                >
+                  <span className="text-2xl font-bold" style={{ color: config.textColor }}>11:32</span>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                  <div 
-                    className="rounded-2xl p-3 flex items-center gap-3"
-                    style={{ 
-                      backgroundColor: hexToRgba(config.cardBgColor, config.cardBgOpacity),
-                      borderWidth: 1,
-                      borderColor: hexToRgba(config.borderColor, 20)
-                    }}
-                  >
-                    <Clock className="w-5 h-5" style={{ color: config.accentColor }} />
-                    <div>
-                      <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>Time</p>
-                      <p className="text-sm font-semibold" style={{ color: config.textColor }}>12:30 PM</p>
-                    </div>
+                <div className="flex items-center space-x-2 text-right">
+                  <span className="text-2xl font-medium" style={{ color: config.textColor }}>02</span>
+                  <div className="text-[10px] leading-tight" style={{ color: config.secondaryTextColor }}>
+                    Wed<br/>Sept
                   </div>
-                  <div 
-                    className="rounded-2xl p-3 flex items-center gap-3"
-                    style={{ 
-                      backgroundColor: hexToRgba(config.cardBgColor, config.cardBgOpacity),
-                      borderWidth: 1,
-                      borderColor: hexToRgba(config.borderColor, 20)
-                    }}
-                  >
-                    <CalendarIcon className="w-5 h-5" style={{ color: config.accentColor }} />
-                    <div>
-                      <p className="text-xs" style={{ color: hexToRgba(config.textColor, 60) }}>Saturday</p>
-                      <p className="text-sm font-semibold" style={{ color: config.textColor }}>07 Dec 2024</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons Preview */}
-                <div className="grid grid-cols-4 gap-2 md:gap-3">
-                  {toggleItems
-                    .filter((item) => config[item.key as keyof ControlCentreConfig])
-                    .map((item) => (
-                      <div
-                        key={item.key}
-                        className="aspect-square rounded-xl md:rounded-2xl flex flex-col items-center justify-center gap-1 md:gap-2"
-                        style={{ 
-                          backgroundColor: item.key === 'showReboot' 
-                            ? 'rgba(239, 68, 68, 0.8)' 
-                            : hexToRgba(config.cardBgColor, config.cardBgOpacity),
-                          borderWidth: 1,
-                          borderColor: item.key === 'showReboot' 
-                            ? 'rgba(248, 113, 113, 0.3)' 
-                            : hexToRgba(config.borderColor, 20)
-                        }}
-                      >
-                        <item.icon 
-                          className="w-4 h-4 md:w-5 md:h-5" 
-                          style={{ color: item.key === 'showReboot' ? '#fff' : config.textColor }} 
-                        />
-                        <span 
-                          className="text-[10px] md:text-xs" 
-                          style={{ color: item.key === 'showReboot' ? '#fff' : hexToRgba(config.textColor, 80) }}
-                        >
-                          {item.label}
-                        </span>
-                      </div>
-                    ))}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              {/* Quick Actions Preview */}
+              {config.showQuickActions && (
+                <div className="flex space-x-3">
+                  <div style={neuOutset} className="flex-grow p-3 flex items-center justify-between px-4">
+                    <div className="flex items-center space-x-0.5 text-xs">
+                      <span className="text-[#4285F4] font-bold">G</span>
+                      <span className="text-[#EA4335] font-bold">o</span>
+                      <span className="text-[#FBBC05] font-bold">o</span>
+                      <span className="text-[#4285F4] font-bold">g</span>
+                      <span className="text-[#34A853] font-bold">l</span>
+                      <span className="text-[#EA4335] font-bold">e</span>
+                    </div>
+                    <Search className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                  </div>
+                  <div className="flex space-x-2">
+                    <div style={neuBtn} className="w-10 h-10 rounded-full flex items-center justify-center">
+                      <Phone className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                    </div>
+                    <div style={neuBtn} className="w-10 h-10 rounded-full flex items-center justify-center">
+                      <Mail className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Profile Card Preview */}
+              {config.showProfileCard && (
+                <div style={neuOutset} className="p-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full overflow-hidden p-0.5" style={neuInset}>
+                      <img 
+                        src={config.profileImageUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} 
+                        alt="Avatar" 
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-semibold" style={{ color: config.textColor }}>{config.profileName}</h3>
+                      <p className="text-[8px]" style={{ color: config.secondaryTextColor }}>{config.profileSubtitle}</p>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <Bell className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                    <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-red-500 rounded-full" />
+                  </div>
+                </div>
+              )}
+
+              {/* Media & Weather Preview */}
+              <div className="grid grid-cols-2 gap-3">
+                {config.showMusicPlayer && (
+                  <div style={neuOutset} className="p-3 flex flex-col justify-between aspect-square">
+                    <div>
+                      <h4 className="text-[10px] font-bold truncate" style={{ color: config.textColor }}>CrabDance Radio</h4>
+                      <p className="text-[8px]" style={{ color: config.secondaryTextColor }}>Live Stream</p>
+                    </div>
+                    <div className="flex justify-center">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: config.accentColor }}>
+                        <Play className="w-3 h-3 text-black ml-0.5" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {config.showWeather && (
+                  <div style={neuOutset} className="p-3 flex flex-col justify-between aspect-square">
+                    <div className="flex items-start justify-between">
+                      <Cloud className="text-blue-400 w-5 h-5" />
+                      <div className="text-right">
+                        <div className="text-[10px] font-bold" style={{ color: config.textColor }}>21°C</div>
+                        <div className="text-[8px]" style={{ color: config.secondaryTextColor }}>Cloudy</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <MapPin className="w-2 h-2" style={{ color: config.textColor }} />
+                      <span className="text-[8px]" style={{ color: config.textColor }}>Location</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Control Buttons Preview */}
+              <div style={neuOutset} className="p-4">
+                <div className="grid grid-cols-4 gap-3">
+                  {config.showTorch && (
+                    <div style={neuBtn} className="w-10 h-10 mx-auto rounded-full flex items-center justify-center">
+                      <Flashlight className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                    </div>
+                  )}
+                  {config.showInfo && (
+                    <div style={neuBtn} className="w-10 h-10 mx-auto rounded-full flex items-center justify-center">
+                      <Settings className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                    </div>
+                  )}
+                  <div style={neuBtn} className="w-10 h-10 mx-auto rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-3 h-3" style={{ color: config.secondaryTextColor }} />
+                  </div>
+                  {config.showReboot && (
+                    <div style={neuBtn} className="w-10 h-10 mx-auto rounded-full flex items-center justify-center">
+                      <RotateCcw className="w-3 h-3" style={{ color: "#ef4444" }} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
