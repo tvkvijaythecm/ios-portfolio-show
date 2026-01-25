@@ -548,68 +548,24 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
             </div>
           </div>
 
-          {/* Search & Quick Actions */}
+          {/* Search Bar */}
           {config.showQuickActions && (
-            <div className="flex space-x-4">
-              <button 
-                onClick={() => setShowGoogleSearch(true)}
-                style={neuOutset} 
-                className="flex-grow p-4 flex items-center justify-between px-6 active:scale-[0.98] transition-transform"
-              >
-                <div className="flex items-center space-x-1">
-                  <span className="text-[#4285F4] font-bold">G</span>
-                  <span className="text-[#EA4335] font-bold">o</span>
-                  <span className="text-[#FBBC05] font-bold">o</span>
-                  <span className="text-[#4285F4] font-bold">g</span>
-                  <span className="text-[#34A853] font-bold">l</span>
-                  <span className="text-[#EA4335] font-bold">e</span>
-                </div>
-                <div className="h-6 w-[1px] bg-white/10 mx-2" />
-                <Search className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
-              </button>
-              <div className="flex space-x-3">
-                <button 
-                  onClick={() => {
-                    const phoneUrl = contactSettings?.phone_number 
-                      ? `tel:${contactSettings.phone_number}` 
-                      : "";
-                    if (phoneUrl) {
-                      setShowExternalDialog({ app: "Phone", url: phoneUrl });
-                    } else {
-                      toast({
-                        title: "No phone number",
-                        description: "Phone number not configured",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  style={neuBtn} 
-                  className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform"
-                >
-                  <Phone className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
-                </button>
-                <button 
-                  onClick={() => {
-                    const whatsappUrl = contactSettings?.whatsapp_number 
-                      ? `https://wa.me/${contactSettings.whatsapp_number.replace(/[^0-9]/g, '')}` 
-                      : "";
-                    if (whatsappUrl) {
-                      setShowExternalDialog({ app: "WhatsApp", url: whatsappUrl });
-                    } else {
-                      toast({
-                        title: "No WhatsApp number",
-                        description: "WhatsApp number not configured",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  style={neuBtn} 
-                  className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform"
-                >
-                  <Mail className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
-                </button>
+            <button 
+              onClick={() => setShowGoogleSearch(true)}
+              style={neuOutset} 
+              className="w-full p-4 flex items-center justify-between px-6 active:scale-[0.98] transition-transform"
+            >
+              <div className="flex items-center space-x-1">
+                <span className="text-[#4285F4] font-bold">G</span>
+                <span className="text-[#EA4335] font-bold">o</span>
+                <span className="text-[#FBBC05] font-bold">o</span>
+                <span className="text-[#4285F4] font-bold">g</span>
+                <span className="text-[#34A853] font-bold">l</span>
+                <span className="text-[#EA4335] font-bold">e</span>
               </div>
-            </div>
+              <div className="h-6 w-[1px] bg-white/10 mx-2" />
+              <Search className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
+            </button>
           )}
 
           {/* User Profile Card */}
