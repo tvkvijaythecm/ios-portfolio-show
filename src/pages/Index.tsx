@@ -327,7 +327,7 @@ const Index = () => {
                 isOpen={showControlCentre}
                 onClose={() => setShowControlCentre(false)}
                 onOpenWeather={() => setOpenApp("weather")}
-                onOpenInfo={() => setOpenApp("privacy")}
+                onOpenInfo={() => setOpenApp("profile")}
               />
             )}
           </AnimatePresence>

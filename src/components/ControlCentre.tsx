@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, PanInfo } from "framer-motion";
 import { 
-  X, 
   Flashlight, 
   Cloud, 
   Info, 
   RotateCcw, 
-  Globe, 
   MapPin, 
   Play, 
   Pause, 
@@ -14,22 +12,26 @@ import {
   Radio,
   Phone,
   Settings,
-  MessageCircle,
-  Camera,
   Search,
   Mail,
   Bell,
-  Sun,
-  CloudRain
+  Sun
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import ExternalLinkDialog from "@/components/ExternalLinkDialog";
+import { AnimatePresence } from "framer-motion";
 
 interface ControlCentreProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenWeather: () => void;
   onOpenInfo: () => void;
+}
+
+interface ContactSettings {
+  phone_number: string | null;
+  whatsapp_number: string | null;
 }
 
 interface ControlCentreConfig {
@@ -74,11 +76,11 @@ const RADIO_STREAM_URL = "https://radios.crabdance.com:8002/1";
 const RADIO_STATION_NAME = "CrabDance Radio";
 
 const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCentreProps) => {
-  const [ipAddress, setIpAddress] = useState("Detecting...");
+  const [_ipAddress, setIpAddress] = useState("Detecting...");
   const [isFetchingIp, setIsFetchingIp] = useState(false);
   const [location, setLocation] = useState("Detecting...");
   const [currentTime, setCurrentTime] = useState("");
-  const [currentDate, setCurrentDate] = useState("");
+  const [_currentDate, setCurrentDate] = useState("");
   const [currentDay, setCurrentDay] = useState("");
   const [dayNumber, setDayNumber] = useState("");
   const [monthName, setMonthName] = useState("");
@@ -90,6 +92,10 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   const [isLoadingRadio, setIsLoadingRadio] = useState(false);
   const [weatherTemp, setWeatherTemp] = useState("--");
   const [weatherCondition, setWeatherCondition] = useState("--");
+  const [showGoogleSearch, setShowGoogleSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [contactSettings, setContactSettings] = useState<ContactSettings | null>(null);
+  const [showExternalDialog, setShowExternalDialog] = useState<{ app: string; url: string } | null>(null);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -197,7 +203,24 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
         console.error("Error loading control centre config:", error);
       }
     };
+
+    const loadContactSettings = async () => {
+      try {
+        const { data } = await supabase
+          .from("contact_settings")
+          .select("phone_number, whatsapp_number")
+          .maybeSingle();
+        
+        if (data) {
+          setContactSettings(data);
+        }
+      } catch (error) {
+        console.error("Error loading contact settings:", error);
+      }
+    };
+
     loadConfig();
+    loadContactSettings();
   }, []);
 
   // Check if torch is supported
@@ -528,7 +551,11 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           {/* Search & Quick Actions */}
           {config.showQuickActions && (
             <div className="flex space-x-4">
-              <div style={neuOutset} className="flex-grow p-4 flex items-center justify-between px-6">
+              <button 
+                onClick={() => setShowGoogleSearch(true)}
+                style={neuOutset} 
+                className="flex-grow p-4 flex items-center justify-between px-6 active:scale-[0.98] transition-transform"
+              >
                 <div className="flex items-center space-x-1">
                   <span className="text-[#4285F4] font-bold">G</span>
                   <span className="text-[#EA4335] font-bold">o</span>
@@ -539,12 +566,46 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                 </div>
                 <div className="h-6 w-[1px] bg-white/10 mx-2" />
                 <Search className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
-              </div>
+              </button>
               <div className="flex space-x-3">
-                <button style={neuBtn} className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform">
+                <button 
+                  onClick={() => {
+                    const phoneUrl = contactSettings?.phone_number 
+                      ? `tel:${contactSettings.phone_number}` 
+                      : "";
+                    if (phoneUrl) {
+                      setShowExternalDialog({ app: "Phone", url: phoneUrl });
+                    } else {
+                      toast({
+                        title: "No phone number",
+                        description: "Phone number not configured",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  style={neuBtn} 
+                  className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform"
+                >
                   <Phone className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
                 </button>
-                <button style={neuBtn} className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform">
+                <button 
+                  onClick={() => {
+                    const whatsappUrl = contactSettings?.whatsapp_number 
+                      ? `https://wa.me/${contactSettings.whatsapp_number.replace(/[^0-9]/g, '')}` 
+                      : "";
+                    if (whatsappUrl) {
+                      setShowExternalDialog({ app: "WhatsApp", url: whatsappUrl });
+                    } else {
+                      toast({
+                        title: "No WhatsApp number",
+                        description: "WhatsApp number not configured",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  style={neuBtn} 
+                  className="w-12 h-12 flex items-center justify-center active:scale-95 transition-transform"
+                >
                   <Mail className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
                 </button>
               </div>
@@ -686,10 +747,14 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
               )}
 
               <button 
+                onClick={() => {
+                  onOpenInfo();
+                  onClose();
+                }}
                 style={neuBtn}
                 className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
               >
-                <MessageCircle className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
+                <Info className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
               </button>
               
               {config.showReboot && (
@@ -705,6 +770,73 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           </div>
         </div>
       </motion.div>
+
+      {/* Google Search Popup */}
+      {showGoogleSearch && (
+        <motion.div
+          className="fixed inset-0 z-[102] flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowGoogleSearch(false)} />
+          <motion.div
+            className="relative z-10 w-full max-w-[350px] rounded-2xl overflow-hidden"
+            style={{ ...neuOutset, padding: "20px" }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+          >
+            <div className="flex items-center space-x-2 mb-4">
+              <span className="text-[#4285F4] font-bold text-xl">G</span>
+              <span className="text-[#EA4335] font-bold text-xl">o</span>
+              <span className="text-[#FBBC05] font-bold text-xl">o</span>
+              <span className="text-[#4285F4] font-bold text-xl">g</span>
+              <span className="text-[#34A853] font-bold text-xl">l</span>
+              <span className="text-[#EA4335] font-bold text-xl">e</span>
+            </div>
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
+                  setShowGoogleSearch(false);
+                  setSearchQuery("");
+                }
+              }}
+              className="flex gap-2"
+            >
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search Google..."
+                className="flex-1 px-4 py-3 rounded-xl text-sm"
+                style={{ ...neuInset, color: config.textColor, background: config.bgColor }}
+                autoFocus
+              />
+              <button
+                type="submit"
+                className="px-4 py-3 rounded-xl active:scale-95 transition-transform"
+                style={neuBtn}
+              >
+                <Search className="w-5 h-5" style={{ color: config.accentColor }} />
+              </button>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* External Link Dialog */}
+      {showExternalDialog && (
+        <ExternalLinkDialog
+          appName={showExternalDialog.app}
+          onConfirm={() => {
+            window.open(showExternalDialog.url, '_blank');
+            setShowExternalDialog(null);
+          }}
+          onCancel={() => setShowExternalDialog(null)}
+        />
+      )}
     </>
   );
 };
