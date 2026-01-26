@@ -52,57 +52,48 @@ const DateWidget = () => {
 
   return (
     <motion.div
-      className="w-full aspect-square rounded-3xl overflow-hidden shadow-xl border border-white/30"
+      className="w-full aspect-square rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl"
       style={{
-        backgroundColor: config.backgroundColor,
+        background: "rgba(255, 255, 255, 0.08)",
         boxShadow: `
-          0 20px 50px rgba(0,0,0,0.35),
-          0 10px 20px rgba(0,0,0,0.25),
-          0 4px 8px rgba(0,0,0,0.15),
-          inset 0 2px 4px rgba(255,255,255,0.3),
-          inset 0 -2px 4px rgba(0,0,0,0.05)
+          0 8px 32px rgba(0,0,0,0.3),
+          inset 0 1px 0 rgba(255,255,255,0.2)
         `,
-        transform: "perspective(800px) rotateX(2deg) rotateY(2deg)",
-        transformStyle: "preserve-3d"
       }}
-      initial={{ scale: 0.9, opacity: 0, rotateX: 10, rotateY: 5 }}
-      animate={{ scale: 1, opacity: 1, rotateX: 2, rotateY: 2 }}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
       whileHover={{ 
-        scale: 1.02, 
-        rotateX: 0, 
-        rotateY: 0,
+        scale: 1.02,
         boxShadow: `
-          0 30px 60px rgba(0,0,0,0.4),
-          0 15px 30px rgba(0,0,0,0.3),
-          0 5px 10px rgba(0,0,0,0.2),
-          inset 0 2px 4px rgba(255,255,255,0.35),
-          inset 0 -2px 4px rgba(0,0,0,0.05)
+          0 12px 40px rgba(0,0,0,0.4),
+          inset 0 1px 0 rgba(255,255,255,0.25)
         `
       }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
       {/* Month Header */}
       <div 
-        className="h-[30%] flex items-center justify-center"
-        style={{ backgroundColor: config.headerColor }}
+        className="h-[30%] flex items-center justify-center backdrop-blur-sm"
+        style={{ 
+          backgroundColor: config.headerColor,
+          borderBottom: "1px solid rgba(255,255,255,0.1)"
+        }}
       >
-        <span className="text-white font-bold text-sm tracking-wider">
+        <span className="text-white font-bold text-sm tracking-wider drop-shadow-md">
           {monthName}
         </span>
       </div>
       
       {/* Date Body */}
-      <div className="h-[70%] flex flex-col items-center justify-center gap-0">
+      <div className="h-[70%] flex flex-col items-center justify-center gap-0 bg-white/5">
         <span 
-          className="text-5xl font-light leading-none"
-          style={{ color: config.dateColor }}
+          className="text-5xl font-light leading-none text-white drop-shadow-lg"
         >
           {dayNumber}
         </span>
         {config.showDayName && (
           <span 
-            className="text-lg font-normal mt-1"
-            style={{ color: config.dayNameColor }}
+            className="text-lg font-normal mt-1 text-white/80"
           >
             {dayName}
           </span>
