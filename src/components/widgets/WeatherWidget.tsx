@@ -237,46 +237,36 @@ const WeatherWidget = () => {
 
   return (
     <motion.div
-      className="w-full h-full rounded-[20px] sm:rounded-3xl overflow-hidden relative border border-white/30"
+      className="w-full h-full rounded-[20px] sm:rounded-3xl overflow-hidden relative border border-white/20 backdrop-blur-xl"
       style={{
-        background: `linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(240,245,250,0.9) 100%)`,
+        background: "rgba(255, 255, 255, 0.08)",
         boxShadow: `
-          0 20px 50px rgba(0,0,0,0.35),
-          0 10px 20px rgba(0,0,0,0.25),
-          0 4px 8px rgba(0,0,0,0.15),
-          inset 0 2px 4px rgba(255,255,255,0.3),
-          inset 0 -2px 4px rgba(0,0,0,0.05)
+          0 8px 32px rgba(0,0,0,0.3),
+          inset 0 1px 0 rgba(255,255,255,0.2)
         `,
-        transform: "perspective(800px) rotateX(2deg) rotateY(2deg)",
-        transformStyle: "preserve-3d"
       }}
-      initial={{ scale: 0.9, opacity: 0, rotateX: 10, rotateY: 5 }}
-      animate={{ scale: 1, opacity: 1, rotateX: 2, rotateY: 2 }}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
       whileHover={{ 
-        scale: 1.02, 
-        rotateX: 0, 
-        rotateY: 0,
+        scale: 1.02,
         boxShadow: `
-          0 30px 60px rgba(0,0,0,0.4),
-          0 15px 30px rgba(0,0,0,0.3),
-          0 5px 10px rgba(0,0,0,0.2),
-          inset 0 2px 4px rgba(255,255,255,0.35),
-          inset 0 -2px 4px rgba(0,0,0,0.05)
+          0 12px 40px rgba(0,0,0,0.4),
+          inset 0 1px 0 rgba(255,255,255,0.25)
         `
       }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
       {/* Main Content */}
-      <div className="h-full p-3 sm:p-4 flex flex-col justify-between text-gray-800">
+      <div className="h-full p-3 sm:p-4 flex flex-col justify-between">
         
         {/* Top Row - Location + Temperature */}
         <div className="flex items-start justify-between">
           {/* Location */}
           <div className="flex-1 min-w-0">
-            <div className="text-xs sm:text-sm font-medium truncate text-gray-600">
+            <div className="text-xs sm:text-sm font-medium truncate text-white/70 drop-shadow-md">
               {loading ? "Loading..." : displayLocation}
             </div>
-            <div className="text-2xl sm:text-3xl font-light tracking-tight mt-0.5 text-gray-900">
+            <div className="text-2xl sm:text-3xl font-light tracking-tight mt-0.5 text-white drop-shadow-lg">
               {loading ? "--" : `${displayTemp}°`}
             </div>
           </div>
@@ -284,7 +274,7 @@ const WeatherWidget = () => {
           {/* Weather Icon */}
           <div className="relative ml-2">
             {loading ? (
-              <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 animate-spin text-gray-400" />
+              <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 animate-spin text-white/60" />
             ) : (
               getWeatherIcon(displayCondition, 36, "w-8 h-8 sm:w-10 sm:h-10")
             )}
@@ -293,10 +283,10 @@ const WeatherWidget = () => {
 
         {/* Bottom - Condition + Hi/Lo */}
         <div className="mt-auto">
-          <div className="text-[10px] sm:text-xs text-gray-600 capitalize">
+          <div className="text-[10px] sm:text-xs text-white/70 capitalize drop-shadow-md">
             {loading ? "..." : displayCondition}
           </div>
-          <div className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
+          <div className="text-[10px] sm:text-xs text-white/60 mt-0.5 drop-shadow-md">
             {loading ? "--" : `H:${displayTempMax}° L:${displayTempMin}°`}
           </div>
         </div>
