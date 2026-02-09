@@ -5,7 +5,7 @@ import LazyImage from "@/components/ui/lazy-image";
 const ProfileWidget = () => {
   return (
     <motion.div
-      className="w-full backdrop-blur-3xl rounded-[32px] p-4 border border-white/30 overflow-hidden relative"
+      className="w-full backdrop-blur-3xl rounded-[32px] px-4 py-3 border border-white/30 overflow-hidden relative"
       style={{
         background: 'rgba(255, 255, 255, 0.12)',
         backdropFilter: 'blur(60px) saturate(200%) brightness(1.1)',
@@ -16,15 +16,15 @@ const ProfileWidget = () => {
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.2 }}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <LazyImage 
           src={profileImage} 
           alt="Suresh Kaleyannan"
-          className="w-16 h-16 rounded-full app-shadow"
+          className="w-11 h-11 rounded-full app-shadow"
         />
         <div className="flex-1">
-          <h3 className="text-white dark:text-gray-200 font-semibold text-lg">Suresh Kaleyannan</h3>
-          <p className="text-white/80 dark:text-gray-400 text-sm">Creative Developer, Malaysia</p>
+          <h3 className="text-white font-semibold text-sm leading-tight">Suresh Kaleyannan</h3>
+          <p className="text-white/70 text-xs leading-tight mt-0.5">Creative Developer, Malaysia</p>
         </div>
       </div>
     </motion.div>
