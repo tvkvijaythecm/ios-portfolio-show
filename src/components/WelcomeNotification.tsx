@@ -102,12 +102,9 @@ const WelcomeNotification = ({ onDismiss }: WelcomeNotificationProps) => {
           className="fixed top-[calc(1%+0.5cm+8px)] left-4 right-4 z-[200] mx-auto max-w-md cursor-grab active:cursor-grabbing"
         >
           <div 
-            className="backdrop-blur-3xl rounded-[32px] border border-white/30 p-4 flex items-start gap-3 overflow-hidden"
+            className="backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-4 flex items-start gap-3"
             style={{
-              background: 'rgba(255, 255, 255, 0.12)',
-              backdropFilter: 'blur(60px) saturate(200%) brightness(1.1)',
-              WebkitBackdropFilter: 'blur(60px) saturate(200%) brightness(1.1)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(255, 255, 255, 0.1)',
+              background: `linear-gradient(to bottom right, ${config.gradientFrom}e6, ${config.gradientVia}e6, ${config.gradientTo}e6)`
             }}
           >
             {/* Time */}
