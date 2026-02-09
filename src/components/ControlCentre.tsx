@@ -103,27 +103,37 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
   
   const { toast } = useToast();
 
-  // Neumorphic styles
-  const neuOutset = {
-    background: config.bgColor,
-    boxShadow: `8px 8px 16px ${config.shadowDark}, -4px -4px 12px ${config.shadowLight}`,
+  // Liquid glass styles
+  const liquidGlass = {
+    background: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(40px) saturate(180%) brightness(1.05)',
+    WebkitBackdropFilter: 'blur(40px) saturate(180%) brightness(1.05)',
     borderRadius: "24px",
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(255, 255, 255, 0.08)',
   };
 
-  const neuInset = {
-    background: config.bgColor,
-    boxShadow: `inset 6px 6px 12px ${config.shadowDark}, inset -3px -3px 8px ${config.shadowLight}`,
+  const liquidGlassInset = {
+    background: 'rgba(255, 255, 255, 0.06)',
+    backdropFilter: 'blur(30px) saturate(160%)',
+    WebkitBackdropFilter: 'blur(30px) saturate(160%)',
     borderRadius: "24px",
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.15)',
   };
 
-  const neuBtn = {
-    background: config.bgColor,
-    boxShadow: `4px 4px 8px ${config.shadowDark}, -2px -2px 6px ${config.shadowLight}`,
+  const liquidGlassBtn = {
+    background: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(20px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(20px) saturate(180%)',
     borderRadius: "50%",
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.25)',
   };
 
-  const neuBtnActive = {
-    boxShadow: `inset 3px 3px 6px ${config.shadowDark}, inset -1px -1px 4px ${config.shadowLight}`,
+  const liquidGlassBtnActive = {
+    background: 'rgba(255, 255, 255, 0.18)',
+    boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2)',
   };
 
   // Initialize audio element
@@ -529,7 +539,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           <div className="w-12 h-1.5 rounded-full mx-auto mb-2" style={{ backgroundColor: config.secondaryTextColor }} />
 
           {/* Header Clock Widget */}
-          <div style={neuInset} className="p-5 flex items-center justify-between">
+          <div style={liquidGlassInset} className="p-5 flex items-center justify-between">
             <div 
               className="px-6 py-2 flex items-center"
               style={{
@@ -552,7 +562,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           {config.showQuickActions && (
             <button 
               onClick={() => setShowGoogleSearch(true)}
-              style={neuOutset} 
+              style={liquidGlass} 
               className="w-full p-4 flex items-center justify-between px-6 active:scale-[0.98] transition-transform"
             >
               <div className="flex items-center space-x-1">
@@ -570,9 +580,9 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
 
           {/* User Profile Card */}
           {config.showProfileCard && (
-            <div style={neuOutset} className="p-4 flex items-center justify-between">
+            <div style={liquidGlass} className="p-4 flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden p-1" style={neuInset}>
+                <div className="w-12 h-12 rounded-full overflow-hidden p-1" style={liquidGlassInset}>
                   {config.profileImageUrl ? (
                     <img src={config.profileImageUrl} alt="Avatar" className="w-full h-full rounded-full object-cover" />
                   ) : (
@@ -592,7 +602,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                 <div className="h-8 w-[1px] bg-white/10 mx-4" />
                 <div className="relative">
                   <Bell className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2" style={{ borderColor: config.bgColor }} />
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2" style={{ borderColor: 'transparent' }} />
                 </div>
               </div>
             </div>
@@ -602,7 +612,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           <div className="grid grid-cols-2 gap-4">
             {/* Music Player */}
             {config.showMusicPlayer && (
-              <div style={neuOutset} className="p-5 flex flex-col justify-between aspect-square">
+              <div style={liquidGlass} className="p-5 flex flex-col justify-between aspect-square">
                 <div>
                   <h4 className="text-xs font-bold truncate" style={{ color: config.textColor }}>{RADIO_STATION_NAME}</h4>
                   <p className="text-[10px] mt-1" style={{ color: config.secondaryTextColor }}>Live Radio Stream</p>
@@ -610,7 +620,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                 
                 <div className="w-full">
                   {/* Progress bar */}
-                  <div style={neuInset} className="w-full h-[3px] mb-4 overflow-hidden rounded-full">
+                  <div style={liquidGlassInset} className="w-full h-[3px] mb-4 overflow-hidden rounded-full">
                     <div 
                       className="h-full transition-all duration-300" 
                       style={{ 
@@ -652,7 +662,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                   onOpenWeather();
                   onClose();
                 }}
-                style={neuOutset} 
+                style={liquidGlass} 
                 className="p-5 flex flex-col justify-between aspect-square text-left active:scale-95 transition-transform"
               >
                 <div className="flex items-start justify-between">
@@ -674,12 +684,12 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           </div>
 
           {/* Controls Grid */}
-          <div style={neuOutset} className="p-6">
+          <div style={liquidGlass} className="p-6">
             <div className="grid grid-cols-4 gap-4">
               {config.showTorch && (
                 <button 
                   onClick={handleTorchToggle}
-                  style={torchOn ? { ...neuBtn, ...neuBtnActive } : neuBtn}
+                  style={torchOn ? { ...liquidGlassBtn, ...liquidGlassBtnActive } : liquidGlassBtn}
                   className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
                 >
                   <Flashlight 
@@ -695,7 +705,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                     onOpenInfo();
                     onClose();
                   }}
-                  style={neuBtn}
+                  style={liquidGlassBtn}
                   className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
                 >
                   <Settings className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
@@ -707,7 +717,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                   onOpenInfo();
                   onClose();
                 }}
-                style={neuBtn}
+                style={liquidGlassBtn}
                 className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
               >
                 <Info className="w-4 h-4" style={{ color: config.secondaryTextColor }} />
@@ -716,7 +726,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
               {config.showReboot && (
                 <button 
                   onClick={handleReboot}
-                  style={neuBtn}
+                  style={liquidGlassBtn}
                   className="w-12 h-12 mx-auto flex items-center justify-center active:scale-95 transition-transform"
                 >
                   <RotateCcw className="w-4 h-4" style={{ color: "#ef4444" }} />
@@ -738,7 +748,7 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowGoogleSearch(false)} />
           <motion.div
             className="relative z-10 w-full max-w-[350px] rounded-2xl overflow-hidden"
-            style={{ ...neuOutset, padding: "20px" }}
+            style={{ ...liquidGlass, padding: "20px" }}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
           >
@@ -767,13 +777,13 @@ const ControlCentre = ({ isOpen, onClose, onOpenWeather, onOpenInfo }: ControlCe
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Google..."
                 className="flex-1 px-4 py-3 rounded-xl text-sm"
-                style={{ ...neuInset, color: config.textColor, background: config.bgColor }}
+                style={{ ...liquidGlassInset, color: config.textColor }}
                 autoFocus
               />
               <button
                 type="submit"
                 className="px-4 py-3 rounded-xl active:scale-95 transition-transform"
-                style={neuBtn}
+                style={liquidGlassBtn}
               >
                 <Search className="w-5 h-5" style={{ color: config.accentColor }} />
               </button>
