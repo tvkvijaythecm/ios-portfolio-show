@@ -23,11 +23,9 @@ const DateWidget = () => {
   });
 
   useEffect(() => {
-    // Update time every minute
     const timer = setInterval(() => {
       setCurrentDate(new Date());
     }, 60000);
-
     return () => clearInterval(timer);
   }, []);
 
@@ -46,13 +44,35 @@ const DateWidget = () => {
     loadConfig();
   }, []);
 
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const today = currentDate.getDate();
   const monthName = currentDate.toLocaleDateString("en-US", { month: "long" }).toUpperCase();
-  const dayNumber = currentDate.getDate();
-  const dayName = currentDate.toLocaleDateString("en-US", { weekday: "long" });
+
+  // Build calendar grid
+  const firstDay = new Date(year, month, 1);
+  // Monday = 0, Sunday = 6
+  let startDay = firstDay.getDay() - 1;
+  if (startDay < 0) startDay = 6;
+  
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  const weekdays = ["M", "T", "W", "T", "F", "S", "S"];
+  
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < startDay; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  // Fill remaining cells to complete last row
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const isWeekend = (index: number) => {
+    const col = index % 7;
+    return col >= 5; // Saturday and Sunday columns
+  };
 
   return (
     <motion.div
-      className="w-full aspect-square rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl"
+      className="w-full h-full rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl"
       style={{
         background: "rgba(255, 255, 255, 0.08)",
         boxShadow: `
@@ -71,33 +91,49 @@ const DateWidget = () => {
       }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {/* Month Header */}
-      <div 
-        className="h-[30%] flex items-center justify-center backdrop-blur-sm"
-        style={{ 
-          backgroundColor: config.headerColor,
-          borderBottom: "1px solid rgba(255,255,255,0.1)"
-        }}
-      >
-        <span className="text-white font-bold text-sm tracking-wider drop-shadow-md">
+      <div className="h-full p-3 sm:p-4 flex flex-col justify-between">
+        {/* Month Name */}
+        <div className="text-white font-bold text-sm sm:text-base tracking-wider drop-shadow-md mb-1">
           {monthName}
-        </span>
-      </div>
-      
-      {/* Date Body */}
-      <div className="h-[70%] flex flex-col items-center justify-center gap-0 bg-white/5">
-        <span 
-          className="text-5xl font-light leading-none text-white drop-shadow-lg"
-        >
-          {dayNumber}
-        </span>
-        {config.showDayName && (
-          <span 
-            className="text-lg font-normal mt-1 text-white/80"
-          >
-            {dayName}
-          </span>
-        )}
+        </div>
+
+        {/* Weekday Headers */}
+        <div className="grid grid-cols-7 gap-0 mb-1">
+          {weekdays.map((day, i) => (
+            <div
+              key={i}
+              className={`text-center text-[10px] sm:text-xs font-semibold ${
+                i >= 5 ? "text-white/40" : "text-white/60"
+              }`}
+            >
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-0 flex-1">
+          {cells.map((day, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-center"
+            >
+              {day !== null && (
+                <div
+                  className={`w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-full text-[11px] sm:text-sm font-medium ${
+                    day === today
+                      ? "bg-white text-black font-bold"
+                      : isWeekend(i)
+                        ? "text-white/40"
+                        : "text-white/90"
+                  }`}
+                >
+                  {day}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
