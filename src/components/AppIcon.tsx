@@ -38,8 +38,14 @@ const AppIcon = ({
         className={cn(
           iconSize,
           "flex items-center justify-center relative rounded-[22%] overflow-hidden",
-          "bg-white/10 backdrop-blur-md border border-white/20 shadow-lg"
+          "border border-white/25"
         )}
+        style={{
+          background: 'rgba(255, 255, 255, 0.12)',
+          backdropFilter: 'blur(40px) saturate(180%) brightness(1.1)',
+          WebkitBackdropFilter: 'blur(40px) saturate(180%) brightness(1.1)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(255, 255, 255, 0.08)',
+        }}
         whileHover={{ scale: 1.1, rotate: 3 }}
         whileTap={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
