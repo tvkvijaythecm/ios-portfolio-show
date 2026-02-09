@@ -164,7 +164,7 @@ const WeatherWidget = () => {
         dailyMap.get(dateStr)!.temps.push(item.main.temp);
       });
 
-      const daily = Array.from(dailyMap.values()).slice(0, 4).map(d => ({
+      const daily = Array.from(dailyMap.values()).slice(0, 2).map(d => ({
         day: d.day,
         temp: Math.round(d.temps.reduce((a, b) => a + b, 0) / d.temps.length),
         tempMin: Math.round(Math.min(...d.temps)),
@@ -195,7 +195,7 @@ const WeatherWidget = () => {
   const displayCondition = liveWeather?.condition ?? config.condition;
   const displayLocation = liveWeather?.location ?? config.location;
   const displayHourly = liveWeather?.hourly ?? [];
-  const displayDaily = liveWeather?.daily ?? config.forecast.slice(0, 4).map(f => ({
+  const displayDaily = liveWeather?.daily?.slice(0, 2) ?? config.forecast.slice(0, 2).map(f => ({
     ...f,
     tempMin: f.temp - 3,
     tempMax: f.temp + 5,
