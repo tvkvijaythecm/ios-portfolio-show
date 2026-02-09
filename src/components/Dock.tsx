@@ -138,7 +138,13 @@ const Dock = () => {
               onClick={() => setShowSocial(false)}
             />
             <motion.div
-              className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-white/40 dark:bg-gray-800/40 backdrop-blur-2xl rounded-3xl p-4 z-50 shadow-2xl border border-white/20"
+              className="fixed bottom-32 left-1/2 -translate-x-1/2 backdrop-blur-3xl rounded-[32px] p-4 z-50 border border-white/30 overflow-hidden"
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                backdropFilter: 'blur(60px) saturate(200%) brightness(1.1)',
+                WebkitBackdropFilter: 'blur(60px) saturate(200%) brightness(1.1)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(255, 255, 255, 0.1)',
+              }}
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 20 }}
