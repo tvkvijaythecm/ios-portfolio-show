@@ -167,7 +167,13 @@ const Dock = () => {
 
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-30">
         <motion.div
-          className="bg-white/15 dark:bg-white/10 backdrop-blur-2xl rounded-[28px] px-5 py-3 border border-white/20 shadow-lg"
+          className="backdrop-blur-3xl rounded-[32px] px-5 py-3 border border-white/30 overflow-hidden relative"
+          style={{
+            background: 'rgba(255, 255, 255, 0.12)',
+            backdropFilter: 'blur(60px) saturate(200%) brightness(1.1)',
+            WebkitBackdropFilter: 'blur(60px) saturate(200%) brightness(1.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(255, 255, 255, 0.1)',
+          }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 30 }}
